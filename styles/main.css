@@ -1,37 +1,90 @@
+.body {
+  background: #768397;
+  color: #3e1a5c;
+
+}
+
+@font-face {
+  font-family: CrackMan;
+  src: url('../CrackMan 2.TTF');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .body-container {
   display: flex;
   flex-direction: column;
   width: 65%;
   margin: 0 auto;
   height: auto;
-  border: 1px solid black;
+  /* border: 1px solid black; */
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.header div {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
+  padding-top: 10px;
 }
 
 .title {
-  align-self: center;
+  font-family: CrackMan;
+  font-size: 32px;
+  color: #3e1a5c;
 }
 
 .mid-row {
   display: flex;
   flex-direction: row;
-  margin-top: 5%;
+  margin-top: 2%;
+  justify-content: center;
 }
 
-.instructions {
+.list {
+  list-style: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 150px;
-  height: 200px;
+  width: 175px;
+  height: 220px;
   padding: 10px;
-  border: 1px solid grey;
+  border: 2px solid #3e1a5c;
+  margin: 0 40px;
 }
 
-.instructions li {
+.list li {
   text-align: center;
   padding-top: 10px;
 }
 
-.instructions li:first-of-type {
-  font-size: 24px;
+.list li:first-of-type {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.list li:nth-of-type(1n) {
+  padding-top: 25px;
+}
+
+.list a {
+  color: #3e1a5c;
+}
+
+.list a:hover {
+  cursor: pointer;
+  color: #2e1b3f;
+}
+
+.game-board {
+  width: 500px;
+  height: 500px;
+  border: 2px solid #3e1a5c;
 }
