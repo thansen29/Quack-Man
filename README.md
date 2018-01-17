@@ -15,7 +15,8 @@ In this Quack-Man game, users will be able to:
 Vanilla JavaScript, HTML5, CSS3, Canvas
 
 # Wireframes
-![](https://image.ibb.co/fMQHmm/Screen_Shot_2018_01_16_at_10_44_39_PM.png)
+![](https://image.ibb.co/kAtA6m/Screen_Shot_2018_01_17_at_9_59_55_AM.png)
+
 
 # Timeline
 ### Day 1
