@@ -126,9 +126,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    this.ctx.strokeStyle = "green";
-    this.ctx.rect(this.x, this.y, this.width, this.height);
-    this.ctx.stroke();
+    // this.ctx.strokeStyle = "green";
+    // this.ctx.rect(this.x, this.y, this.width, this.height);
+    // this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -270,10 +270,11 @@ class Board {
     });
 
     if(collides){
-      console.log("why");
+      // console.log("why", this.direction);
       this.quackMan.x = finalPos.x; + offsetX;
       this.quackMan.y = finalPos.y; + offsetY;
       this.direction = [0, 0];
+      console.log(this.direction, quackSpeed);
     }
     this.quackMan.draw();
   }
@@ -17715,9 +17716,9 @@ X.X.X  X.X.X  X.X.X
 X.X.XXXX.X.XXXX.X.X
 X.X.o....X......X.X
 X.X.XX.XXXXX.XX.X.X
-X....X........X...X
-XXXX.X.XXXXX.XX.XXX
-    ...X   X....
+X.X.XX.......XX.X.X
+X....X.XXXXX.XX...X
+XXXX...X   X....XXX
     .X.XXXXX.XX.
 XXXX.X.......XX.XXX
 X.o...XXXXXX.XX...X
