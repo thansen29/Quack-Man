@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
   const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
   gameView.start();
-  // new GameView(ctx, game).start();
+
 });
 
 
@@ -198,11 +198,14 @@ document.addEventListener("DOMContentLoaded", () => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pill__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__large_pill__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__draw_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ghost__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__draw_strategy__ = __webpack_require__(12);
 
 
 
 
+
+// import Pinky from './pinky';
 
 
 
@@ -263,14 +266,17 @@ class Board {
     const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
 
-    //iterate through whole maze and see if quackmans pos intersects
-    //with a wall
     let collides = false;
     this.grid.forEach((row) => {
       row.forEach((cell) => {
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
           if(this.quackMan.collidesWith(cell)){
             collides = true;
+          }
+        } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */]){
+          if(this.quackMan.collidesWith(cell)){
+            collides = true;
+            console.log('yooooooo');
           }
         }
       });
@@ -375,14 +381,14 @@ class Board {
           case "p":
           case "c":
             ghosts.push(item);
-            break;
+            return item;//currently each ghost is in the grid
           default:
             return item;
         }
         return null;
       });
     });
-
+    // debugger
     mappedGrid.forEach((row, rowIdx) => {
       row.forEach((cell, cellIdx) => {
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
@@ -392,24 +398,24 @@ class Board {
           let prevVert = mappedGrid[rowIdx-1] ? mappedGrid[rowIdx-1][cellIdx] : null;
 
           if(nextHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawRightWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawRightWall);
           } else if(prevHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawRightCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawRightCap);
           }
           if(prevHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawLeftWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawLeftWall);
           } else if(nextHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawLeftCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawLeftCap);
           }
           if(nextVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawBottomWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawBottomWall);
           } else if(prevVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawBottomCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawBottomCap);
           }
           if(prevVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawTopWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawTopWall);
           } else if(nextVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawTopCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_6__draw_strategy__["a" /* default */].drawTopCap);
           }
         }
       });
