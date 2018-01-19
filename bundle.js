@@ -232,6 +232,8 @@ class Board {
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
     this.score = 0;
+    this.lives = 3;
+    this.level = 0;
   }
 
   draw(){
@@ -262,7 +264,6 @@ class Board {
     this.quackMan.x += this.direction[0] * quackSpeed;
     this.quackMan.y += this.direction[1] * quackSpeed;
     let finalPos = this.calculateMatrixPos(startX, startY);
-    //here we have the new position on the canvas
 
     const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
@@ -313,7 +314,7 @@ class Board {
     const newX = currentLocation.gridX + direction[0];
     const newY = currentLocation.gridY + direction[1];
     if(this.grid.length >= newX &&
-       this.grid[0].length >= newY){ //cant change directions into a wall
+       this.grid[0].length >= newY){
         const myCell = this.grid[newY][newX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
           this.direction = direction;
@@ -344,9 +345,9 @@ class Board {
     const score = $('.score');
     const lives = $('.lives');
     const level = $('.level');
-    score.html("score:" + this.score);
-    lives.html("Lives:" );
-    level.html("Level: 0" );
+    score.html("Score:" + this.score);
+    lives.html("Lives:" + this.lives );
+    level.html("Level:" + this.level );
   }
 
   static fromString(ctx, boardModel){
