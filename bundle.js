@@ -126,9 +126,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    // this.ctx.strokeStyle = "green";
-    // this.ctx.rect(this.x, this.y, this.width, this.height);
-    // this.ctx.stroke();
+    this.ctx.strokeStyle = "green";
+    this.ctx.rect(this.x, this.y, this.width, this.height);
+    this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -274,9 +274,9 @@ class Board {
       this.quackMan.x = finalPos.x; + offsetX;
       this.quackMan.y = finalPos.y; + offsetY;
       this.direction = [0, 0];
-      console.log(this.direction, quackSpeed);
     }
-    this.quackMan.draw();
+    
+    this.quackMan.draw(this.direction);
   }
 
   changeDirection(direction){
@@ -449,12 +449,28 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.y = y;
     this.width = width - 3;
     this.height = height - 3;
+    this.lastDirection = "./assets/duck.png";
   }
 
 
-  draw(){
+  draw(direction){
     const duck = new Image();
-    duck.src = "./assets/duck.png";
+    if(direction[0] === 1){
+      this.lastDirection = "./assets/duck.png";
+      duck.src = this.lastDirection;
+    } else if(direction[0] === -1){
+      this.lastDirection = "./assets/leftduck.png";
+      duck.src = this.lastDirection;
+    } else if(direction[1] === 1){
+      this.lastDirection = "./assets/downduck.png";
+      duck.src = this.lastDirection;
+    } else if(direction[1] === -1){
+      this.lastDirection = "./assets/upduck.png";
+      duck.src = this.lastDirection;
+    } else {
+      duck.src = this.lastDirection;
+    }
+
     this.ctx.drawImage(duck, this.x, this.y, this.width, this.height);
   }
 
