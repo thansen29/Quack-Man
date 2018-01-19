@@ -68,9 +68,6 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-//contain all logic for collisions, for bounding boxes,
-//maintaining position, render a sprite
-
 class VisibleObject {
   constructor(ctx, x, y, width, height){
     this.ctx = ctx;
@@ -86,18 +83,8 @@ class VisibleObject {
          this.y < (object.y + object.height) &&
          object.y < (this.y + this.height));
   }
-  //
-  // getBoundingBox(){
-  //   return {
-  //     topLeft: { x: this.x, y: this.y },
-  //     topRight: { x: this.x + this.width, y: this.y },
-  //     bottomLeft: { x: this.x, y: this.y + this.height } ,
-  //     bottomRight: { x: this.x + this.width, y: this.y + this.height }
-  //   };
-  // }
 
   draw(){
-
   }
 
 
@@ -223,11 +210,12 @@ const quackSpeed = 3;
 
 class Board {
 
-  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight){
+  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts){
     this.ctx = ctx;
     this.grid = grid;
     this.dots = dots;
     this.quackMan = quackMan;
+    this.ghosts = ghosts;
     this.direction = [0, 0];
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
@@ -240,6 +228,7 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
+    this.drawGhosts();
     this.moveQuackMan();
   }
 
@@ -254,6 +243,12 @@ class Board {
   drawPills(){
     this.dots.forEach((dot) => {
       dot.draw();
+    });
+  }
+
+  drawGhosts(){
+    this.ghosts.forEach((ghost) => {
+      ghost.draw();
     });
   }
 
@@ -298,7 +293,7 @@ class Board {
     this.dots.forEach((dot) => {
       const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
       if(dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible){
-        dot.visible = false;
+        dot.hide();
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
           //trigger some other stuff
@@ -360,6 +355,7 @@ class Board {
 
     const dots = [];
     let quackMan = null;
+    const ghosts = [];
     const mappedGrid = grid.map((row, rowIdx) => {
       return row.map((cell, cellIdx) => {
         const x = cellIdx * squareWidth;
@@ -373,6 +369,12 @@ class Board {
             break;
           case "q":
             quackMan = item;
+            break;
+          case "b":
+          case "i":
+          case "p":
+          case "c":
+            ghosts.push(item);
             break;
           default:
             return item;
@@ -413,7 +415,7 @@ class Board {
       });
     });
 
-    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight);
+    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight, ghosts);
   }
 
 }
@@ -430,6 +432,15 @@ class Board {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pill__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__large_pill__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__duck__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blinky__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__inky__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pinky__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__clyde__ = __webpack_require__(20);
+
+
+
+
+
 
 
 
@@ -446,6 +457,14 @@ class Util {
         return new __WEBPACK_IMPORTED_MODULE_2__large_pill__["a" /* default */](ctx, x, y, width, height);
       case "q":
         return new __WEBPACK_IMPORTED_MODULE_3__duck__["a" /* default */](ctx, x, y, width, height);
+      case "b":
+        return new __WEBPACK_IMPORTED_MODULE_4__blinky__["a" /* default */](ctx, x, y, width, height);
+      case "i":
+        return new __WEBPACK_IMPORTED_MODULE_5__inky__["a" /* default */](ctx, x, y, width, height);
+      case "p":
+        return new __WEBPACK_IMPORTED_MODULE_6__pinky__["a" /* default */](ctx, x, y, width, height);
+      case "c":
+        return new __WEBPACK_IMPORTED_MODULE_7__clyde__["a" /* default */](ctx, x, y, width, height);
       default:
     }
   }
@@ -476,6 +495,10 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
       this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
       this.ctx.fill();
     }
+  }
+
+  hide(){
+    this.visible = false;
   }
 }
 
@@ -17778,8 +17801,8 @@ X.X.XXXX.X.XXXX.X.X
 X.X.o....X......X.X
 X.X.XX.XXXXX.XX.X.X
 X.X.X........XX.X.X
-X...X.XXXXXX.XX...X
-XXX.X.XggggX....XXX
+X...X.XXX XX.XX...X
+XXX.X.XbipcX....XXX
    .X.XXXXXX.XX.
 XXX.X........XX.XXX
 X.o...XXXXXX.XX...X
@@ -17880,6 +17903,116 @@ class Game {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(0);
+
+
+class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */] {
+  constructor(ctx, x, y, width, height){
+    super(ctx, x, y, width, height);
+    this.ctx = ctx;
+    this.x = x;
+    this.y = y;
+    this.width = width - 3;
+    this.height = height - 3;
+    this.eatable = false;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Ghost);
+
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ghost__ = __webpack_require__(16);
+
+
+class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
+  draw(){
+    if(!this.eatable){
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/blinky.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Blinky);
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ghost__ = __webpack_require__(16);
+
+
+class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
+  
+  draw(){
+    if(!this.eatable){
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/inky.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Inky);
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ghost__ = __webpack_require__(16);
+
+
+class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
+  
+  draw(){
+    if(!this.eatable){
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/pinky.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Pinky);
+
+
+/***/ }),
+/* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ghost__ = __webpack_require__(16);
+
+
+class Clyde extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
+  
+  draw(){
+    if(!this.eatable){
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/clyde.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Clyde);
 
 
 /***/ })
