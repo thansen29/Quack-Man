@@ -209,8 +209,10 @@ document.addEventListener("DOMContentLoaded", () => {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wall__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pill__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__duck__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__draw_strategy__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__large_pill__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__draw_strategy__ = __webpack_require__(12);
+
 
 
 
@@ -296,7 +298,12 @@ class Board {
       const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
       if(dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible){
         dot.visible = false;
-        this.score += 5;
+        if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
+          this.score += 50;
+          //trigger some other stuff
+        } else {
+          this.score += 5;
+        }
       }
     });
   }
@@ -340,9 +347,6 @@ class Board {
     score.html("score:" + this.score);
     lives.html("Lives:" );
     level.html("Level: 0" );
-    // this.ctx.fillStyle = "red";
-    // this.ctx.font = "30px Comic Sans MS";
-    // this.ctx.fillText("Score", 0, 600);
   }
 
   static fromString(ctx, boardModel){
@@ -385,24 +389,24 @@ class Board {
           let prevVert = mappedGrid[rowIdx-1] ? mappedGrid[rowIdx-1][cellIdx] : null;
 
           if(nextHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawRightWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawRightWall);
           } else if(prevHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawRightCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawRightCap);
           }
           if(prevHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawLeftWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawLeftWall);
           } else if(nextHorz instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawLeftCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawLeftCap);
           }
           if(nextVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawBottomWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawBottomWall);
           } else if(prevVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawBottomCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawBottomCap);
           }
           if(prevVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawTopWall);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawTopWall);
           } else if(nextVert instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_4__draw_strategy__["a" /* default */].drawTopCap);
+            cell.addDrawStrategy(__WEBPACK_IMPORTED_MODULE_5__draw_strategy__["a" /* default */].drawTopCap);
           }
         }
       });
@@ -464,11 +468,13 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
   }
 
   draw(){
-    this.ctx.fillStyle = "yellow";
-    this.ctx.lineWidth = 0;
-    this.ctx.beginPath();
-    this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
-    this.ctx.fill();
+    if(this.visible){
+      this.ctx.fillStyle = "yellow";
+      this.ctx.lineWidth = 0;
+      this.ctx.beginPath();
+      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
+      this.ctx.fill();
+    }
   }
 }
 
