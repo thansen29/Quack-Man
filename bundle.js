@@ -154,11 +154,17 @@ class Pill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
   }
 
   draw(){
-    this.ctx.fillStyle = "yellow";
-    this.ctx.lineWidth = 0;
-    this.ctx.beginPath();
-    this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/10, 2*Math.PI, false);
-    this.ctx.fill();
+    if(this.visible){
+      this.ctx.fillStyle = "yellow";
+      this.ctx.lineWidth = 0;
+      this.ctx.beginPath();
+      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/10, 2*Math.PI, false);
+      this.ctx.fill();
+    }
+  }
+
+  hide(){
+    this.visible = false;
   }
 }
 
@@ -221,6 +227,7 @@ class Board {
     this.direction = [0, 0];
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
+    this.score = 0;
   }
 
   draw(){
@@ -270,14 +277,26 @@ class Board {
     });
 
     if(collides){
-      // console.log("why", this.direction);
-      this.quackMan.x = finalPos.x; + offsetX;
-      this.quackMan.y = finalPos.y; + offsetY;
+      this.quackMan.x = finalPos.x + offsetX;
+      this.quackMan.y = finalPos.y + offsetY;
       this.direction = [0, 0];
     }
 
     this.wrapQuack(this.quackMan.x);
     this.quackMan.draw(this.direction);
+    this.eatPill();
+  }
+
+  eatPill(){
+    const quackLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
+    this.dots.forEach((dot) => {
+      const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
+      if(dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible){
+        dot.visible = false;
+        this.score += 5;
+        console.log(this.score);
+      }
+    });
   }
 
   changeDirection(direction){
@@ -481,10 +500,6 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     }
 
     this.ctx.drawImage(duck, this.x, this.y, this.width, this.height);
-  }
-
-  moveTo(pos){
-    this.pos = pos;
   }
 }
 
