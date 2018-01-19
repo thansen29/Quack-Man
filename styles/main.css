@@ -1,12 +1,16 @@
 .body {
-  background: #768397;
+  /* background: #768397; */
+  background: black;
   color: #3e1a5c;
+}
 
+.duck {
+  display: none;
 }
 
 @font-face {
   font-family: CrackMan;
-  src: url('../CrackMan 2.TTF');
+  src: url('../assets/CrackMan 2.TTF');
   font-weight: normal;
   font-style: normal;
 }
@@ -17,7 +21,6 @@
   width: 65%;
   margin: 0 auto;
   height: auto;
-  /* border: 1px solid black; */
 }
 
 .header {
@@ -56,7 +59,7 @@
   width: 175px;
   height: 220px;
   padding: 10px;
-  border: 2px solid #3e1a5c;
+  border: 3px solid #3e1a5c;
   margin: 0 40px;
 }
 
@@ -84,7 +87,7 @@
 }
 
 .game-board {
-  width: 500px;
-  height: 500px;
-  border: 2px solid #3e1a5c;
+  width: 600px;
+  height: 600px;
+  border: 3px solid #3e1a5c;
 }
