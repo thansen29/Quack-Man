@@ -126,9 +126,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    this.ctx.strokeStyle = "green";
-    this.ctx.rect(this.x, this.y, this.width, this.height);
-    this.ctx.stroke();
+    // this.ctx.strokeStyle = "green";
+    // this.ctx.rect(this.x, this.y, this.width, this.height);
+    // this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -275,7 +275,8 @@ class Board {
       this.quackMan.y = finalPos.y; + offsetY;
       this.direction = [0, 0];
     }
-    
+
+    this.wrapQuack(this.quackMan.x);
     this.quackMan.draw(this.direction);
   }
 
@@ -301,6 +302,14 @@ class Board {
       gridX,
       gridY
     };
+  }
+
+  wrapQuack(x){
+    if(x >= 600){
+      this.quackMan.x = 0;
+    } else if(x <= 0){
+      this.quackMan.x = 600;
+    }
   }
 
   static fromString(ctx, boardModel){
