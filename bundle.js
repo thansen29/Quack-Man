@@ -195,7 +195,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */]);
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
-  new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game).start();
+  const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
+  gameView.start();
+  // new GameView(ctx, game).start();
 });
 
 
@@ -285,6 +287,7 @@ class Board {
     this.wrapQuack(this.quackMan.x);
     this.quackMan.draw(this.direction);
     this.eatPill();
+    this.showStats();
   }
 
   eatPill(){
@@ -294,7 +297,6 @@ class Board {
       if(dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible){
         dot.visible = false;
         this.score += 5;
-        console.log(this.score);
       }
     });
   }
@@ -329,6 +331,18 @@ class Board {
     } else if(x <= 0){
       this.quackMan.x = 600;
     }
+  }
+
+  showStats(){
+    const score = $('.score');
+    const lives = $('.lives');
+    const level = $('.level');
+    score.html("score:" + this.score);
+    lives.html("Lives:" );
+    level.html("Level: 0" );
+    // this.ctx.fillStyle = "red";
+    // this.ctx.font = "30px Comic Sans MS";
+    // this.ctx.fillText("Score", 0, 600);
   }
 
   static fromString(ctx, boardModel){
@@ -17826,7 +17840,6 @@ class GameView {
     this.lastTime = time;
 
     requestAnimationFrame(this.animate.bind(this));
-
   }
 }
 
@@ -17852,6 +17865,10 @@ class Game {
 
   changeDirection(direction){
     this.board.changeDirection(direction);
+  }
+
+  getScore(){
+    this.board.getScore();
   }
 }
 
