@@ -276,7 +276,7 @@ class Board {
         } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */]){
           if(this.quackMan.collidesWith(cell)){
             collides = true;
-            console.log('yooooooo');
+            alert("you ded");
           }
         }
       });
@@ -297,8 +297,7 @@ class Board {
   eatPill(){
     const quackLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
     this.dots.forEach((dot) => {
-      const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
-      if(dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible){
+      if(this.canEatPill(dot, quackLocation)){
         dot.hide();
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
@@ -308,6 +307,11 @@ class Board {
         }
       }
     });
+  }
+
+  canEatPill(dot, quackLocation){
+    const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
+    return dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible;
   }
 
   changeDirection(direction){
@@ -17808,7 +17812,7 @@ X.X.o....X......X.X
 X.X.XX.XXXXX.XX.X.X
 X.X.X........XX.X.X
 X...X.XXX XX.XX...X
-XXX.X.XbipcX....XXX
+XXX.X.XbpicX....XXX
    .X.XXXXXX.XX.
 XXX.X........XX.XXX
 X.o...XXXXXX.XX...X
