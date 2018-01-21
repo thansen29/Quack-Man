@@ -184,6 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
   const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
   gameView.start();
+  // gameView.bindKeyHandlers();
 
 });
 
@@ -232,6 +233,7 @@ class Board {
     this.drawPills();
     this.drawGhosts();
     this.moveQuackMan();
+    this.gameOver();
   }
 
   drawWalls(){
@@ -288,6 +290,7 @@ class Board {
         } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */]){
           if(this.quackMan.collidesWith(cell)){
             collides = true;
+            this.lives -= 1;
             alert("you ded");
           }
         }
@@ -297,9 +300,8 @@ class Board {
   }
 
   eatPill(){
-    const quackLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
     this.dots.forEach((dot) => {
-      if(this.canEatPill(dot, quackLocation)){
+      if(this.canEatPill(dot)){
         dot.hide();
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
@@ -311,9 +313,12 @@ class Board {
     });
   }
 
-  canEatPill(dot, quackLocation){
+  canEatPill(dot){
+    const quackLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
     const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
-    return dotLocation.gridX === quackLocation.gridX && dotLocation.gridY === quackLocation.gridY && dot.visible;
+    return dotLocation.gridX === quackLocation.gridX &&
+    dotLocation.gridY === quackLocation.gridY &&
+    dot.visible;
   }
 
   changeDirection(direction){
@@ -345,6 +350,13 @@ class Board {
       this.quackMan.x = 0;
     } else if(x <= 0){
       this.quackMan.x = 600;
+    }
+  }
+
+  gameOver(){
+    if(this.lives === 0){
+      // alert("you lose");
+      //reset game
     }
   }
 
@@ -17857,9 +17869,11 @@ class GameView {
 
   bindKeyHandlers(){
     window.addEventListener("keydown", this.moveSprite.bind(this), false);
+    window.addEventListener("click", this.beginGame.bind(this), false);
   }
 
   moveSprite(e){
+    //s is 83
     let pos = [0, 0];
     switch (e.keyCode) {
       case 40:
@@ -17882,7 +17896,10 @@ class GameView {
 
   start(){
     this.bindKeyHandlers();
+    this.game.draw();
+  }
 
+  beginGame(){
     this.lastTime = 0;
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -17918,10 +17935,6 @@ class Game {
 
   changeDirection(direction){
     this.board.changeDirection(direction);
-  }
-
-  getScore(){
-    this.board.getScore();
   }
 }
 
