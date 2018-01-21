@@ -205,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-// import Pinky from './pinky';
 
 
 
@@ -266,6 +265,19 @@ class Board {
     const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
 
+    if(this.isCollision()){
+      this.quackMan.x = finalPos.x + offsetX;
+      this.quackMan.y = finalPos.y + offsetY;
+      this.direction = [0, 0];
+    }
+
+    this.wrapQuack(this.quackMan.x);
+    this.quackMan.draw(this.direction);
+    this.eatPill();
+    this.showStats();
+  }
+
+  isCollision(){
     let collides = false;
     this.grid.forEach((row) => {
       row.forEach((cell) => {
@@ -281,17 +293,7 @@ class Board {
         }
       });
     });
-
-    if(collides){
-      this.quackMan.x = finalPos.x + offsetX;
-      this.quackMan.y = finalPos.y + offsetY;
-      this.direction = [0, 0];
-    }
-
-    this.wrapQuack(this.quackMan.x);
-    this.quackMan.draw(this.direction);
-    this.eatPill();
-    this.showStats();
+    return collides;
   }
 
   eatPill(){
