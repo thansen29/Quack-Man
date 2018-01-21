@@ -17865,11 +17865,12 @@ class GameView {
   constructor(ctx, game){
     this.ctx = ctx;
     this.game = game;
+    this.beginGame = this.beginGame.bind(this);
   }
 
   bindKeyHandlers(){
     window.addEventListener("keydown", this.moveSprite.bind(this), false);
-    window.addEventListener("click", this.beginGame.bind(this), false);
+    window.addEventListener("click", this.beginGame, false);
   }
 
   moveSprite(e){
@@ -17897,9 +17898,11 @@ class GameView {
   start(){
     this.bindKeyHandlers();
     this.game.draw();
+
   }
 
   beginGame(){
+    window.removeEventListener("click", this.beginGame, false);
     this.lastTime = 0;
     requestAnimationFrame(this.animate.bind(this));
   }
