@@ -113,9 +113,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    // this.ctx.strokeStyle = "green";
-    // this.ctx.rect(this.x, this.y, this.width, this.height);
-    // this.ctx.stroke();
+    this.ctx.strokeStyle = "green";
+    this.ctx.rect(this.x, this.y, this.width, this.height);
+    this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -385,9 +385,7 @@ class Board {
   makeEatable(){
     this.ghosts.forEach((ghost) => {
       ghost.eatable = true;
-      console.log('make true');
       window.setTimeout(() => {
-        console.log('make false');
         ghost.eatable = false;
       }, 5000);
     });
@@ -17806,6 +17804,8 @@ class DrawStrategy {
   static drawBottomWall(ctx, x, y, width, height){
     ctx.fillStyle = "indigo";
     ctx.strokeStyle = "indigo";
+    // ctx.scale(1, 1);
+
     ctx.fillRect((width*.25 + x), y+height/2, width/2, height/2 );
     ctx.strokeRect((width*.25 + x), y+height/2, width/2, height/2 );
 
@@ -17814,6 +17814,8 @@ class DrawStrategy {
   static drawRightWall(ctx, x, y, width, height){
     ctx.fillStyle = "indigo";
     ctx.strokeStyle = "indigo";
+    // ctx.scale(1, 1);
+
     ctx.fillRect((width/2 + x), y+height*.25, width/2, height/2 );
     ctx.strokeRect((width/2 + x), y+height*.25, width/2, height/2 );
 
@@ -17822,6 +17824,8 @@ class DrawStrategy {
   static drawLeftWall(ctx, x, y, width, height){
     ctx.fillStyle = "indigo";
     ctx.strokeStyle = "indigo";
+    // ctx.scale(1, 1);
+
     ctx.fillRect(x, y+height*.25, width/2, height/2 );
     ctx.strokeRect(x, y+height*.25, width/2, height/2 );
 
