@@ -17865,12 +17865,18 @@ class GameView {
   constructor(ctx, game){
     this.ctx = ctx;
     this.game = game;
-    this.beginGame = this.beginGame.bind(this);
+    // this.beginGame = this.beginGame.bind(this);
+    this.countdown = this.countdown.bind(this);
+    this.count = 5;
+    this.timer;
   }
 
-  bindKeyHandlers(){
+  bindKeyHandler(){
     window.addEventListener("keydown", this.moveSprite.bind(this), false);
-    window.addEventListener("click", this.beginGame, false);
+  }
+
+  bindClickHandler(){
+    window.addEventListener("click", this.countdown, false);
   }
 
   moveSprite(e){
@@ -17896,13 +17902,16 @@ class GameView {
   }
 
   start(){
-    this.bindKeyHandlers();
     this.game.draw();
+    this.intro();
 
   }
 
   beginGame(){
     window.removeEventListener("click", this.beginGame, false);
+
+    this.bindKeyHandler();
+    //call method that will make the ghosts start moving
     this.lastTime = 0;
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -17913,6 +17922,30 @@ class GameView {
     this.lastTime = time;
 
     requestAnimationFrame(this.animate.bind(this));
+  }
+  //TODO: make this font actually work
+  intro(){
+    this.ctx.fillStyle = "yellow";
+	  this.ctx.font = "24px PressStart";
+    this.ctx.fillText("Click anywhere to begin the game", 150, 300);
+    this.bindClickHandler();
+
+  }
+
+  countdown(){
+    this.game.draw();
+    this.timer = window.setInterval(() => {
+      this.game.draw();
+      this.ctx.fillText(`Starting in  ${this.count}`, 200, 300);
+      if(this.count === 0){
+        window.clearInterval(this.timer);
+        this.beginGame();
+      }
+      this.count -= 1;
+    }, 1000);
+
+
+
   }
 }
 
