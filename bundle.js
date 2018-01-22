@@ -313,9 +313,14 @@ class Board {
           }
         } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */]){
           if(this.quackMan.collidesWith(cell)){
-            collides = true;
-            this.lives -= 1;
-            console.log("you ded");
+            if(!cell.eatable){
+              collides = true;
+              this.lives -= 1;
+              console.log("you ded");
+            } else {
+              collides = true;
+              console.log("you ate him");
+            }
           }
         }
       });
@@ -330,7 +335,6 @@ class Board {
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
           this.makeEatable();
-          //trigger some other stuff
         } else {
           this.score += 5;
         }
