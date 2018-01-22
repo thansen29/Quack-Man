@@ -255,6 +255,31 @@ class Board {
     });
   }
 
+  moveGhosts(){
+    console.log("moving ghosts");
+    const nums = [-1, 1];
+    const randDir = nums[Math.floor(Math.random()*nums.length)];
+    this.ghosts.forEach((ghost) => {
+      const startX = ghost.x;
+      const startY = ghost.y;
+
+      ghost.x += randDir * quackSpeed;
+      ghost.y += randDir * quackSpeed;
+      let finalPos = this.calculateMatrixPos(startX, startY);
+
+      const offsetX = (this.squareWidth - ghost.width) / 2; // 1.5 _
+      const offsetY = (this.squareHeight - ghost.height) / 2;
+
+      if(this.isCollision()){
+        ghost.x = finalPos.x + offsetX;
+        ghost.y = finalPos.y + offsetY;
+        this.direction = [0, 0];
+      }
+
+      ghost.draw(this.direction);
+    });
+  }
+
   moveQuackMan(){
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
@@ -290,7 +315,7 @@ class Board {
           if(this.quackMan.collidesWith(cell)){
             collides = true;
             this.lives -= 1;
-            alert("you ded");
+            console.log("you ded");
           }
         }
       });
@@ -304,6 +329,7 @@ class Board {
         dot.hide();
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
+          this.makeEatable();
           //trigger some other stuff
         } else {
           this.score += 5;
@@ -352,8 +378,20 @@ class Board {
     }
   }
 
+  makeEatable(){
+    this.ghosts.forEach((ghost) => {
+      ghost.eatable = true;
+      console.log('make true');
+      window.setTimeout(() => {
+        console.log('make false');
+        ghost.eatable = false;
+      }, 5000);
+    });
+  }
+
   gameOver(){
     if(this.lives === 0){
+
       // alert("you lose");
       //reset game
     }
@@ -17866,7 +17904,7 @@ class GameView {
     this.game = game;
     // this.beginGame = this.beginGame.bind(this);
     this.countdown = this.countdown.bind(this);
-    this.count = 5;
+    this.count = 4;
   }
 
   bindKeyHandler(){
@@ -17961,6 +17999,11 @@ class Game {
     this.board.draw();
   }
 
+  moveGhosts(){
+    this.board.moveGhosts();
+  }
+
+
   changeDirection(direction){
     this.board.changeDirection(direction);
   }
@@ -18006,6 +18049,10 @@ class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/blinky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    } else {
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/eatable.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
   }
 }
@@ -18022,11 +18069,15 @@ class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
-  
+
   draw(){
     if(!this.eatable){
       const ghostImg = new Image();
       ghostImg.src = `./assets/inky.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    } else {
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
   }
@@ -18044,11 +18095,15 @@ class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
-  
+
   draw(){
     if(!this.eatable){
       const ghostImg = new Image();
       ghostImg.src = `./assets/pinky.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    } else {
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
   }
@@ -18066,11 +18121,15 @@ class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 class Clyde extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
-  
+
   draw(){
     if(!this.eatable){
       const ghostImg = new Image();
       ghostImg.src = `./assets/clyde.png`;
+      this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+    } else {
+      const ghostImg = new Image();
+      ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
   }
