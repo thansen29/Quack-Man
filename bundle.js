@@ -184,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
   const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
   gameView.start();
-  // gameView.bindKeyHandlers();
 
 });
 
@@ -17868,7 +17867,6 @@ class GameView {
     // this.beginGame = this.beginGame.bind(this);
     this.countdown = this.countdown.bind(this);
     this.count = 5;
-    this.timer;
   }
 
   bindKeyHandler(){
@@ -17901,10 +17899,13 @@ class GameView {
     this.game.changeDirection(pos);
   }
 
+  //TODO: make this font actually work
   start(){
     this.game.draw();
-    this.intro();
-
+    this.ctx.fillStyle = "yellow";
+    this.ctx.font = "24px PressStart";
+    this.ctx.fillText("Click anywhere to begin the game", 150, 300);
+    this.bindClickHandler();
   }
 
   beginGame(){
@@ -17923,17 +17924,10 @@ class GameView {
 
     requestAnimationFrame(this.animate.bind(this));
   }
-  //TODO: make this font actually work
-  intro(){
-    this.ctx.fillStyle = "yellow";
-	  this.ctx.font = "24px PressStart";
-    this.ctx.fillText("Click anywhere to begin the game", 150, 300);
-    this.bindClickHandler();
-
-  }
 
   countdown(){
     this.game.draw();
+    this.ctx.fillText(`Loading...`, 250, 300);
     this.timer = window.setInterval(() => {
       this.game.draw();
       this.ctx.fillText(`Starting in  ${this.count}`, 200, 300);
@@ -17943,10 +17937,8 @@ class GameView {
       }
       this.count -= 1;
     }, 1000);
-
-
-
   }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (GameView);
