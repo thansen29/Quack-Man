@@ -18087,6 +18087,7 @@ class GameView {
 
   togglePause(){
     this.paused = !this.paused;
+    this.ctx.fillText(`Paused`, 250, 300);
     requestAnimationFrame(this.animate.bind(this));
 
   }
