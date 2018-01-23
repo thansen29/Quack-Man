@@ -191,6 +191,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
 
 
+// import boardModel from './board_model';
 
 const quackSpeed = 3;
 
@@ -208,9 +209,9 @@ class Board {
     this.score = 0;
     this.lives = 3;
     this.level = 0;
+    this.muted = true;
 
     this.intro = document.getElementById('intro');
-    this.muted = true;
   }
 
   draw(){
@@ -323,13 +324,16 @@ class Board {
       if(this.canEatPill(dot)){
         dot.hide();
         if(!this.muted){
+          chomp.volume = .3;
           chomp.play();
         }
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
           this.makeEatable();
           if(!this.muted){
+            chomp.volume = .3;
             chomp.play();
+
           }
         } else {
           this.score += 5;
@@ -394,6 +398,7 @@ class Board {
     this.intro.pause();
     if(!this.muted){
       death.play();
+      death.volume = .3;
       chomp.pause();
       window.setTimeout(() => {
         this.intro.play();
@@ -407,6 +412,9 @@ class Board {
     const eatGhost = document.getElementById('eatghost');
     intro.pause();
     if(!this.muted){
+      intro.volume = .3;
+      eatGhost.volume = .3;
+
       eatGhost.play();
       intro.play();
     }
@@ -414,13 +422,6 @@ class Board {
     console.log("you ate him");
   }
 
-  gameOver(){
-    if(this.lives === 0){
-
-      // alert("you lose");
-      //reset game
-    }
-  }
 
   showStats(){
     const score = $('.score');
@@ -432,11 +433,28 @@ class Board {
   }
 
   toggleSound(muted){
-    console.log(muted);
     this.muted = muted;
   }
 
+  //TODO: need to figure out how to go back to default board
+  restartGame(){
+    this.score = 0;
+    this.lives = 3;
+    this.level = 0;
+    this.muted = true;
+    // debugger
+    // Board.fromString(this.ctx, this.boardModel);
+  }
+
+  gameOver(){
+    if(this.lives === 0){
+      console.log('you lose');
+      this.restartGame();
+    }
+  }
+
   static fromString(ctx, boardModel){
+    this.boardModel = boardModel;
     const rows = boardModel.split('\n');
     const grid = rows.map(row => row.split('') );
     const numRows = grid.length;
@@ -18123,18 +18141,11 @@ class GameView {
       case 32:
         this.togglePause();
         break;
-      case 82:
-        this.restartGame();
-        break;
       default:
     }
 
     // this.game.moveQuackMan(this.lastDir);
     this.game.changeDirection(this.lastDir);
-  }
-
-  restartGame(){
-
   }
 
   togglePause(){
@@ -18187,8 +18198,6 @@ class GameView {
     }, 1000);
   }
 
-  //TODO: make it not error while still working
-  //issues: stops movement when toggling sound.
   toggleSound(e){
     const audio = document.getElementById("intro");
     if(this.preGame && e.keyCode === 83){
@@ -18209,6 +18218,7 @@ class GameView {
   playAudio(audio){
     this.gameMuted = false;
     audio.muted = false;
+    audio.volume = .3;
     audio.play();
     this.game.toggleSound(this.gameMuted);
   }
