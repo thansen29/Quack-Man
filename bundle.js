@@ -264,7 +264,10 @@ class Board {
     });
   }
 
-  moveQuackMan(){
+  moveQuackMan(dir){
+    if(dir){
+      this.direction = dir;
+    }
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
 
@@ -342,6 +345,8 @@ class Board {
        this.grid[0].length >= newY){
         const myCell = this.grid[newY][newX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
+          console.log('wall');
+          console.log(this.direction);
           this.direction = direction;
         }
     }
@@ -18043,6 +18048,7 @@ class GameView {
     this.gameMuted = false;
     this.paused = false;
     this.preGame = true;
+    this.lastDir = [0, 0];
   }
 
   bindMoveHandler(){
@@ -18059,19 +18065,18 @@ class GameView {
 
   moveSprite(e){
     //r is 82
-    let pos = [0, 0];
     switch (e.keyCode) {
       case 40:
-        pos[1] = 1;
+        this.lastDir = [0, 1];
         break;
       case 39:
-        pos[0] = 1;
+        this.lastDir = [1, 0];
         break;
       case 38:
-        pos[1] = -1;
+        this.lastDir = [0, -1];
         break;
       case 37:
-        pos[0] = -1;
+        this.lastDir = [-1, 0];
         break;
       case 83:
         this.toggleSound();
@@ -18079,17 +18084,24 @@ class GameView {
       case 32:
         this.togglePause();
         break;
+      case 82:
+        this.restartGame();
+        break;
       default:
     }
 
-    this.game.changeDirection(pos);
+    // this.game.moveQuackMan(this.lastDir);
+    this.game.changeDirection(this.lastDir);
+  }
+
+  restartGame(){
+
   }
 
   togglePause(){
     this.paused = !this.paused;
     this.ctx.fillText(`Paused`, 250, 300);
     requestAnimationFrame(this.animate.bind(this));
-
   }
 
   //TODO: make this font actually work
@@ -18193,6 +18205,9 @@ class Game {
     this.board.moveGhosts();
   }
 
+  moveQuackMan(dir){
+    this.board.moveQuackMan(dir);
+  }
 
   changeDirection(direction){
     this.board.changeDirection(direction);
