@@ -18056,10 +18056,8 @@ class GameView {
   }
 
   moveSprite(e){
-    //s is 83
-    // debugger
+    //r is 82
     let pos = [0, 0];
-    // let toggleSound;
     switch (e.keyCode) {
       case 40:
         pos[1] = 1;
@@ -18075,6 +18073,8 @@ class GameView {
         break;
       case 83:
         this.toggleSound();
+      case 82:
+        // this.togglePause();
       default:
     }
     // if(toggleSound){
@@ -18096,6 +18096,7 @@ class GameView {
 
   beginGame(){
     window.removeEventListener("click", this.beginGame, false);
+    window.removeEventListener("keydown", this.toggleSound, false);
 
     this.bindMoveHandler();
     //call method that will make the ghosts start moving
@@ -18125,8 +18126,11 @@ class GameView {
     }, 1000);
   }
 
+  //TODO: make it not error while still working
+  //issues: stops movement when toggling sound.
   toggleSound(e){
-    if(e.keyCode === 83){
+    // if(e.keyCode === 83){
+      console.log('here');
       const audio = document.getElementById("intro");
       if(!this.gameMuted){
         this.gameMuted = true;
@@ -18137,7 +18141,7 @@ class GameView {
         audio.muted = true;
         audio.pause();
       }
-    }
+    // }
   }
 
 }
