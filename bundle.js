@@ -302,11 +302,10 @@ class Board {
           if(this.quackMan.collidesWith(cell)){
             if(!cell.eatable){
               collides = true;
-              this.lives -= 1;
-              console.log("you ded");
+              this.killQuackMan();
             } else {
               collides = true;
-              console.log("you ate him");
+              this.eatGhost();
             }
           }
         }
@@ -316,12 +315,15 @@ class Board {
   }
 
   eatPill(){
+    const chomp = document.getElementById('chomp');
     this.dots.forEach((dot) => {
       if(this.canEatPill(dot)){
         dot.hide();
+        chomp.play();
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
           this.makeEatable();
+          chomp.play();
         } else {
           this.score += 5;
         }
@@ -345,8 +347,6 @@ class Board {
        this.grid[0].length >= newY){
         const myCell = this.grid[newY][newX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
-          console.log('wall');
-          console.log(this.direction);
           this.direction = direction;
         }
     }
@@ -378,6 +378,29 @@ class Board {
         ghost.eatable = false;
       }, 5000);
     });
+  }
+
+  killQuackMan(){
+    this.lives -= 1;
+    const intro = document.getElementById('intro');
+    const death = document.getElementById('death');
+    const chomp = document.getElementById('chomp');
+    intro.pause();
+    death.play();
+    chomp.pause();
+    window.setTimeout(() => {
+      intro.play();
+    }, 1500);
+    console.log("you ded");
+  }
+
+  eatGhost(){
+    const intro = document.getElementById('intro');
+    const eatGhost = document.getElementById('eatghost');
+    intro.pause();
+    eatGhost.play();
+    this.score += 200;
+    console.log("you ate him");
   }
 
   gameOver(){
