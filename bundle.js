@@ -208,6 +208,9 @@ class Board {
     this.score = 0;
     this.lives = 3;
     this.level = 0;
+
+    this.intro = document.getElementById('intro');
+    this.muted = true;
   }
 
   draw(){
@@ -319,11 +322,15 @@ class Board {
     this.dots.forEach((dot) => {
       if(this.canEatPill(dot)){
         dot.hide();
-        chomp.play();
+        if(!this.muted){
+          chomp.play();
+        }
         if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
           this.score += 50;
           this.makeEatable();
-          chomp.play();
+          if(!this.muted){
+            chomp.play();
+          }
         } else {
           this.score += 5;
         }
@@ -382,15 +389,16 @@ class Board {
 
   killQuackMan(){
     this.lives -= 1;
-    const intro = document.getElementById('intro');
     const death = document.getElementById('death');
     const chomp = document.getElementById('chomp');
-    intro.pause();
-    death.play();
-    chomp.pause();
-    window.setTimeout(() => {
-      intro.play();
-    }, 1500);
+    this.intro.pause();
+    if(!this.muted){
+      death.play();
+      chomp.pause();
+      window.setTimeout(() => {
+        this.intro.play();
+      }, 1500);
+    }
     console.log("you ded");
   }
 
@@ -398,7 +406,10 @@ class Board {
     const intro = document.getElementById('intro');
     const eatGhost = document.getElementById('eatghost');
     intro.pause();
-    eatGhost.play();
+    if(!this.muted){
+      eatGhost.play();
+      intro.play();
+    }
     this.score += 200;
     console.log("you ate him");
   }
@@ -418,6 +429,11 @@ class Board {
     score.html("Score:" + this.score);
     lives.html("Lives:" + this.lives );
     level.html("Level:" + this.level );
+  }
+
+  toggleSound(muted){
+    console.log(muted);
+    this.muted = muted;
   }
 
   static fromString(ctx, boardModel){
@@ -518,9 +534,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    this.ctx.strokeStyle = "green";
-    this.ctx.rect(this.x, this.y, this.width, this.height);
-    this.ctx.stroke();
+    // this.ctx.strokeStyle = "green";
+    // this.ctx.rect(this.x, this.y, this.width, this.height);
+    // this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -18068,7 +18084,7 @@ class GameView {
     this.countdown = this.countdown.bind(this);
     this.toggleSound = this.toggleSound.bind(this);
     this.count = 4;
-    this.gameMuted = false;
+    this.gameMuted = true;
     this.paused = false;
     this.preGame = true;
     this.lastDir = [0, 0];
@@ -18176,13 +18192,13 @@ class GameView {
   toggleSound(e){
     const audio = document.getElementById("intro");
     if(this.preGame && e.keyCode === 83){
-      if(!this.gameMuted){
+      if(this.gameMuted){
         this.playAudio(audio);
       } else {
         this.pauseAudio(audio);
       }
     } else if(!this.preGame){
-      if(!this.gameMuted){
+      if(this.gameMuted){
         this.playAudio(audio);
       } else {
         this.pauseAudio(audio);
@@ -18191,15 +18207,17 @@ class GameView {
   }
 
   playAudio(audio){
-    this.gameMuted = true;
+    this.gameMuted = false;
     audio.muted = false;
     audio.play();
+    this.game.toggleSound(this.gameMuted);
   }
 
   pauseAudio(audio){
-    this.gameMuted = false;
+    this.gameMuted = true;
     audio.muted = true;
     audio.pause();
+    this.game.toggleSound(this.gameMuted);
   }
 
 }
@@ -18234,6 +18252,10 @@ class Game {
 
   changeDirection(direction){
     this.board.changeDirection(direction);
+  }
+
+  toggleSound(muted){
+    this.board.toggleSound(muted);
   }
 }
 
