@@ -219,7 +219,7 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
-
+    this.drawGhosts();
     this.moveQuackMan();
     // this.moveGhosts();
     this.gameOver();
@@ -239,32 +239,41 @@ class Board {
     });
   }
 
-  // drawGhosts(){
-  //   this.ghosts.forEach((ghost) => {
-  //     ghost.draw();
-  //   });
-  // }
+  drawGhosts(){
+    this.ghosts.forEach((ghost) => {
+      ghost.draw();
+    });
+    this.drawn = true;
+  }
 
   moveGhosts(){
     let randDir = randDirections[Math.floor(Math.random()*randDirections.length)];
-    // console.log(randDir);
 
     this.ghosts.forEach((ghost) => {
       const startX = ghost.x;
       const startY = ghost.y;
+      let currPos = this.calculateMatrixPos(startX, startY);
 
-      ghost.x += randDir[0] * quackSpeed;
-      ghost.y += randDir[1] * quackSpeed;
-      let finalPos = this.calculateMatrixPos(startX, startY);
+      let newGridX = currPos.gridX + randDir[0];
+      let newGridY = currPos.gridY + randDir[1];
+
+      let finalX = newGridX * this.squareWidth;
+      let finalY = newGridY * this.squareHeight;
+      // finalX -= this.squareWidth * quackSpeed;
+      // finalY -= this.squareHeight * quackSpeed;
 
       const offsetX = (this.squareWidth - ghost.width) / 2; // 1.5 _
       const offsetY = (this.squareHeight - ghost.height) / 2;
-
+      // debugger
       if(this.ghostCollision(ghost)){
-        ghost.x = finalPos.x + offsetX;
-        ghost.y = finalPos.y + offsetY;
+        ghost.x = startX + offsetX;
+        ghost.y = startY + offsetY;
         randDir = [0, 0];
+      } else {
+        ghost.x = finalX + offsetX;
+        ghost.y = finalY + offsetY;
       }
+
       ghost.draw();
     });
   }
@@ -460,7 +469,6 @@ class Board {
   }
 
   static fromString(ctx, boardModel){
-    this.boardModel = boardModel;
     const rows = boardModel.split('\n');
     const grid = rows.map(row => row.split('') );
     const numRows = grid.length;
@@ -490,7 +498,8 @@ class Board {
           case "p":
           case "c":
             ghosts.push(item);
-            return item;//currently each ghost is in the grid
+            // return item;//currently each ghost is in the grid
+            break;
           default:
             return item;
         }
@@ -558,9 +567,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    // this.ctx.strokeStyle = "green";
-    // this.ctx.rect(this.x, this.y, this.width, this.height);
-    // this.ctx.stroke();
+    this.ctx.strokeStyle = "green";
+    this.ctx.rect(this.x, this.y, this.width, this.height);
+    this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -18185,6 +18194,7 @@ class GameView {
     if(!this.paused){
       const timeDelta = time - this.lastTime;
       this.game.draw();
+      this.game.moveGhosts();
       this.lastTime = time;
       requestAnimationFrame(this.animate.bind(this));
     }
