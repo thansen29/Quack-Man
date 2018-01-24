@@ -194,6 +194,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 // import boardModel from './board_model';
 
 const quackSpeed = 3;
+const randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
 
@@ -218,8 +219,9 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
-    this.drawGhosts();
+
     this.moveQuackMan();
+    // this.moveGhosts();
     this.gameOver();
   }
 
@@ -237,34 +239,33 @@ class Board {
     });
   }
 
-  drawGhosts(){
-    this.ghosts.forEach((ghost) => {
-      ghost.draw();
-    });
-  }
+  // drawGhosts(){
+  //   this.ghosts.forEach((ghost) => {
+  //     ghost.draw();
+  //   });
+  // }
 
   moveGhosts(){
-    console.log("moving ghosts");
-    const nums = [-1, 1];
-    const randDir = nums[Math.floor(Math.random()*nums.length)];
+    let randDir = randDirections[Math.floor(Math.random()*randDirections.length)];
+    // console.log(randDir);
+
     this.ghosts.forEach((ghost) => {
       const startX = ghost.x;
       const startY = ghost.y;
 
-      ghost.x += randDir * quackSpeed;
-      ghost.y += randDir * quackSpeed;
+      ghost.x += randDir[0] * quackSpeed;
+      ghost.y += randDir[1] * quackSpeed;
       let finalPos = this.calculateMatrixPos(startX, startY);
 
       const offsetX = (this.squareWidth - ghost.width) / 2; // 1.5 _
       const offsetY = (this.squareHeight - ghost.height) / 2;
 
-      if(this.isCollision()){
+      if(this.ghostCollision(ghost)){
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
-        this.direction = [0, 0];
+        randDir = [0, 0];
       }
-
-      ghost.draw(this.direction);
+      ghost.draw();
     });
   }
 
@@ -298,20 +299,27 @@ class Board {
     let collides = false;
     this.grid.forEach((row) => {
       row.forEach((cell) => {
-        if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
-          if(this.quackMan.collidesWith(cell)){
+        if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && this.quackMan.collidesWith(cell)){
+          collides = true;
+        } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */] && this.quackMan.collidesWith(cell)){
             collides = true;
-          }
-        } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */]){
-          if(this.quackMan.collidesWith(cell)){
-            if(!cell.eatable){
-              collides = true;
-              this.killQuackMan();
-            } else {
-              collides = true;
+            if(cell.eatable){
               this.eatGhost();
+            } else {
+              this.killQuackMan();
             }
           }
+      });
+    });
+    return collides;
+  }
+
+  ghostCollision(ghost){
+    let collides = false;
+    this.grid.forEach((row) => {
+      row.forEach((cell) => {
+        if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
+          collides = true;
         }
       });
     });
@@ -333,7 +341,6 @@ class Board {
           if(!this.muted){
             chomp.volume = .3;
             chomp.play();
-
           }
         } else {
           this.score += 5;
@@ -442,8 +449,7 @@ class Board {
     this.lives = 3;
     this.level = 0;
     this.muted = true;
-    // debugger
-    // Board.fromString(this.ctx, this.boardModel);
+
   }
 
   gameOver(){
@@ -459,8 +465,8 @@ class Board {
     const grid = rows.map(row => row.split('') );
     const numRows = grid.length;
     const numCols = grid[0].length;
-    const squareWidth = ctx.canvas.width / numCols;
-    const squareHeight = ctx.canvas.height / numRows;
+    const squareWidth = (ctx.canvas.width / numCols);
+    const squareHeight = (ctx.canvas.height / numRows);
 
     const dots = [];
     let quackMan = null;
@@ -18185,6 +18191,7 @@ class GameView {
   }
 
   countdown(){
+    window.removeEventListener("click", this.countdown, false);
     this.game.draw();
     this.ctx.fillText(`Loading...`, 250, 300);
     this.timer = window.setInterval(() => {
