@@ -130,8 +130,8 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.ctx = ctx;
     this.x = x;
     this.y = y;
-    this.width = width - 3;
-    this.height = height - 3;
+    this.width = width - 10;
+    this.height = height - 10;
     this.loadDucks();
     this.lastDuck = this.rightDuck;
   }
@@ -149,8 +149,11 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     } else {
       this.lastDuck;
     }
-
-    this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
+    this.ctx.fillStyle = "blue";
+    this.ctx.beginPath();
+    this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/2, 0, Math.PI*2 );
+    this.ctx.fill();
+    // this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
   }
 
   loadDucks(){
@@ -279,6 +282,7 @@ class Board {
   }
 
   moveQuackMan(dir){
+    this.actuallyChangeDirection();
     if(dir){
       this.direction = dir;
     }
@@ -329,6 +333,13 @@ class Board {
       row.forEach((cell) => {
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
           collides = true;
+        } else if(ghost.x === this.quackMan.x && ghost.y === this.quackMan.y){
+          collides = true;
+          if(ghost.eatable){
+            this.eatGhost();
+          } else {
+            this.killQuackMan();
+          }
         }
       });
     });
@@ -367,14 +378,53 @@ class Board {
   }
 
   changeDirection(direction){
-    const currentLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
-    const newX = currentLocation.gridX + direction[0];
-    const newY = currentLocation.gridY + direction[1];
+    if(direction[0] === this.direction[0] &&
+      direction[1] === this.direction[1])
+      return;
+
+    this.nextDirection = direction;
+  }
+
+  actuallyChangeDirection(){
+    if(!this.nextDirection){
+      return;
+    }
+    const quackX = this.quackMan.x + this.quackMan.width / 2;
+    const quackY = this.quackMan.y + this.quackMan.height / 2;
+    const currentLocation = this.calculateMatrixPos(quackX, quackY);
+    const curDirXPos = currentLocation.gridX + this.direction[0];
+    const curDirYPos = currentLocation.gridY + this.direction[1];
+    const newX = currentLocation.gridX + this.nextDirection[0];
+    const newY = currentLocation.gridY + this.nextDirection[1];
+
+    const nextX = newX * this.squareWidth + (this.squareWidth / 2);
+    const nextY = newY * this.squareHeight + (this.squareHeight / 2);
+
+    const curDirX = curDirXPos * this.squareWidth + (this.squareWidth / 2);
+    const curDirY = curDirYPos * this.squareHeight + (this.squareHeight / 2);
+
+    const curX = currentLocation.gridX;
+    const curY = currentLocation.gridY;
+
     if(this.grid.length >= newX &&
        this.grid[0].length >= newY){
         const myCell = this.grid[newY][newX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
-          this.direction = direction;
+
+
+          if((this.direction[0] + this.nextDirection[0]) && (this.direction[1] + this.nextDirection[1])) {
+            // if ((this.nextDirection[0] === -1 && quackX >= curDirX) ||
+            //     (this.nextDirection[0] === 1 && quackX <= curDirX) ||
+            //     (this.nextDirection[1] === -1 && quackY >= curDirY) ||
+            //     (this.nextDirection[1] === 1 && quackY <= curDirY)) {
+            //   return
+            // }
+
+            this.quackMan.x = curX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
+            this.quackMan.y = curY * this.squareHeight + (this.squareHeight - this.quackMan.height) / 2;
+          }
+          this.direction = this.nextDirection;
+          this.nextDirection = null;
         }
     }
   }
@@ -506,7 +556,7 @@ class Board {
         return null;
       });
     });
-    // debugger
+
     mappedGrid.forEach((row, rowIdx) => {
       row.forEach((cell, cellIdx) => {
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
@@ -567,9 +617,9 @@ class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
         drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
       });
     }
-    this.ctx.strokeStyle = "green";
-    this.ctx.rect(this.x, this.y, this.width, this.height);
-    this.ctx.stroke();
+    // this.ctx.strokeStyle = "green";
+    // this.ctx.rect(this.x, this.y, this.width, this.height);
+    // this.ctx.stroke();
   }
 
   addDrawStrategy(drawStrategy){
@@ -596,9 +646,9 @@ class Pill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default 
 
   draw(){
     if(this.visible){
+      this.ctx.beginPath();
       this.ctx.fillStyle = "yellow";
       this.ctx.lineWidth = 0;
-      this.ctx.beginPath();
       this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/10, 2*Math.PI, false);
       this.ctx.fill();
     }
@@ -628,9 +678,9 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
 
   draw(){
     if(this.visible){
+      this.ctx.beginPath();
       this.ctx.fillStyle = "yellow";
       this.ctx.lineWidth = 0;
-      this.ctx.beginPath();
       this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
       this.ctx.fill();
     }
@@ -18002,6 +18052,8 @@ class DrawStrategy {
     ctx.strokeStyle = "indigo";
     ctx.fillRect((width*.25 + x), y, width/2, height/2 );
     ctx.strokeRect((width*.25 + x), y, width/2, height/2 );
+    ctx.fill();
+
   }
 
   static drawBottomWall(ctx, x, y, width, height){
@@ -18011,6 +18063,7 @@ class DrawStrategy {
 
     ctx.fillRect((width*.25 + x), y+height/2, width/2, height/2 );
     ctx.strokeRect((width*.25 + x), y+height/2, width/2, height/2 );
+    ctx.fill();
 
   }
 
@@ -18021,6 +18074,7 @@ class DrawStrategy {
 
     ctx.fillRect((width/2 + x), y+height*.25, width/2, height/2 );
     ctx.strokeRect((width/2 + x), y+height*.25, width/2, height/2 );
+    ctx.fill();
 
   }
 
@@ -18031,6 +18085,7 @@ class DrawStrategy {
 
     ctx.fillRect(x, y+height*.25, width/2, height/2 );
     ctx.strokeRect(x, y+height*.25, width/2, height/2 );
+    ctx.fill();
 
   }
 
@@ -18194,7 +18249,7 @@ class GameView {
     if(!this.paused){
       const timeDelta = time - this.lastTime;
       this.game.draw();
-      this.game.moveGhosts();
+      // this.game.moveGhosts();
       this.lastTime = time;
       requestAnimationFrame(this.animate.bind(this));
     }
@@ -18203,16 +18258,21 @@ class GameView {
   countdown(){
     window.removeEventListener("click", this.countdown, false);
     this.game.draw();
+    this.ctx.fillStyle = "yellow";
     this.ctx.fillText(`Loading...`, 250, 300);
+    this.ctx.fill();
     this.timer = window.setInterval(() => {
       this.game.draw();
+      this.ctx.fillStyle = "yellow";
       this.ctx.fillText(`Starting in  ${this.count}`, 200, 300);
       if(this.count === 0){
         window.clearInterval(this.timer);
         this.beginGame();
       }
+      this.ctx.fill();
       this.count -= 1;
     }, 1000);
+    this.ctx.fill();
   }
 
   toggleSound(e){
