@@ -413,11 +413,11 @@ class Board {
 
 
           if((this.direction[0] + this.nextDirection[0]) && (this.direction[1] + this.nextDirection[1])) {
-            // if ((this.nextDirection[0] === -1 && quackX >= curDirX) ||
-            //     (this.nextDirection[0] === 1 && quackX <= curDirX) ||
-            //     (this.nextDirection[1] === -1 && quackY >= curDirY) ||
-            //     (this.nextDirection[1] === 1 && quackY <= curDirY)) {
-            //   return
+            // if ((this.direction[0] === -1 && quackX >= curDirX) ||
+            //     (this.direction[0] === 1 && quackX <= curDirX) ||
+            //     (this.direction[1] === -1 && quackY >= curDirY) ||
+            //     (this.direction[1] === 1 && quackY <= curDirY)) {
+            //   return;
             // }
 
             this.quackMan.x = curX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
