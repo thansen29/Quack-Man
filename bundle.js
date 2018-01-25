@@ -130,8 +130,8 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.ctx = ctx;
     this.x = x;
     this.y = y;
-    this.width = width - 10;
-    this.height = height - 10;
+    this.width = width - 3;
+    this.height = height - 3;
     this.loadDucks();
     this.lastDuck = this.rightDuck;
   }
@@ -149,11 +149,11 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     } else {
       this.lastDuck;
     }
-    this.ctx.fillStyle = "blue";
-    this.ctx.beginPath();
-    this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/2, 0, Math.PI*2 );
-    this.ctx.fill();
-    // this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
+    // this.ctx.fillStyle = "blue";
+    // this.ctx.beginPath();
+    // this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/2, 0, Math.PI*2 );
+    // this.ctx.fill();
+    this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
   }
 
   loadDucks(){
@@ -392,36 +392,30 @@ class Board {
     const quackX = this.quackMan.x + this.quackMan.width / 2;
     const quackY = this.quackMan.y + this.quackMan.height / 2;
     const currentLocation = this.calculateMatrixPos(quackX, quackY);
-    const curDirXPos = currentLocation.gridX + this.direction[0];
-    const curDirYPos = currentLocation.gridY + this.direction[1];
-    const newX = currentLocation.gridX + this.nextDirection[0];
-    const newY = currentLocation.gridY + this.nextDirection[1];
+    const currentGridX = currentLocation.gridX;
+    const currentGridY = currentLocation.gridY;
 
-    const nextX = newX * this.squareWidth + (this.squareWidth / 2);
-    const nextY = newY * this.squareHeight + (this.squareHeight / 2);
+    const centerNextX = currentGridX * this.squareWidth + (this.squareWidth / 2);
+    const centerNextY = currentGridY * this.squareHeight + (this.squareHeight / 2);
 
-    const curDirX = curDirXPos * this.squareWidth + (this.squareWidth / 2);
-    const curDirY = curDirYPos * this.squareHeight + (this.squareHeight / 2);
-
-    const curX = currentLocation.gridX;
-    const curY = currentLocation.gridY;
-
-    if(this.grid.length >= newX &&
-       this.grid[0].length >= newY){
-        const myCell = this.grid[newY][newX];
+    const nextX = currentGridX + this.nextDirection[0];
+    const nextY = currentGridY + this.nextDirection[1];
+    if(this.grid.length >= nextX &&
+       this.grid[0].length >= nextY){
+        const myCell = this.grid[nextY][nextX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
 
           if((this.direction[0] + this.nextDirection[0]) && (this.direction[1] + this.nextDirection[1])) {
-            // if ((this.direction[0] === -1 && quackX >= curDirX) ||
-            //     (this.direction[0] === 1 && quackX <= curDirX) ||
-            //     (this.direction[1] === -1 && quackY >= curDirY) ||
-            //     (this.direction[1] === 1 && quackY <= curDirY)) {
-            //   return;
-            // }
+            if ((this.direction[0] === -1 && quackX >= centerNextX) ||
+                (this.direction[0] === 1 && quackX <= centerNextX) ||
+                (this.direction[1] === -1 && quackY >= centerNextY) ||
+                (this.direction[1] === 1 && quackY <= centerNextY)) {
+              return;
+            }
 
-            this.quackMan.x = curX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
-            this.quackMan.y = curY * this.squareHeight + (this.squareHeight - this.quackMan.height) / 2;
+            this.quackMan.x = currentGridX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
+            this.quackMan.y = currentGridY * this.squareHeight + (this.squareHeight - this.quackMan.height) / 2;
           }
           this.direction = this.nextDirection;
           this.nextDirection = null;
