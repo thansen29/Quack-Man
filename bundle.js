@@ -120,7 +120,7 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
     this.height = height - 3;
     this.eatable = false;
     this.direction = [0, 0];
-    this.nextDirection = null;
+    this.nextDirection = [0, -1];
   }
 }
 
@@ -200,6 +200,9 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ghost__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__draw_strategy__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_lodash__);
+
 
 
 
@@ -213,7 +216,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 const quackSpeed = 3;
 const ghostSpeed = 3;
 const vulnerableSpeed = 2;
-const randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
 
@@ -241,7 +244,7 @@ class Board {
     this.drawPills();
     // this.drawGhosts();
     this.moveQuackMan();
-    // this.moveGhosts();
+    this.moveGhosts();
     this.gameOver();
   }
 
@@ -268,8 +271,16 @@ class Board {
     this.drawn = true;
   }
 
-  getRandomDirection(){
-    return randDirections[Math.floor(Math.random()*randDirections.length)];
+  getRandomDirection(ghost){
+    randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
+    const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
+    if(ghost.direction[0] === newDirection[0] &&
+       ghost.direction[1] === newDirection[1]){
+         return;
+    }
+    ghost.nextDirection = newDirection;
+    // debugger
+
     //shuffle the array,lodash
     // iterate over array until you find a direction you can actually go in
     //only fire this function if the ghost hits a wall
@@ -278,12 +289,12 @@ class Board {
 
   moveGhosts(){
 
-    this.changeGhostDirection();
     this.ghosts.forEach((ghost) => {
+      this.changeGhostDirection(ghost);
       const startX = ghost.x;
       const startY = ghost.y;
-      ghost.x += ghost.direction[0] * vulnerableSpeed;
-      ghost.y += ghost.direction[1] * vulnerableSpeed;
+      ghost.x += ghost.direction[0] * (ghost.eatable ? 1 : 1.5);
+      ghost.y += ghost.direction[1] * (ghost.eatable ? 1 : 1.5);
       let finalPos = this.calculateMatrixPos(startX, startY);
 
       const offsetX = (this.squareWidth - ghost.width) / 2;
@@ -297,56 +308,49 @@ class Board {
 
       // this.wrapQuack(ghost.x);
 
-      if(ghost.collidesWith(this.quackMan)) {
-        console.log("AHHHHH");
-      }
+      this.ghostCollision(ghost);
       ghost.draw();
 
     });
   }
 
 
-  changeGhostDirection(){
-    // this.currentGhostDirection = randDir;
+  changeGhostDirection(ghost){
+    if(!ghost.nextDirection){
+      return;
+    }
+    const ghostX = ghost.x + ghost.width / 2;
+    const ghostY = ghost.y + ghost.height / 2;
+    const currentLocation = this.calculateMatrixPos(ghostX, ghostY);
+    const currentGridX = currentLocation.gridX;
+    const currentGridY = currentLocation.gridY;
 
-    // if(!this.nextGhostDirection) return;
-    this.ghosts.forEach((ghost) => {
-      const randDir = this.getRandomDirection();
-      ghost.nextDirection = randDir;
-      const ghostX = ghost.x + ghost.width / 2;
-      const ghostY = ghost.y + ghost.height / 2;
-      const currentLocation = this.calculateMatrixPos(ghostX, ghostY);
-      const currentGridX = currentLocation.gridX;
-      const currentGridY = currentLocation.gridY;
+    const centerNextX = currentGridX * this.squareWidth + (this.squareWidth /2);
+    const centerNextY = currentGridY * this.squareHeight + (this.squareHeight /2);
 
-      const centerNextX = currentGridX * this.squareWidth + (this.squareWidth /2);
-      const centerNextY = currentGridY * this.squareHeight + (this.squareHeight /2);
+    const nextX = currentGridX + ghost.nextDirection[0];
+    const nextY = currentGridY + ghost.nextDirection[1];
+    if(this.grid.length >= nextX &&
+        this.grid[0].length >= nextY){
+          const nextCell = this.grid[nextY][nextX];
+          if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
+              if((ghost.direction[0] + ghost.nextDirection[0]) && (ghost.direction[1] + ghost.nextDirection[1])) {
+                if ((ghost.direction[0] === -1 && ghostX >= centerNextX) ||
+                    (ghost.direction[0] === 1 && ghostX <= centerNextX) ||
+                    (ghost.direction[1] === -1 && ghostY >= centerNextY) ||
+                    (ghost.direction[1] === 1 && ghostY <= centerNextY)) {
+                  return;
+                }
 
-      const nextX = currentGridX + randDir[0];
-      const nextY = currentGridY + randDir[1];
-      if(this.grid.length >= nextX &&
-          this.grid[0].length >= nextY){
-            const myCell = this.grid[nextY][nextX];
-            if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
-
-                if((ghost.direction[0] + ghost.nextDirection[0]) && (ghost.direction[1] + ghost.nextDirection[1])) {
-                  if ((ghost.direction[0] === -1 && ghostX >= centerNextX) ||
-                      (ghost.direction[0] === 1 && ghostX <= centerNextX) ||
-                      (ghost.direction[1] === -1 && ghostY >= centerNextY) ||
-                      (ghost.direction[1] === 1 && ghostY <= centerNextY)) {
-                    return;
-                  }
-
-                ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
-                ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
-              }
-            ghost.direction = ghost.nextDirection;
-            ghost.nextDirection = null;
-          } else {
-
-          }
-      }
-    });
+              ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
+              ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
+            }
+          ghost.direction = ghost.nextDirection;
+          // ghost.nextDirection = null;
+        } else {
+          this.getRandomDirection(ghost);
+        }
+    }
   }
 
   moveQuackMan(){
@@ -394,36 +398,11 @@ class Board {
   }
 
   ghostCollision(ghost){
-    let collides = false;
-    const ghostBox = ghost.getBoundingBox();
-    const quackBox = this.quackMan.getBoundingBox();
-    // debugger
-    this.grid.forEach((row) => {
-      row.forEach((cell) => {
-
-        if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
-          collides = true;
-        } else if(ghost.x === this.quackMan.x && ghost.y === this.quackMan.y){
-        // } else if(ghostBox.topLeft.x === quackBox.topLeft.x ||
-        //           ghostBox.topRight.x === quackBox.topRight.x ||
-        //           ghostBox.bottomLeft.x === quackBox.bottomLeft.x ||
-        //           ghostBox.bottomRight.x === quackBox.bottomRight.x ||
-        //           ghostBox.topLeft.y === quackBox.topLeft.y ||
-        //           ghostBox.topRight.y === quackBox.topRight.y ||
-        //           ghostBox.bottomLeft.y === quackBox.bottomLeft.y ||
-        //           ghostBox.bottomRight.y === quackBox.bottomRight.y
-        //         ){
-            console.log('touch quack');
-            collides = true;
-            if(ghost.eatable){
-              this.eatGhost();
-            } else {
-              this.killQuackMan();
-            }
-          }
-      });
-    });
-    return collides;
+    if(ghost.collidesWith(this.quackMan) && ghost.eatable){
+      this.eatGhost();
+    } else if(ghost.collidesWith(this.quackMan) && !ghost.eatable){
+      this.killQuackMan();
+    }
   }
 
   eatPill(){
@@ -480,8 +459,8 @@ class Board {
     const nextY = currentGridY + this.quackMan.nextDirection[1];
     if(this.grid.length >= nextX &&
        this.grid[0].length >= nextY){
-        const myCell = this.grid[nextY][nextX];
-        if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
+        const nextCell = this.grid[nextY][nextX];
+        if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
 
           if((this.quackMan.direction[0] + this.quackMan.nextDirection[0]) && (this.quackMan.direction[1] + this.quackMan.nextDirection[1])) {
