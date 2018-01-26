@@ -121,6 +121,10 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
     this.eatable = false;
     this.direction = [0, 0];
     this.nextDirection = [0, -1];
+    this.eaten = false;
+    this.speed = 1.5;
+    this.vulnerableSpeed = .8;
+    this.eatenSpeed = 2.5;
   }
 }
 
@@ -147,6 +151,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.lastDuck = this.rightDuck;
     this.direction = [0, 0];
     this.nextDirection = null;
+    this.speed = 3;
   }
 
 
@@ -213,9 +218,6 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
 // import boardModel from './board_model';
 
-const quackSpeed = 3;
-const ghostSpeed = 3;
-const vulnerableSpeed = 2;
 let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
@@ -267,12 +269,11 @@ class Board {
       this.defaultPositions.push([[ghost.x, ghost.y]]);
       ghost.draw();
     });
-    // this.ghostDirection(this.getRandomDirection());
     this.drawn = true;
   }
 
+  //perhaps a timer to randomly call this every few seconds
   getRandomDirection(ghost){
-
     randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
     if(ghost.direction[0] === newDirection[0] &&
@@ -280,22 +281,15 @@ class Board {
          return;
     }
     ghost.nextDirection = newDirection;
-    // debugger
-
-    //shuffle the array,lodash
-    // iterate over array until you find a direction you can actually go in
-    //only fire this function if the ghost hits a wall
-    //perhaps a timer to randomly call this every few seconds
   }
 
   moveGhosts(){
-
     this.ghosts.forEach((ghost) => {
       this.changeGhostDirection(ghost);
       const startX = ghost.x;
       const startY = ghost.y;
-      ghost.x += ghost.direction[0] * (ghost.eatable ? .9 : 1.5);
-      ghost.y += ghost.direction[1] * (ghost.eatable ? .9 : 1.5);
+      ghost.x += ghost.direction[0] * ghost.speed;
+      ghost.y += ghost.direction[1] * ghost.speed;
       let finalPos = this.calculateMatrixPos(startX, startY);
 
       const offsetX = (this.squareWidth - ghost.width) / 2;
@@ -308,10 +302,8 @@ class Board {
       }
 
       this.wrap(ghost.x);
-
       this.ghostCollision(ghost);
       ghost.draw();
-
     });
   }
 
@@ -347,7 +339,6 @@ class Board {
               ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
             }
           ghost.direction = ghost.nextDirection;
-          // ghost.nextDirection = null;
         } else {
           this.getRandomDirection(ghost);
         }
@@ -360,8 +351,8 @@ class Board {
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
 
-    this.quackMan.x += this.quackMan.direction[0] * quackSpeed;
-    this.quackMan.y += this.quackMan.direction[1] * quackSpeed;
+    this.quackMan.x += this.quackMan.direction[0] * this.quackMan.speed;
+    this.quackMan.y += this.quackMan.direction[1] * this.quackMan.speed;
     let finalPos = this.calculateMatrixPos(startX, startY);
 
     const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
@@ -400,7 +391,7 @@ class Board {
 
   ghostCollision(ghost){
     if(ghost.collidesWith(this.quackMan) && ghost.eatable){
-      this.eatGhost();
+      this.eatGhost(ghost);
     } else if(ghost.collidesWith(this.quackMan) && !ghost.eatable){
       this.killQuackMan();
     }
@@ -551,7 +542,7 @@ class Board {
     console.log("you ded");
   }
 
-  eatGhost(){
+  eatGhost(ghost){
     const intro = document.getElementById('intro');
     const eatGhost = document.getElementById('eatghost');
     intro.pause();
@@ -563,6 +554,10 @@ class Board {
       intro.play();
     }
     this.score += 200;
+    ghost.eaten = true;
+    window.setTimeout(() => {
+      ghost.eaten = false;
+    }, 2000);
     console.log("you ate him");
   }
 
@@ -18030,8 +18025,17 @@ class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/blinky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+      this.speed = 1.5;
     } else {
+      if(this.eaten){
+        this.speed = 3;
+        const ghostImg = new Image();
+        ghostImg.src = `./assets/eyes.png`;
+        this.ctx.drawImage(ghostImg, this.x, this.y, this.width/2, this.height/2);
+        return;
+      }
       const ghostImg = new Image();
+      this.speed = .8;
       ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
@@ -18056,8 +18060,17 @@ class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/inky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+      this.speed = 1.5;
     } else {
+      if(this.eaten){
+        this.speed = 3;
+        const ghostImg = new Image();
+        ghostImg.src = `./assets/eyes.png`;
+        this.ctx.drawImage(ghostImg, this.x, this.y, this.width/2, this.height/2);
+        return;
+      }
       const ghostImg = new Image();
+      this.speed = .8;
       ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
@@ -18082,8 +18095,17 @@ class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/pinky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+      this.speed = 1.5;
     } else {
+        if(this.eaten){
+          this.speed = 3;
+          const ghostImg = new Image();
+          ghostImg.src = `./assets/eyes.png`;
+          this.ctx.drawImage(ghostImg, this.x, this.y, this.width/2, this.height/2);
+          return;
+        }
       const ghostImg = new Image();
+      this.speed = .8;
       ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
@@ -18108,8 +18130,17 @@ class Clyde extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/clyde.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
+      this.speed = 1.5;
     } else {
+      if(this.eaten){
+        this.speed = 3;
+        const ghostImg = new Image();
+        ghostImg.src = `./assets/eyes.png`;
+        this.ctx.drawImage(ghostImg, this.x, this.y, this.width/2, this.height/2);
+        return;
+      }
       const ghostImg = new Image();
+      this.speed = .8;
       ghostImg.src = `./assets/eatable.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
     }
