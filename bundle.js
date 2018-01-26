@@ -272,6 +272,7 @@ class Board {
   }
 
   getRandomDirection(ghost){
+
     randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
     if(ghost.direction[0] === newDirection[0] &&
@@ -300,10 +301,11 @@ class Board {
       const offsetX = (this.squareWidth - ghost.width) / 2;
       const offsetY = (this.squareHeight - ghost.height) / 2;
 
-      if(this.isCollision()){
+      if(this.isCollision(ghost)){
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
-        ghost.direction = [0, 0];
+        // ghost.direction = [0, 0];
+        // this.getRandomDirection(ghost);
       }
 
       // this.wrapQuack(ghost.x);
@@ -378,20 +380,20 @@ class Board {
     this.showStats();
   }
 
-  isCollision(){
+  isCollision(ghost){
     let collides = false;
     this.grid.forEach((row) => {
       row.forEach((cell) => {
+        if(ghost){
+          if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
+            collides = true;
+            this.getRandomDirection(ghost);
+            return collides;
+          }
+        }
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && this.quackMan.collidesWith(cell)){
           collides = true;
-        } else if(cell instanceof __WEBPACK_IMPORTED_MODULE_5__ghost__["a" /* default */] && this.quackMan.collidesWith(cell)){
-            collides = true;
-            if(cell.eatable){
-              this.eatGhost();
-            } else {
-              this.killQuackMan();
-            }
-          }
+        }
       });
     });
     return collides;
