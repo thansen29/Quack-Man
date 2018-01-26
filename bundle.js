@@ -119,6 +119,8 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
     this.width = width - 3;
     this.height = height - 3;
     this.eatable = false;
+    this.direction = [0, 0];
+    this.nextDirection = null;
   }
 }
 
@@ -143,6 +145,8 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.height = height - 3;
     this.loadDucks();
     this.lastDuck = this.rightDuck;
+    this.direction = [0, 0];
+    this.nextDirection = null;
   }
 
 
@@ -219,8 +223,7 @@ class Board {
     this.dots = dots;
     this.quackMan = quackMan;
     this.ghosts = ghosts;
-    this.direction = [0, 0];
-    this.currentGhostDirection = [0, 0];
+    // this.ghost.direction = [0, 0];
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
     this.score = 0;
@@ -279,8 +282,8 @@ class Board {
     this.ghosts.forEach((ghost) => {
       const startX = ghost.x;
       const startY = ghost.y;
-      ghost.x += this.currentGhostDirection[0] * vulnerableSpeed;
-      ghost.y += this.currentGhostDirection[1] * vulnerableSpeed;
+      ghost.x += ghost.direction[0] * vulnerableSpeed;
+      ghost.y += ghost.direction[1] * vulnerableSpeed;
       let finalPos = this.calculateMatrixPos(startX, startY);
 
       const offsetX = (this.squareWidth - ghost.width) / 2;
@@ -289,7 +292,7 @@ class Board {
       if(this.isCollision()){
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
-        this.currentGhostDirection = [0, 0];
+        ghost.direction = [0, 0];
       }
 
       // this.wrapQuack(ghost.x);
@@ -309,7 +312,7 @@ class Board {
     // if(!this.nextGhostDirection) return;
     this.ghosts.forEach((ghost) => {
       const randDir = this.getRandomDirection();
-      this.nextGhostDirection = randDir;
+      ghost.nextDirection = randDir;
       const ghostX = ghost.x + ghost.width / 2;
       const ghostY = ghost.y + ghost.height / 2;
       const currentLocation = this.calculateMatrixPos(ghostX, ghostY);
@@ -326,19 +329,19 @@ class Board {
             const myCell = this.grid[nextY][nextX];
             if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
 
-                if((this.currentGhostDirection[0] + this.nextGhostDirection[0]) && (this.currentGhostDirection[1] + this.nextGhostDirection[1])) {
-                  if ((this.currentGhostDirection[0] === -1 && ghostX >= centerNextX) ||
-                      (this.currentGhostDirection[0] === 1 && ghostX <= centerNextX) ||
-                      (this.currentGhostDirection[1] === -1 && ghostY >= centerNextY) ||
-                      (this.currentGhostDirection[1] === 1 && ghostY <= centerNextY)) {
+                if((ghost.direction[0] + ghost.nextDirection[0]) && (ghost.direction[1] + ghost.nextDirection[1])) {
+                  if ((ghost.direction[0] === -1 && ghostX >= centerNextX) ||
+                      (ghost.direction[0] === 1 && ghostX <= centerNextX) ||
+                      (ghost.direction[1] === -1 && ghostY >= centerNextY) ||
+                      (ghost.direction[1] === 1 && ghostY <= centerNextY)) {
                     return;
                   }
 
                 ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
                 ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
               }
-            this.currentGhostDirection = this.nextGhostDirection;
-            this.nextGhostDirection = null;
+            ghost.direction = ghost.nextDirection;
+            ghost.nextDirection = null;
           } else {
 
           }
@@ -352,8 +355,8 @@ class Board {
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
 
-    this.quackMan.x += this.direction[0] * quackSpeed;
-    this.quackMan.y += this.direction[1] * quackSpeed;
+    this.quackMan.x += this.quackMan.direction[0] * quackSpeed;
+    this.quackMan.y += this.quackMan.direction[1] * quackSpeed;
     let finalPos = this.calculateMatrixPos(startX, startY);
 
     const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
@@ -362,11 +365,11 @@ class Board {
     if(this.isCollision()){
       this.quackMan.x = finalPos.x + offsetX;
       this.quackMan.y = finalPos.y + offsetY;
-      this.direction = [0, 0];
+      this.quackMan.direction = [0, 0];
     }
 
     this.wrapQuack(this.quackMan.x);
-    this.quackMan.draw(this.direction);
+    this.quackMan.draw(this.quackMan.direction);
     this.eatPill();
     this.showStats();
   }
@@ -455,15 +458,15 @@ class Board {
   }
 
   changeDirection(direction){
-    if(direction[0] === this.direction[0] &&
-      direction[1] === this.direction[1])
+    if(direction[0] === this.quackMan.direction[0] &&
+      direction[1] === this.quackMan.direction[1])
       return;
 
-    this.nextDirection = direction;
+    this.quackMan.nextDirection = direction;
   }
 
   actuallyChangeDirection(){
-    if(!this.nextDirection) return;
+    if(!this.quackMan.nextDirection) return;
     const quackX = this.quackMan.x + this.quackMan.width / 2;
     const quackY = this.quackMan.y + this.quackMan.height / 2;
     const currentLocation = this.calculateMatrixPos(quackX, quackY);
@@ -473,27 +476,27 @@ class Board {
     const centerNextX = currentGridX * this.squareWidth + (this.squareWidth / 2);
     const centerNextY = currentGridY * this.squareHeight + (this.squareHeight / 2);
 
-    const nextX = currentGridX + this.nextDirection[0];
-    const nextY = currentGridY + this.nextDirection[1];
+    const nextX = currentGridX + this.quackMan.nextDirection[0];
+    const nextY = currentGridY + this.quackMan.nextDirection[1];
     if(this.grid.length >= nextX &&
        this.grid[0].length >= nextY){
         const myCell = this.grid[nextY][nextX];
         if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
 
-          if((this.direction[0] + this.nextDirection[0]) && (this.direction[1] + this.nextDirection[1])) {
-            if ((this.direction[0] === -1 && quackX >= centerNextX) ||
-                (this.direction[0] === 1 && quackX <= centerNextX) ||
-                (this.direction[1] === -1 && quackY >= centerNextY) ||
-                (this.direction[1] === 1 && quackY <= centerNextY)) {
+          if((this.quackMan.direction[0] + this.quackMan.nextDirection[0]) && (this.quackMan.direction[1] + this.quackMan.nextDirection[1])) {
+            if ((this.quackMan.direction[0] === -1 && quackX >= centerNextX) ||
+                (this.quackMan.direction[0] === 1 && quackX <= centerNextX) ||
+                (this.quackMan.direction[1] === -1 && quackY >= centerNextY) ||
+                (this.quackMan.direction[1] === 1 && quackY <= centerNextY)) {
               return;
             }
 
             this.quackMan.x = currentGridX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
             this.quackMan.y = currentGridY * this.squareHeight + (this.squareHeight - this.quackMan.height) / 2;
           }
-          this.direction = this.nextDirection;
-          this.nextDirection = null;
+          this.quackMan.direction = this.quackMan.nextDirection;
+          this.quackMan.nextDirection = null;
         }
     }
   }
