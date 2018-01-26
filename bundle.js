@@ -84,6 +84,15 @@ class VisibleObject {
          object.y < (this.y + this.height));
   }
 
+  getBoundingBox(){
+    return {
+      topLeft: { x: this.x, y: this.y },
+      topRight: { x: this.x + this.width, y: this.y },
+      bottomLeft: { x: this.x, y: this.y + this.height } ,
+      bottomRight: { x: this.x + this.width, y: this.y + this.height }
+    };
+  }
+
   draw(){
   }
 
@@ -194,9 +203,12 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
 
 
+
 // import boardModel from './board_model';
 
 const quackSpeed = 3;
+const ghostSpeed = 3;
+const vulnerableSpeed = 2;
 const randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
@@ -208,12 +220,14 @@ class Board {
     this.quackMan = quackMan;
     this.ghosts = ghosts;
     this.direction = [0, 0];
+    this.currentGhostDirection = [0, 0];
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
     this.score = 0;
     this.lives = 3;
     this.level = 0;
     this.muted = true;
+    this.defaultPositions = [];
 
     this.intro = document.getElementById('intro');
   }
@@ -222,7 +236,7 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
-    this.drawGhosts();
+    // this.drawGhosts();
     this.moveQuackMan();
     // this.moveGhosts();
     this.gameOver();
@@ -244,48 +258,97 @@ class Board {
 
   drawGhosts(){
     this.ghosts.forEach((ghost) => {
+      this.defaultPositions.push([[ghost.x, ghost.y]]);
       ghost.draw();
     });
+    // this.ghostDirection(this.getRandomDirection());
     this.drawn = true;
   }
 
-  moveGhosts(){
-    let randDir = randDirections[Math.floor(Math.random()*randDirections.length)];
+  getRandomDirection(){
+    return randDirections[Math.floor(Math.random()*randDirections.length)];
+    //shuffle the array,lodash
+    // iterate over array until you find a direction you can actually go in
+    //only fire this function if the ghost hits a wall
+    //perhaps a timer to randomly call this every few seconds
+  }
 
+  moveGhosts(){
+
+    this.changeGhostDirection();
     this.ghosts.forEach((ghost) => {
       const startX = ghost.x;
       const startY = ghost.y;
-      let currPos = this.calculateMatrixPos(startX, startY);
+      ghost.x += this.currentGhostDirection[0] * vulnerableSpeed;
+      ghost.y += this.currentGhostDirection[1] * vulnerableSpeed;
+      let finalPos = this.calculateMatrixPos(startX, startY);
 
-      let newGridX = currPos.gridX + randDir[0];
-      let newGridY = currPos.gridY + randDir[1];
-
-      let finalX = newGridX * this.squareWidth;
-      let finalY = newGridY * this.squareHeight;
-      // finalX -= this.squareWidth * quackSpeed;
-      // finalY -= this.squareHeight * quackSpeed;
-
-      const offsetX = (this.squareWidth - ghost.width) / 2; // 1.5 _
+      const offsetX = (this.squareWidth - ghost.width) / 2;
       const offsetY = (this.squareHeight - ghost.height) / 2;
-      // debugger
-      if(this.ghostCollision(ghost)){
-        ghost.x = startX + offsetX;
-        ghost.y = startY + offsetY;
-        randDir = [0, 0];
-      } else {
-        ghost.x = finalX + offsetX;
-        ghost.y = finalY + offsetY;
+
+      if(this.isCollision()){
+        ghost.x = finalPos.x + offsetX;
+        ghost.y = finalPos.y + offsetY;
+        this.currentGhostDirection = [0, 0];
       }
 
+      // this.wrapQuack(ghost.x);
+
+      if(ghost.collidesWith(this.quackMan)) {
+        console.log("AHHHHH");
+      }
       ghost.draw();
+
     });
   }
 
-  moveQuackMan(dir){
+
+  changeGhostDirection(){
+    // this.currentGhostDirection = randDir;
+
+    // if(!this.nextGhostDirection) return;
+    this.ghosts.forEach((ghost) => {
+      const randDir = this.getRandomDirection();
+      this.nextGhostDirection = randDir;
+      const ghostX = ghost.x + ghost.width / 2;
+      const ghostY = ghost.y + ghost.height / 2;
+      const currentLocation = this.calculateMatrixPos(ghostX, ghostY);
+      const currentGridX = currentLocation.gridX;
+      const currentGridY = currentLocation.gridY;
+
+      const centerNextX = currentGridX * this.squareWidth + (this.squareWidth /2);
+      const centerNextY = currentGridY * this.squareHeight + (this.squareHeight /2);
+
+      const nextX = currentGridX + randDir[0];
+      const nextY = currentGridY + randDir[1];
+      if(this.grid.length >= nextX &&
+          this.grid[0].length >= nextY){
+            const myCell = this.grid[nextY][nextX];
+            if(!(myCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
+
+                if((this.currentGhostDirection[0] + this.nextGhostDirection[0]) && (this.currentGhostDirection[1] + this.nextGhostDirection[1])) {
+                  if ((this.currentGhostDirection[0] === -1 && ghostX >= centerNextX) ||
+                      (this.currentGhostDirection[0] === 1 && ghostX <= centerNextX) ||
+                      (this.currentGhostDirection[1] === -1 && ghostY >= centerNextY) ||
+                      (this.currentGhostDirection[1] === 1 && ghostY <= centerNextY)) {
+                    return;
+                  }
+
+                ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
+                ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
+              }
+            this.currentGhostDirection = this.nextGhostDirection;
+            this.nextGhostDirection = null;
+          } else {
+
+          }
+      }
+    });
+  }
+
+  moveQuackMan(){
     this.actuallyChangeDirection();
-    if(dir){
-      this.direction = dir;
-    }
+
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
 
@@ -329,18 +392,32 @@ class Board {
 
   ghostCollision(ghost){
     let collides = false;
+    const ghostBox = ghost.getBoundingBox();
+    const quackBox = this.quackMan.getBoundingBox();
+    // debugger
     this.grid.forEach((row) => {
       row.forEach((cell) => {
+
         if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
           collides = true;
         } else if(ghost.x === this.quackMan.x && ghost.y === this.quackMan.y){
-          collides = true;
-          if(ghost.eatable){
-            this.eatGhost();
-          } else {
-            this.killQuackMan();
+        // } else if(ghostBox.topLeft.x === quackBox.topLeft.x ||
+        //           ghostBox.topRight.x === quackBox.topRight.x ||
+        //           ghostBox.bottomLeft.x === quackBox.bottomLeft.x ||
+        //           ghostBox.bottomRight.x === quackBox.bottomRight.x ||
+        //           ghostBox.topLeft.y === quackBox.topLeft.y ||
+        //           ghostBox.topRight.y === quackBox.topRight.y ||
+        //           ghostBox.bottomLeft.y === quackBox.bottomLeft.y ||
+        //           ghostBox.bottomRight.y === quackBox.bottomRight.y
+        //         ){
+            console.log('touch quack');
+            collides = true;
+            if(ghost.eatable){
+              this.eatGhost();
+            } else {
+              this.killQuackMan();
+            }
           }
-        }
       });
     });
     return collides;
@@ -386,9 +463,7 @@ class Board {
   }
 
   actuallyChangeDirection(){
-    if(!this.nextDirection){
-      return;
-    }
+    if(!this.nextDirection) return;
     const quackX = this.quackMan.x + this.quackMan.width / 2;
     const quackY = this.quackMan.y + this.quackMan.height / 2;
     const currentLocation = this.calculateMatrixPos(quackX, quackY);
@@ -18133,7 +18208,7 @@ X.X.XXXX.X.XXXX.X.X
 X.X.o....X......X.X
 X.X.XX.XXXXX.XX.X.X
 X.X.X........XX.X.X
-X...X.XXX XX.XX...X
+X...X.X    X.XX...X
 XXX.X.XbpicX....XXX
    .X.XXXXXX.XX.
 XXX.X........XX.XXX
@@ -18232,6 +18307,7 @@ class GameView {
     window.removeEventListener("click", this.beginGame, false);
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
+    this.game.drawGhosts();
 
     this.bindMoveHandler();
     //call method that will make the ghosts start moving
@@ -18243,7 +18319,7 @@ class GameView {
     if(!this.paused){
       const timeDelta = time - this.lastTime;
       this.game.draw();
-      // this.game.moveGhosts();
+      this.game.moveGhosts();
       this.lastTime = time;
       requestAnimationFrame(this.animate.bind(this));
     }
@@ -18258,7 +18334,7 @@ class GameView {
     this.timer = window.setInterval(() => {
       this.game.draw();
       this.ctx.fillStyle = "yellow";
-      this.ctx.fillText(`Starting in  ${this.count}`, 200, 300);
+      this.ctx.fillText(`Starting in  ${this.count}`, 215, 300);
       if(this.count === 0){
         window.clearInterval(this.timer);
         this.beginGame();
@@ -18321,6 +18397,10 @@ class Game {
 
   draw(){
     this.board.draw();
+  }
+
+  drawGhosts(){
+    this.board.drawGhosts();
   }
 
   moveGhosts(){
