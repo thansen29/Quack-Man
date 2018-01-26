@@ -123,8 +123,7 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
     this.nextDirection = [0, -1];
     this.eaten = false;
     this.speed = 1.5;
-    this.vulnerableSpeed = .8;
-    this.eatenSpeed = 2.5;
+    this.vulnerable = false;
   }
 }
 
@@ -152,6 +151,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     this.direction = [0, 0];
     this.nextDirection = null;
     this.speed = 3;
+    this.vulnerable = true;
   }
 
 
@@ -519,6 +519,7 @@ class Board {
 
   makeEatable(){
     this.ghosts.forEach((ghost) => {
+      ghost.vulnerable = true;
       ghost.eatable = true;
       window.setTimeout(() => {
         ghost.eatable = false;
@@ -526,8 +527,8 @@ class Board {
     });
   }
 
+  //need to make quackman vulnerable again at level reset
   killQuackMan(){
-    this.lives -= 1;
     const death = document.getElementById('death');
     const chomp = document.getElementById('chomp');
     this.intro.pause();
@@ -539,7 +540,11 @@ class Board {
         this.intro.play();
       }, 1500);
     }
-    console.log("you ded");
+    if(this.quackMan.vulnerable){
+      this.lives -= 1;
+      console.log("you ded");
+      this.quackMan.vulnerable = false;
+    }
   }
 
   eatGhost(ghost){
@@ -553,12 +558,16 @@ class Board {
       eatGhost.play();
       intro.play();
     }
-    this.score += 200;
-    ghost.eaten = true;
-    window.setTimeout(() => {
-      ghost.eaten = false;
-    }, 2000);
-    console.log("you ate him");
+    if(ghost.vulnerable){
+      this.score += 200;
+      ghost.eaten = true;
+      window.setTimeout(() => {
+        ghost.eaten = false;
+      }, 2000);
+      console.log("you ate him");
+      ghost.vulnerable = false;
+
+    }
   }
 
 
