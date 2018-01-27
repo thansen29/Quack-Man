@@ -247,7 +247,7 @@ class Board {
     // this.drawGhosts();
     this.moveQuackMan();
     this.moveGhosts();
-    this.gameOver();
+    // this.gameOver();
   }
 
   drawWalls(){
@@ -280,7 +280,14 @@ class Board {
        ghost.direction[1] === newDirection[1]){
          return;
     }
-    ghost.nextDirection = newDirection;
+    // if((ghost.direction[0] + newDirection[0] === 0) &&
+    //    (ghost.direction[1] + newDirection[1] === 0)){
+    //      console.log('inverse');
+    //      this.getRandomDirection(ghost);
+    //    } else {
+         ghost.nextDirection = newDirection;
+       // }
+
   }
 
   moveGhosts(){
@@ -300,8 +307,13 @@ class Board {
         ghost.y = finalPos.y + offsetY;
         this.getRandomDirection(ghost);
       }
+      if(ghost.direction[0] === 0 && ghost.direction[1] === 0 ){
+        // ghost.direction = [1, 0];
+        // ghost.nextDirection = [1, 0];
+        // this.getRandomDirection(ghost);
+      }
 
-      this.wrap(ghost.x);
+      this.wrap(ghost, ghost.x);
       this.ghostCollision(ghost);
       ghost.draw();
     });
@@ -330,7 +342,7 @@ class Board {
           const nextCell = this.grid[nextY][nextX];
           if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
 
-              if(this.isInverseDirection(ghost)) {
+              if(this.notInverseDirection(ghost)) {
                 if (this.smoothMovement(ghost, ghostX, ghostY, nextCenterX, nextCenterY)) {
                   return;
                 }
@@ -472,7 +484,7 @@ class Board {
         const nextCell = this.grid[nextGridY][nextGridX];
         if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
-          if(this.isInverseDirection(this.quackMan, quackCenterX, nextCenterX)) {
+          if(this.notInverseDirection(this.quackMan, quackCenterX, nextCenterX)) {
             if (this.smoothMovement(this.quackMan, quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
               return;
             }
@@ -493,7 +505,7 @@ class Board {
         (object.direction[1] === 1 && centerY <= nextCenterY);
   }
 
-  isInverseDirection(object){
+  notInverseDirection(object){
     return object.direction[0] + object.nextDirection[0] &&
     object.direction[1] + object.nextDirection[1];
   }
@@ -542,8 +554,8 @@ class Board {
     }
     if(this.quackMan.vulnerable){
       this.lives -= 1;
-      console.log("you ded");
-      this.quackMan.vulnerable = false;
+      // console.log("you ded");
+      // this.quackMan.vulnerable = false;
     }
   }
 
@@ -586,6 +598,11 @@ class Board {
 
   //TODO: need to figure out how to go back to default board
   restartGame(){
+    // this.ghosts.forEach((ghost) => {
+    //   window.setInterval(() => {
+    //     this.getRandomDirection(ghost);
+    //   }, 1000);
+    // });
     this.score = 0;
     this.lives = 3;
     this.level = 0;
@@ -594,9 +611,16 @@ class Board {
   }
 
   gameOver(){
-    if(this.lives === 0){
-      console.log('you lose');
-      this.restartGame();
+    // if(this.lives === 0){
+    //   console.log('you lose');
+    //   this.restartGame();
+    // }
+    // console.log(this.lives);
+    if(this.lives <= 0){
+      // console.log('hellloooooooo');
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -18280,6 +18304,12 @@ XXXXXXXXXXXXXXXXXXX`;
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__duck__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__board__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__board_model_js__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(20);
+
+
+
 
 
 class GameView {
@@ -18288,6 +18318,7 @@ class GameView {
     this.game = game;
     // this.beginGame = this.beginGame.bind(this);
     this.countdown = this.countdown.bind(this);
+    this.startNewGame = this.startNewGame.bind(this);
     this.toggleSound = this.toggleSound.bind(this);
     this.count = 4;
     this.gameMuted = true;
@@ -18357,6 +18388,7 @@ class GameView {
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
     this.game.drawGhosts();
+    // this.game.restartGame();
 
     this.bindMoveHandler();
     //call method that will make the ghosts start moving
@@ -18367,15 +18399,45 @@ class GameView {
   animate(time){
     if(!this.paused){
       const timeDelta = time - this.lastTime;
-      this.game.draw();
-      this.game.moveGhosts();
-      this.lastTime = time;
-      requestAnimationFrame(this.animate.bind(this));
+      // console.log(this.game.gameOver());
+      if(this.game.gameOver()){
+        // debugger
+        this.gameOver();
+      } else {
+        this.game.draw();
+        this.game.moveGhosts();
+        this.lastTime = time;
+        requestAnimationFrame(this.animate.bind(this));
+      }
     }
   }
 
+  gameOver(){
+    this.ctx.fillStyle = "yellow";
+    this.ctx.fillText(`Game Over`, 240, 300);
+    this.ctx.fill();
+
+    this.ctx.fillText("Click anywhere to prompt a new game", 150, 340);
+    this.ctx.fill();
+
+    window.addEventListener("click", this.startNewGame, false);
+
+    // this.ctx.fillText("Click anywhere to begin the game", 150, 340);
+    // this.bindClickHandler();
+
+  }
+
+  startNewGame(){
+    const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */]);
+    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
+    const gameView = new GameView(this.ctx, game);
+    gameView.start();
+  }
+
   countdown(){
+    this.count = 4;
     window.removeEventListener("click", this.countdown, false);
+    window.removeEventListener("click", this.startNewGame, false);
     this.game.draw();
     this.ctx.fillStyle = "yellow";
     this.ctx.fillText(`Loading...`, 250, 300);
@@ -18466,6 +18528,14 @@ class Game {
 
   toggleSound(muted){
     this.board.toggleSound(muted);
+  }
+
+  gameOver(){
+    return this.board.gameOver();
+  }
+
+  restartGame(){
+    this.board.restartGame();
   }
 }
 
