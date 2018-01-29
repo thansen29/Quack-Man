@@ -236,6 +236,7 @@ class Board {
     this.level = 0;
     this.muted = true;
     this.defaultPositions = [];
+    this.dead = false;
 
     this.intro = document.getElementById('intro');
   }
@@ -539,7 +540,7 @@ class Board {
     });
   }
 
-  //need to make quackman vulnerable again at level reset
+  //need to make quackman vulnerable again at level reset, this.dead
   killQuackMan(){
     const death = document.getElementById('death');
     const chomp = document.getElementById('chomp');
@@ -554,8 +555,10 @@ class Board {
     }
     if(this.quackMan.vulnerable){
       this.lives -= 1;
-      // console.log("you ded");
-      // this.quackMan.vulnerable = false;
+      this.quackMan.vulnerable = false;
+      this.dead = true;
+      this.restartGame();
+      console.log("you ded");
     }
   }
 
@@ -598,26 +601,12 @@ class Board {
 
   //TODO: need to figure out how to go back to default board
   restartGame(){
-    // this.ghosts.forEach((ghost) => {
-    //   window.setInterval(() => {
-    //     this.getRandomDirection(ghost);
-    //   }, 1000);
-    // });
-    this.score = 0;
-    this.lives = 3;
-    this.level = 0;
-    this.muted = true;
-
+    return this.dead;
+    // return true;
   }
 
   gameOver(){
-    // if(this.lives === 0){
-    //   console.log('you lose');
-    //   this.restartGame();
-    // }
-    // console.log(this.lives);
     if(this.lives <= 0){
-      // console.log('hellloooooooo');
       return true;
     } else {
       return false;
@@ -18388,7 +18377,6 @@ class GameView {
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
     this.game.drawGhosts();
-    // this.game.restartGame();
 
     this.bindMoveHandler();
     //call method that will make the ghosts start moving
@@ -18399,15 +18387,27 @@ class GameView {
   animate(time){
     if(!this.paused){
       const timeDelta = time - this.lastTime;
-      // console.log(this.game.gameOver());
       if(this.game.gameOver()){
-        // debugger
         this.gameOver();
       } else {
-        this.game.draw();
-        this.game.moveGhosts();
-        this.lastTime = time;
-        requestAnimationFrame(this.animate.bind(this));
+        if(this.game.restartGame()){
+          // this.game.getScore();
+          // this.game.getLives();
+          // this.game.getPills();
+          // this.startNewGame();
+          // this.game.setScore();
+          // this.game.setLives();
+          // this.game.setPills();
+          // clear board
+          // start game over
+          // maintain score, lives, pills
+          // countdown
+        } else {
+          this.game.draw();
+          this.game.moveGhosts();
+          this.lastTime = time;
+          requestAnimationFrame(this.animate.bind(this));
+        }
       }
     }
   }
@@ -18535,7 +18535,7 @@ class Game {
   }
 
   restartGame(){
-    this.board.restartGame();
+    return this.board.restartGame();
   }
 }
 
