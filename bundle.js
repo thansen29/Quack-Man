@@ -167,11 +167,9 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
     } else {
       this.lastDuck;
     }
-    // this.ctx.fillStyle = "blue";
-    // this.ctx.beginPath();
-    // this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/2, 0, Math.PI*2 );
-    // this.ctx.fill();
+
     this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
+    this.ctx.fill();
   }
 
   loadDucks(){
@@ -233,11 +231,10 @@ class Board {
     this.squareHeight = squareHeight;
     this.score = 0;
     this.lives = 3;
-    this.level = 0;
+    this.level = 1;
     this.muted = true;
     this.defaultPositions = defaultPositions;
     this.dead = false;
-
     this.intro = document.getElementById('intro');
   }
 
@@ -368,7 +365,7 @@ class Board {
     this.quackMan.y += this.quackMan.direction[1] * this.quackMan.speed;
     let finalPos = this.calculateMatrixPos(startX, startY);
 
-    const offsetX = (this.squareWidth - this.quackMan.width) / 2; // 1.5 _
+    const offsetX = (this.squareWidth - this.quackMan.width) / 2;
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
 
     if(this.isCollision()){
@@ -540,7 +537,6 @@ class Board {
     });
   }
 
-  //need to make quackman vulnerable again at level reset, this.dead
   killQuackMan(){
     const death = document.getElementById('death');
     const chomp = document.getElementById('chomp');
@@ -558,10 +554,10 @@ class Board {
       this.quackMan.vulnerable = false;
       this.dead = true;
       this.restartGame();
-      console.log("you ded");
     }
   }
 
+  //TODO: make a slight pause showing you gained 200 points
   eatGhost(ghost){
     const intro = document.getElementById('intro');
     const eatGhost = document.getElementById('eatghost');
@@ -579,12 +575,10 @@ class Board {
       window.setTimeout(() => {
         ghost.eaten = false;
       }, 2000);
-      console.log("you ate him");
       ghost.vulnerable = false;
 
     }
   }
-
 
   showStats(){
     const score = $('.score');
@@ -599,11 +593,9 @@ class Board {
     this.muted = muted;
   }
 
-  //TODO: need to figure out how to go back to default board
   restartGame(){
     return this.dead;
   }
-
 
   gameOver(){
     if(this.lives <= 0){
@@ -613,6 +605,18 @@ class Board {
     }
   }
 
+  roundOver(){
+    const complete = this.dots.every((dot) => !dot.visible);
+    if(complete){
+      this.level += 1;
+      this.dots.forEach((dot) =>{
+        dot.visible = true;
+      });
+    }
+    return complete;
+  }
+
+  //TODO: animate death?
   setDefaultPositions(){
     this.dead = false;
     this.quackMan.vulnerable = true;
@@ -630,18 +634,6 @@ class Board {
     });
 
   }
-
-  // getRoundDetails(){
-  //   return {
-  //     score: this.score,
-  //     lives: this.lives
-  //   };
-  // }
-  //
-  // setRoundDetails(score, lives){
-  //   this.score = score;
-  //   this.lives = lives;
-  // }
 
   static fromString(ctx, boardModel){
     const rows = boardModel.split('\n');
@@ -18425,6 +18417,8 @@ class GameView {
         if(this.game.restartGame()){
           window.removeEventListener("keydown", this.moveSprite, false);
           this.startNewRound();
+        } else if(this.game.roundOver()){
+          this.startNewRound();
         } else {
           this.game.draw();
           this.game.moveGhosts();
@@ -18446,14 +18440,7 @@ class GameView {
     window.addEventListener("click", this.startNewGame, false);
   }
 
-  //need to maintain score, lives etc while making a new instance of gameview
   startNewRound(){
-    // const details = this.game.getRoundDetails();
-    // const board = Board.fromString(this.ctx, boardModel);
-    // const game = new Game(board);
-    // const gameView = new GameView(this.ctx, game);
-    // gameView.countdown();
-    // this.game.setRoundDetails(details.score, details.lives);
     this.game.setDefaultPositions();
     this.countdown();
   }
@@ -18573,13 +18560,9 @@ class Game {
     this.board.setDefaultPositions();
   }
 
-  // getRoundDetails(){
-  //   return this.board.getRoundDetails();
-  // }
-  //
-  // setRoundDetails(score, lives){
-  //   this.board.setRoundDetails(score, lives);
-  // }
+  roundOver(){
+    return this.board.roundOver();
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
