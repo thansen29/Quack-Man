@@ -222,7 +222,7 @@ let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
 
-  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts){
+  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions){
     this.ctx = ctx;
     this.grid = grid;
     this.dots = dots;
@@ -235,7 +235,7 @@ class Board {
     this.lives = 3;
     this.level = 0;
     this.muted = true;
-    this.defaultPositions = [];
+    this.defaultPositions = defaultPositions;
     this.dead = false;
 
     this.intro = document.getElementById('intro');
@@ -602,8 +602,8 @@ class Board {
   //TODO: need to figure out how to go back to default board
   restartGame(){
     return this.dead;
-    // return true;
   }
+
 
   gameOver(){
     if(this.lives <= 0){
@@ -613,6 +613,36 @@ class Board {
     }
   }
 
+  setDefaultPositions(){
+    this.dead = false;
+    this.quackMan.vulnerable = true;
+    this.quackMan.direction = [0, 0];
+    this.quackMan.nextDirection = [0, 0];
+    this.quackMan.x = 284.2105263157895;
+    this.quackMan.y = 428.5714285714286;
+    let i = 0;
+    this.ghosts.forEach((ghost) => {
+      ghost.x = this.defaultPositions[i].x;
+      ghost.y = this.defaultPositions[i].y;
+      i+=1;
+      ghost.direction = [0, 0];
+      ghost.nextDirection = [0, -1];
+    });
+
+  }
+
+  // getRoundDetails(){
+  //   return {
+  //     score: this.score,
+  //     lives: this.lives
+  //   };
+  // }
+  //
+  // setRoundDetails(score, lives){
+  //   this.score = score;
+  //   this.lives = lives;
+  // }
+
   static fromString(ctx, boardModel){
     const rows = boardModel.split('\n');
     const grid = rows.map(row => row.split('') );
@@ -620,6 +650,7 @@ class Board {
     const numCols = grid[0].length;
     const squareWidth = (ctx.canvas.width / numCols);
     const squareHeight = (ctx.canvas.height / numRows);
+    const defaultPositions = [];
 
     const dots = [];
     let quackMan = null;
@@ -643,7 +674,7 @@ class Board {
           case "p":
           case "c":
             ghosts.push(item);
-            // return item;//currently each ghost is in the grid
+            defaultPositions.push({x, y});
             break;
           default:
             return item;
@@ -684,7 +715,7 @@ class Board {
       });
     });
 
-    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight, ghosts);
+    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions);
   }
 
 }
@@ -18309,15 +18340,17 @@ class GameView {
     this.countdown = this.countdown.bind(this);
     this.startNewGame = this.startNewGame.bind(this);
     this.toggleSound = this.toggleSound.bind(this);
+    this.moveSprite = this.moveSprite.bind(this);
     this.count = 4;
     this.gameMuted = true;
     this.paused = false;
     this.preGame = true;
     this.lastDir = [0, 0];
+    // this.details = details;
   }
 
   bindMoveHandler(){
-    window.addEventListener("keydown", this.moveSprite.bind(this), false);
+    window.addEventListener("keydown", this.moveSprite, false);
   }
 
   bindSoundHandler(){
@@ -18352,7 +18385,6 @@ class GameView {
       default:
     }
 
-    // this.game.moveQuackMan(this.lastDir);
     this.game.changeDirection(this.lastDir);
   }
 
@@ -18391,17 +18423,8 @@ class GameView {
         this.gameOver();
       } else {
         if(this.game.restartGame()){
-          // this.game.getScore();
-          // this.game.getLives();
-          // this.game.getPills();
-          // this.startNewGame();
-          // this.game.setScore();
-          // this.game.setLives();
-          // this.game.setPills();
-          // clear board
-          // start game over
-          // maintain score, lives, pills
-          // countdown
+          window.removeEventListener("keydown", this.moveSprite, false);
+          this.startNewRound();
         } else {
           this.game.draw();
           this.game.moveGhosts();
@@ -18421,10 +18444,18 @@ class GameView {
     this.ctx.fill();
 
     window.addEventListener("click", this.startNewGame, false);
+  }
 
-    // this.ctx.fillText("Click anywhere to begin the game", 150, 340);
-    // this.bindClickHandler();
-
+  //need to maintain score, lives etc while making a new instance of gameview
+  startNewRound(){
+    // const details = this.game.getRoundDetails();
+    // const board = Board.fromString(this.ctx, boardModel);
+    // const game = new Game(board);
+    // const gameView = new GameView(this.ctx, game);
+    // gameView.countdown();
+    // this.game.setRoundDetails(details.score, details.lives);
+    this.game.setDefaultPositions();
+    this.countdown();
   }
 
   startNewGame(){
@@ -18537,6 +18568,18 @@ class Game {
   restartGame(){
     return this.board.restartGame();
   }
+
+  setDefaultPositions(){
+    this.board.setDefaultPositions();
+  }
+
+  // getRoundDetails(){
+  //   return this.board.getRoundDetails();
+  // }
+  //
+  // setRoundDetails(score, lives){
+  //   this.board.setRoundDetails(score, lives);
+  // }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
