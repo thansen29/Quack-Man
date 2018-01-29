@@ -214,19 +214,17 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
 
 
-// import boardModel from './board_model';
 
 let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
 
-  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions){
+  constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions, initQuack){
     this.ctx = ctx;
     this.grid = grid;
     this.dots = dots;
     this.quackMan = quackMan;
     this.ghosts = ghosts;
-    // this.ghost.direction = [0, 0];
     this.squareWidth = squareWidth;
     this.squareHeight = squareHeight;
     this.score = 0;
@@ -234,6 +232,7 @@ class Board {
     this.level = 1;
     this.muted = true;
     this.defaultPositions = defaultPositions;
+    this.initQuack = initQuack;
     this.dead = false;
     this.intro = document.getElementById('intro');
   }
@@ -245,7 +244,14 @@ class Board {
     // this.drawGhosts();
     this.moveQuackMan();
     this.moveGhosts();
-    // this.gameOver();
+  }
+
+  setInterval(){
+    this.ghosts.forEach((ghost) => {
+      window.setInterval(() => {
+        this.getRandomDirection(ghost);
+      }, 1500);
+    });
   }
 
   drawWalls(){
@@ -268,23 +274,26 @@ class Board {
       ghost.draw();
     });
     this.drawn = true;
+    this.setInterval();
+
   }
 
-  //perhaps a timer to randomly call this every few seconds
+  //ghosts get stuck in corner of default gate???
   getRandomDirection(ghost){
     randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
     if(ghost.direction[0] === newDirection[0] &&
        ghost.direction[1] === newDirection[1]){
          return;
+    } else {
+        ghost.nextDirection = [1, 0];
     }
-    // if((ghost.direction[0] + newDirection[0] === 0) &&
-    //    (ghost.direction[1] + newDirection[1] === 0)){
-    //      console.log('inverse');
-    //      this.getRandomDirection(ghost);
-    //    } else {
+    if((ghost.direction[0] + newDirection[0] === 0) &&
+       (ghost.direction[1] + newDirection[1] === 0)){
+         this.getRandomDirection(ghost);
+       } else {
          ghost.nextDirection = newDirection;
-       // }
+       }
 
   }
 
@@ -304,11 +313,6 @@ class Board {
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
         this.getRandomDirection(ghost);
-      }
-      if(ghost.direction[0] === 0 && ghost.direction[1] === 0 ){
-        // ghost.direction = [1, 0];
-        // ghost.nextDirection = [1, 0];
-        // this.getRandomDirection(ghost);
       }
 
       this.wrap(ghost, ghost.x);
@@ -344,13 +348,12 @@ class Board {
                 if (this.smoothMovement(ghost, ghostX, ghostY, nextCenterX, nextCenterY)) {
                   return;
                 }
-
-              ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
-              ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
-            }
-          ghost.direction = ghost.nextDirection;
+                ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
+                ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
+              }
+            ghost.direction = ghost.nextDirection;
         } else {
-          this.getRandomDirection(ghost);
+            this.getRandomDirection(ghost);
         }
     }
   }
@@ -622,8 +625,8 @@ class Board {
     this.quackMan.vulnerable = true;
     this.quackMan.direction = [0, 0];
     this.quackMan.nextDirection = [0, 0];
-    this.quackMan.x = 284.2105263157895;
-    this.quackMan.y = 428.5714285714286;
+    this.quackMan.x = this.initQuack.x;
+    this.quackMan.y = this.initQuack.y;
     let i = 0;
     this.ghosts.forEach((ghost) => {
       ghost.x = this.defaultPositions[i].x;
@@ -643,6 +646,7 @@ class Board {
     const squareWidth = (ctx.canvas.width / numCols);
     const squareHeight = (ctx.canvas.height / numRows);
     const defaultPositions = [];
+    let initQuack;
 
     const dots = [];
     let quackMan = null;
@@ -660,6 +664,7 @@ class Board {
             break;
           case "q":
             quackMan = item;
+            initQuack = {x, y};
             break;
           case "b":
           case "i":
@@ -707,7 +712,7 @@ class Board {
       });
     });
 
-    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions);
+    return new Board(ctx, mappedGrid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions, initQuack);
   }
 
 }
@@ -18534,10 +18539,6 @@ class Game {
 
   moveGhosts(){
     this.board.moveGhosts();
-  }
-
-  moveQuackMan(dir){
-    this.board.moveQuackMan(dir);
   }
 
   changeDirection(direction){
