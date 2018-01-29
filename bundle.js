@@ -838,6 +838,7 @@ document.addEventListener("DOMContentLoaded", () => {
   canvasEl.height = 600;
 
   const ctx = canvasEl.getContext("2d");
+  ctx.font = "18px PressStart";
 
   const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */]);
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
@@ -18396,8 +18397,10 @@ class GameView {
     this.bindSoundHandler();
     this.game.draw();
     this.ctx.fillStyle = "yellow";
-    this.ctx.font = "24px PressStart";
+    this.ctx.font = "22px PressStart";
+    console.log(this.ctx.font);
     this.ctx.fillText("Click anywhere to begin the game", 150, 300);
+    this.ctx.font = "18px PressStart";
     this.bindClickHandler();
   }
 
@@ -18408,7 +18411,7 @@ class GameView {
     this.game.drawGhosts();
 
     this.bindMoveHandler();
-    //call method that will make the ghosts start moving
+
     this.lastTime = 0;
     requestAnimationFrame(this.animate.bind(this));
   }
@@ -18436,10 +18439,10 @@ class GameView {
 
   gameOver(){
     this.ctx.fillStyle = "yellow";
-    this.ctx.fillText(`Game Over`, 240, 300);
+    this.ctx.fillText(`Game Over`, 220, 300);
     this.ctx.fill();
 
-    this.ctx.fillText("Click anywhere to prompt a new game", 150, 340);
+    this.ctx.fillText("Click anywhere for a new game", 30, 340);
     this.ctx.fill();
 
     window.addEventListener("click", this.startNewGame, false);
@@ -18463,12 +18466,12 @@ class GameView {
     window.removeEventListener("click", this.startNewGame, false);
     this.game.draw();
     this.ctx.fillStyle = "yellow";
-    this.ctx.fillText(`Loading...`, 250, 300);
+    this.ctx.fillText(`Loading...`, 210, 310);
     this.ctx.fill();
     this.timer = window.setInterval(() => {
       this.game.draw();
       this.ctx.fillStyle = "yellow";
-      this.ctx.fillText(`Starting in  ${this.count}`, 215, 300);
+      this.ctx.fillText(`Starting in ${this.count}`, 180, 310);
       if(this.count === 0){
         window.clearInterval(this.timer);
         this.beginGame();

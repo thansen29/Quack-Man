@@ -18,6 +18,13 @@ audio {
   font-style: normal;
 }
 
+@font-face {
+  font-family: PressStart;
+  src: url('../assets/PressStart.ttf');
+  font-weight: normal;
+  font-style: normal;
+}
+
 
 .body-container {
   display: flex;
