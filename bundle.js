@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -135,75 +135,14 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__movable_object__ = __webpack_require__(9);
-
-
-class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* default */] {
-  constructor(ctx, x, y, width, height){
-    super(ctx, x, y, width, height);
-    this.ctx = ctx;
-    this.x = x;
-    this.y = y;
-    this.width = width - 3;
-    this.height = height - 3;
-    this.loadDucks();
-    this.lastDuck = this.rightDuck;
-    this.direction = [0, 0];
-    this.nextDirection = null;
-    this.speed = 3;
-    this.vulnerable = true;
-  }
-
-
-  draw(direction){
-    if(direction[0] === 1){
-      this.lastDuck = this.rightDuck;
-    } else if(direction[0] === -1){
-      this.lastDuck = this.leftDuck;
-    } else if(direction[1] === 1){
-      this.lastDuck = this.downDuck;
-    } else if(direction[1] === -1){
-      this.lastDuck = this.upDuck;
-    } else {
-      this.lastDuck;
-    }
-
-    this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
-    this.ctx.fill();
-  }
-
-  loadDucks(){
-    this.rightDuck = new Image();
-    this.rightDuck.src = "./assets/rightduck.png";
-
-    this.leftDuck = new Image();
-    this.leftDuck.src = "./assets/leftduck.png";
-
-    this.upDuck = new Image();
-    this.upDuck.src = "./assets/upduck.png";
-
-    this.downDuck = new Image();
-    this.downDuck.src = "./assets/downduck.png";
-
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (QuackMan);
-
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wall__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pill__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__large_pill__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ghost__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__draw_strategy__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__draw_strategy__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_lodash__);
 
 
@@ -721,6 +660,67 @@ class Board {
 
 
 /***/ }),
+/* 3 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__movable_object__ = __webpack_require__(12);
+
+
+class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* default */] {
+  constructor(ctx, x, y, width, height){
+    super(ctx, x, y, width, height);
+    this.ctx = ctx;
+    this.x = x;
+    this.y = y;
+    this.width = width - 3;
+    this.height = height - 3;
+    this.loadDucks();
+    this.lastDuck = this.rightDuck;
+    this.direction = [0, 0];
+    this.nextDirection = null;
+    this.speed = 3;
+    this.vulnerable = true;
+  }
+
+
+  draw(direction){
+    if(direction[0] === 1){
+      this.lastDuck = this.rightDuck;
+    } else if(direction[0] === -1){
+      this.lastDuck = this.leftDuck;
+    } else if(direction[1] === 1){
+      this.lastDuck = this.downDuck;
+    } else if(direction[1] === -1){
+      this.lastDuck = this.upDuck;
+    } else {
+      this.lastDuck;
+    }
+
+    this.ctx.drawImage(this.lastDuck, this.x, this.y, this.width, this.height);
+    this.ctx.fill();
+  }
+
+  loadDucks(){
+    this.rightDuck = new Image();
+    this.rightDuck.src = "./assets/rightduck.png";
+
+    this.leftDuck = new Image();
+    this.leftDuck.src = "./assets/leftduck.png";
+
+    this.upDuck = new Image();
+    this.upDuck.src = "./assets/upduck.png";
+
+    this.downDuck = new Image();
+    this.downDuck.src = "./assets/downduck.png";
+
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (QuackMan);
+
+
+/***/ }),
 /* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -819,104 +819,6 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
 
 /***/ }),
 /* 7 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board_js__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__board_model_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__game_view__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(20);
-
-
-
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const canvasEl = document.getElementById("canvas");
-  canvasEl.width = 600;
-  canvasEl.height = 600;
-
-  const ctx = canvasEl.getContext("2d");
-  ctx.font = "18px PressStart";
-
-  const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */]);
-  const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
-  const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
-  gameView.start();
-
-});
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pill__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__large_pill__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__duck__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blinky__ = __webpack_require__(13);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__inky__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pinky__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__clyde__ = __webpack_require__(16);
-
-
-
-
-
-
-
-
-
-class Util {
-
-  static mazeFactory(ctx, string, x, y, width, height){
-    switch (string) {
-      case "X":
-        return new __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */](ctx, x, y, width, height);
-      case ".":
-        return new __WEBPACK_IMPORTED_MODULE_1__pill__["a" /* default */](ctx, x, y, width, height);
-      case "o":
-        return new __WEBPACK_IMPORTED_MODULE_2__large_pill__["a" /* default */](ctx, x, y, width, height);
-      case "q":
-        return new __WEBPACK_IMPORTED_MODULE_3__duck__["a" /* default */](ctx, x, y, width, height);
-      case "b":
-        return new __WEBPACK_IMPORTED_MODULE_4__blinky__["a" /* default */](ctx, x, y, width, height);
-      case "i":
-        return new __WEBPACK_IMPORTED_MODULE_5__inky__["a" /* default */](ctx, x, y, width, height);
-      case "p":
-        return new __WEBPACK_IMPORTED_MODULE_6__pinky__["a" /* default */](ctx, x, y, width, height);
-      case "c":
-        return new __WEBPACK_IMPORTED_MODULE_7__clyde__["a" /* default */](ctx, x, y, width, height);
-      default:
-    }
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Util);
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(10);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__visible_object__ = __webpack_require__(0);
-
-
-
-class MovableObject extends __WEBPACK_IMPORTED_MODULE_1__visible_object__["a" /* default */] {
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (MovableObject);
-
-
-/***/ }),
-/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -18005,10 +17907,200 @@ class MovableObject extends __WEBPACK_IMPORTED_MODULE_1__visible_object__["a" /*
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11), __webpack_require__(12)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13), __webpack_require__(14)(module)))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+const boardModel =
+`XXXXXXXXXXXXXXXXXXX
+X.................X
+X.X.XXXX.X.XXXXoX.X
+X.X.X  X.X.X  X.X.X
+X.X.XXXX.X.XXXX.X.X
+X.X.o....X......X.X
+X.X.XX.XXXXX.XX.X.X
+X.X.X........XX.X.X
+X...X.XXXX X.XX...X
+XXX.X.XbpicX....XXX
+   .X.XXXXXX.XX.
+XXX.X........XX.XXX
+X.o...XXXXXX.XX...X
+X.XXX.....X.....X.X
+X...X.XXX.X.XXX.X.X
+X.X.X....q....X.X.X
+X.X.X.X.XXX.X.X.X.X
+X.X...X..X..X...o.X
+X.XXXXXX.X.XXXXXX.X
+X.................X
+XXXXXXXXXXXXXXXXXXX`;
+
+/* harmony default export */ __webpack_exports__["a"] = (boardModel);
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board__ = __webpack_require__(2);
+
+
+class Game {
+  constructor(board){
+    this.board = board;
+  }
+
+  draw(){
+    this.board.draw();
+  }
+
+  drawGhosts(){
+    this.board.drawGhosts();
+  }
+
+  moveGhosts(){
+    this.board.moveGhosts();
+  }
+
+  changeDirection(direction){
+    this.board.changeDirection(direction);
+  }
+
+  toggleSound(muted){
+    this.board.toggleSound(muted);
+  }
+
+  gameOver(){
+    return this.board.gameOver();
+  }
+
+  restartGame(){
+    return this.board.restartGame();
+  }
+
+  setDefaultPositions(){
+    this.board.setDefaultPositions();
+  }
+
+  roundOver(){
+    return this.board.roundOver();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Game);
+
+
+/***/ }),
+/* 10 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board_js__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__board_model_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__game_view__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(9);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_fontfaceobserver__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_fontfaceobserver___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_fontfaceobserver__);
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const canvasEl = document.getElementById("canvas");
+  canvasEl.width = 600;
+  canvasEl.height = 600;
+
+  const ctx = canvasEl.getContext("2d");
+  const font = new __WEBPACK_IMPORTED_MODULE_4_fontfaceobserver___default.a('PressStart');
+
+  const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */]);
+  const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
+  const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
+  font.load().then( () => {
+    gameView.start();
+  }, () => {
+    console.log('the font failed to load');
+  });
+  // gameView.start();
+
+});
+
 
 /***/ }),
 /* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pill__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__large_pill__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__duck__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blinky__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__inky__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__pinky__ = __webpack_require__(17);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__clyde__ = __webpack_require__(18);
+
+
+
+
+
+
+
+
+
+class Util {
+
+  static mazeFactory(ctx, string, x, y, width, height){
+    switch (string) {
+      case "X":
+        return new __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */](ctx, x, y, width, height);
+      case ".":
+        return new __WEBPACK_IMPORTED_MODULE_1__pill__["a" /* default */](ctx, x, y, width, height);
+      case "o":
+        return new __WEBPACK_IMPORTED_MODULE_2__large_pill__["a" /* default */](ctx, x, y, width, height);
+      case "q":
+        return new __WEBPACK_IMPORTED_MODULE_3__duck__["a" /* default */](ctx, x, y, width, height);
+      case "b":
+        return new __WEBPACK_IMPORTED_MODULE_4__blinky__["a" /* default */](ctx, x, y, width, height);
+      case "i":
+        return new __WEBPACK_IMPORTED_MODULE_5__inky__["a" /* default */](ctx, x, y, width, height);
+      case "p":
+        return new __WEBPACK_IMPORTED_MODULE_6__pinky__["a" /* default */](ctx, x, y, width, height);
+      case "c":
+        return new __WEBPACK_IMPORTED_MODULE_7__clyde__["a" /* default */](ctx, x, y, width, height);
+      default:
+    }
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Util);
+
+
+/***/ }),
+/* 12 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__visible_object__ = __webpack_require__(0);
+
+
+
+class MovableObject extends __WEBPACK_IMPORTED_MODULE_1__visible_object__["a" /* default */] {
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (MovableObject);
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, exports) {
 
 var g;
@@ -18035,7 +18127,7 @@ module.exports = g;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -18063,7 +18155,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18097,7 +18189,7 @@ class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 /***/ }),
-/* 14 */
+/* 16 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18132,7 +18224,7 @@ class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 /***/ }),
-/* 15 */
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18167,7 +18259,7 @@ class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 /***/ }),
-/* 16 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18202,7 +18294,7 @@ class Clyde extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
 
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18286,45 +18378,14 @@ class DrawStrategy {
 
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-const boardModel =
-`XXXXXXXXXXXXXXXXXXX
-X.................X
-X.X.XXXX.X.XXXXoX.X
-X.X.X  X.X.X  X.X.X
-X.X.XXXX.X.XXXX.X.X
-X.X.o....X......X.X
-X.X.XX.XXXXX.XX.X.X
-X.X.X........XX.X.X
-X...X.XXXX X.XX...X
-XXX.X.XbpicX....XXX
-   .X.XXXXXX.XX.
-XXX.X........XX.XXX
-X.o...XXXXXX.XX...X
-X.XXX.....X.....X.X
-X...X.XXX.X.XXX.X.X
-X.X.X....q....X.X.X
-X.X.X.X.XXX.X.X.X.X
-X.X...X..X..X...o.X
-X.XXXXXX.X.XXXXXX.X
-X.................X
-XXXXXXXXXXXXXXXXXXX`;
-
-/* harmony default export */ __webpack_exports__["a"] = (boardModel);
-
-
-/***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__duck__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__board__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__board_model_js__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__duck__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__board__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__board_model_js__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(9);
 
 
 
@@ -18397,10 +18458,8 @@ class GameView {
     this.bindSoundHandler();
     this.game.draw();
     this.ctx.fillStyle = "yellow";
-    this.ctx.font = "22px PressStart";
-    console.log(this.ctx.font);
-    this.ctx.fillText("Click anywhere to begin the game", 150, 300);
     this.ctx.font = "18px PressStart";
+    this.ctx.fillText("Click anywhere to begin the game", 10, 300);
     this.bindClickHandler();
   }
 
@@ -18520,56 +18579,17 @@ class GameView {
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board__ = __webpack_require__(3);
-
-
-class Game {
-  constructor(board){
-    this.board = board;
-  }
-
-  draw(){
-    this.board.draw();
-  }
-
-  drawGhosts(){
-    this.board.drawGhosts();
-  }
-
-  moveGhosts(){
-    this.board.moveGhosts();
-  }
-
-  changeDirection(direction){
-    this.board.changeDirection(direction);
-  }
-
-  toggleSound(muted){
-    this.board.toggleSound(muted);
-  }
-
-  gameOver(){
-    return this.board.gameOver();
-  }
-
-  restartGame(){
-    return this.board.restartGame();
-  }
-
-  setDefaultPositions(){
-    this.board.setDefaultPositions();
-  }
-
-  roundOver(){
-    return this.board.roundOver();
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Game);
+/* Font Face Observer v2.0.13 - © Bram Stein. License: BSD-3-Clause */(function(){function l(a,b){document.addEventListener?a.addEventListener("scroll",b,!1):a.attachEvent("scroll",b)}function m(a){document.body?a():document.addEventListener?document.addEventListener("DOMContentLoaded",function c(){document.removeEventListener("DOMContentLoaded",c);a()}):document.attachEvent("onreadystatechange",function k(){if("interactive"==document.readyState||"complete"==document.readyState)document.detachEvent("onreadystatechange",k),a()})};function r(a){this.a=document.createElement("div");this.a.setAttribute("aria-hidden","true");this.a.appendChild(document.createTextNode(a));this.b=document.createElement("span");this.c=document.createElement("span");this.h=document.createElement("span");this.f=document.createElement("span");this.g=-1;this.b.style.cssText="max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";this.c.style.cssText="max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";
+this.f.style.cssText="max-width:none;display:inline-block;position:absolute;height:100%;width:100%;overflow:scroll;font-size:16px;";this.h.style.cssText="display:inline-block;width:200%;height:200%;font-size:16px;max-width:none;";this.b.appendChild(this.h);this.c.appendChild(this.f);this.a.appendChild(this.b);this.a.appendChild(this.c)}
+function t(a,b){a.a.style.cssText="max-width:none;min-width:20px;min-height:20px;display:inline-block;overflow:hidden;position:absolute;width:auto;margin:0;padding:0;top:-999px;white-space:nowrap;font-synthesis:none;font:"+b+";"}function y(a){var b=a.a.offsetWidth,c=b+100;a.f.style.width=c+"px";a.c.scrollLeft=c;a.b.scrollLeft=a.b.scrollWidth+100;return a.g!==b?(a.g=b,!0):!1}function z(a,b){function c(){var a=k;y(a)&&a.a.parentNode&&b(a.g)}var k=a;l(a.b,c);l(a.c,c);y(a)};function A(a,b){var c=b||{};this.family=a;this.style=c.style||"normal";this.weight=c.weight||"normal";this.stretch=c.stretch||"normal"}var B=null,C=null,E=null,F=null;function G(){if(null===C)if(J()&&/Apple/.test(window.navigator.vendor)){var a=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))(?:\.([0-9]+))/.exec(window.navigator.userAgent);C=!!a&&603>parseInt(a[1],10)}else C=!1;return C}function J(){null===F&&(F=!!document.fonts);return F}
+function K(){if(null===E){var a=document.createElement("div");try{a.style.font="condensed 100px sans-serif"}catch(b){}E=""!==a.style.font}return E}function L(a,b){return[a.style,a.weight,K()?a.stretch:"","100px",b].join(" ")}
+A.prototype.load=function(a,b){var c=this,k=a||"BESbswy",q=0,D=b||3E3,H=(new Date).getTime();return new Promise(function(a,b){if(J()&&!G()){var M=new Promise(function(a,b){function e(){(new Date).getTime()-H>=D?b():document.fonts.load(L(c,'"'+c.family+'"'),k).then(function(c){1<=c.length?a():setTimeout(e,25)},function(){b()})}e()}),N=new Promise(function(a,c){q=setTimeout(c,D)});Promise.race([N,M]).then(function(){clearTimeout(q);a(c)},function(){b(c)})}else m(function(){function u(){var b;if(b=-1!=
+f&&-1!=g||-1!=f&&-1!=h||-1!=g&&-1!=h)(b=f!=g&&f!=h&&g!=h)||(null===B&&(b=/AppleWebKit\/([0-9]+)(?:\.([0-9]+))/.exec(window.navigator.userAgent),B=!!b&&(536>parseInt(b[1],10)||536===parseInt(b[1],10)&&11>=parseInt(b[2],10))),b=B&&(f==v&&g==v&&h==v||f==w&&g==w&&h==w||f==x&&g==x&&h==x)),b=!b;b&&(d.parentNode&&d.parentNode.removeChild(d),clearTimeout(q),a(c))}function I(){if((new Date).getTime()-H>=D)d.parentNode&&d.parentNode.removeChild(d),b(c);else{var a=document.hidden;if(!0===a||void 0===a)f=e.a.offsetWidth,
+g=n.a.offsetWidth,h=p.a.offsetWidth,u();q=setTimeout(I,50)}}var e=new r(k),n=new r(k),p=new r(k),f=-1,g=-1,h=-1,v=-1,w=-1,x=-1,d=document.createElement("div");d.dir="ltr";t(e,L(c,"sans-serif"));t(n,L(c,"serif"));t(p,L(c,"monospace"));d.appendChild(e.a);d.appendChild(n.a);d.appendChild(p.a);document.body.appendChild(d);v=e.a.offsetWidth;w=n.a.offsetWidth;x=p.a.offsetWidth;I();z(e,function(a){f=a;u()});t(e,L(c,'"'+c.family+'",sans-serif'));z(n,function(a){g=a;u()});t(n,L(c,'"'+c.family+'",serif'));
+z(p,function(a){h=a;u()});t(p,L(c,'"'+c.family+'",monospace'))})})}; true?module.exports=A:(window.FontFaceObserver=A,window.FontFaceObserver.prototype.load=A.prototype.load);}());
 
 
 /***/ })
