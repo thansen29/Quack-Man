@@ -174,6 +174,7 @@ class Board {
     this.initQuack = initQuack;
     this.dead = false;
     this.intro = document.getElementById('intro');
+    this.getPoints = false;
   }
 
   draw(){
@@ -512,14 +513,24 @@ class Board {
       intro.play();
     }
     if(ghost.vulnerable){
+      this.getPoints = true;
+      window.setTimeout(() => {
+        this.getPoints = false;
+      }, 200);
       this.score += 200;
       ghost.eaten = true;
+      this.ctx.font = '12px PressStart';
+      this.ctx.fillText("200", this.quackMan.x, this.quackMan.y - 5);
       window.setTimeout(() => {
         ghost.eaten = false;
       }, 2000);
       ghost.vulnerable = false;
 
     }
+  }
+
+  getPoints(){
+    return this.getPoints;
   }
 
   showStats(){
@@ -17988,6 +17999,10 @@ class Game {
   roundOver(){
     return this.board.roundOver();
   }
+
+  getPoints(){
+    return this.board.getPoints;
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -18486,6 +18501,12 @@ class GameView {
           this.startNewRound();
         } else if(this.game.roundOver()){
           this.startNewRound();
+        } else if(this.game.getPoints()){
+            this.paused = true;
+            window.setTimeout(() => {
+              this.paused = false;
+              requestAnimationFrame(this.animate.bind(this));
+            }, 200);
         } else {
           this.game.draw();
           this.game.moveGhosts();
@@ -18497,6 +18518,7 @@ class GameView {
   }
 
   gameOver(){
+    this.ctx.font = "18px PressStart";
     this.ctx.fillStyle = "yellow";
     this.ctx.fillText(`Game Over`, 220, 300);
     this.ctx.fill();
@@ -18508,11 +18530,13 @@ class GameView {
   }
 
   startNewRound(){
+    this.ctx.font = "18px PressStart";
     this.game.setDefaultPositions();
     this.countdown();
   }
 
   startNewGame(){
+    this.ctx.font = "18px PressStart";
     const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */]);
     const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
     const gameView = new GameView(this.ctx, game);
