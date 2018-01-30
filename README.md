@@ -1,7 +1,7 @@
 # Quack-Man
 Quack-man is a remake of the original Pac-Man, a game that hardly needs any introduction.
 
-![Play Quack-Man](http://www.tomhansen.io/Quack-Man/)
+[Play Quack-Man](http://www.tomhansen.io/Quack-Man/)
 
 # Instructions
 
