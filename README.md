@@ -6,6 +6,8 @@ Quack-man is a remake of the original Pac-Man, a game that hardly needs any intr
 ## Gameplay
 Much like the original Pac-Man, Quack-Man's aim is simple, collect the orbs to increase your points, and avoid the ghosts! Except when you eat a larger orb, then the ghosts become vulnerable and delicious.
 
+![](https://preview.ibb.co/iFWgKR/quackman.png)
+
 ## Controls
 - Click anywhere to begin the game
 - Use arrow keys to change directions
@@ -80,3 +82,8 @@ collidesWith(object) {
 ```
 ## Movement
 Paired in with the collision algorithm, much more work needed to be done to achieve smooth, reliable navigation. Direction changes needed to be queued up for when the move is available, as well as not actually changing directions until fully in the next grid square. This prevents any snapping to locations or glitchy movement.
+
+# Future Plans
+- Set up Firebase to allow users to add initials and keep track/persist high scores.
+- New levels
+- Enhance intelligence of ghost movement to actively hunt the quack man.
