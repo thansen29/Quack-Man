@@ -1,35 +1,82 @@
-# Background
+# Quack-Man
 Quack-man is a remake of the original Pac-Man, a game that hardly needs any introduction.
 
-# Functionality & MVP
-Quack-Man's aim is simple, collect the orbs to increase your points, and avoid the ghosts! Except when you eat a larger blinking orb, then you can eat the ghosts!
-In this Quack-Man game, users will be able to:
-- [ ] Start the game, toggle the sound
-- [ ] Smoothly navigate the level
-- [ ] Collect orbs while traversing over them, removing them from view
-- [ ] Keep track of points, adding them to a total
-- [ ] Die when touching a ghost, but eat the ghost after toggling their eatable attribute
-- [ ] Complete a level, generating the next level
+# Instructions
+
+## Gameplay
+Much like the original Pac-Man, Quack-Man's aim is simple, collect the orbs to increase your points, and avoid the ghosts! Except when you eat a larger orb, then the ghosts become vulnerable and delicious.
+
+## Controls
+- Click anywhere to begin the game
+- Use arrow keys to change directions
+- Press "S" to toggle the audio
+
 
 # Technlogies
-Vanilla JavaScript, HTML5, CSS3, Canvas
+Vanilla JavaScript, HTML5 Canvas, HTML5, CSS3
 
-# Wireframes
-![](https://image.ibb.co/kAtA6m/Screen_Shot_2018_01_17_at_9_59_55_AM.png)
+# Features and Implementation
+## Maze generator
+The maze is generated dynamically, using a function to read from a text file and populate the maze based on the given string. This offers an option for easy maze customization. Future plans are to have a series of levels ready for when the player passes a level.
+```
+const boardModel =
+`XXXXXXXXXXXXXXXXXXX
+X.................X
+X.X.XXXX.X.XXXXoX.X
+X.X.X  X.X.X  X.X.X
+X.X.XXXX.X.XXXX.X.X
+X.X.o....X......X.X
+X.X.XX.XXXXX.XX.X.X
+X.X.X........XX.X.X
+X...X.XXXX X.XX...X
+XXX.X.XbpicX....XXX
+   .X.XXXXXX.XX.
+XXX.X........XX.XXX
+X.o...XXXXXX.XX...X
+X.XXX.....X.....X.X
+X...X.XXX.X.XXX.X.X
+X.X.X....q....X.X.X
+X.X.X.X.XXX.X.X.X.X
+X.X...X..X..X...o.X
+X.XXXXXX.X.XXXXXX.X
+X.................X
+XXXXXXXXXXXXXXXXXXX`;
 
+const item = Util.mazeFactory(ctx, cell, x, y, squareWidth, squareHeight);
+switch (cell) {
+  case ".":
+  case "o":
+    dots.push(item);
+    break;
+  case "q":
+    quackMan = item;
+    initQuack = {x, y};
+    break;
+  case "b":
+  case "i":
+  case "p":
+  case "c":
+    ghosts.push(item);
+    defaultPositions.push({x, y});
+    break;
+  default:
+    return item;
+}
+return null;
+});
+});
 
-# Timeline
-### Day 1
-- [ ] Game board built and styled on screen
-- [ ] Directions, title, links to personal pages
-- [ ] Begin basic project file structure and groundwork
+```
 
-### Day 2
-- [ ] Walls to maze built and styled properly
-- [ ] Quack-Man traverses the maze as he's supposed to
-- [ ] Render orbs on screen, eat and increment score.
-
-### Day 3
-- [ ] Ghost traversal of the maze is unique to each color
-- [ ] Functionality to toggle ghosts' eatability, touching them then destroys them
-- [ ] Finishing the level moves on to the next level
+## Collision
+One of the most important features of Quack-Man is collision detection. When the quack man touches a wall, a ghost, or an orb, the game needs to know. This simple yet elegant solution solves the problem for us:
+```  
+collidesWith(object) {
+    return (this.x < (object.x + object.width) &&
+         object.x < (this.x + this.width) &&
+         this.y < (object.y + object.height) &&
+         object.y < (this.y + this.height));
+  }
+```
+## Movement
+Paired in with the collision algorithm, much more work needed to be done to achieve smooth, reliable navigation. Direction changes needed to be queued up for when the move is available, as well as not actually changing directions until fully in the next grid square. This prevents any snapping to locations or glitchy movement.

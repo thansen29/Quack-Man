@@ -18183,7 +18183,7 @@ class Blinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/blinky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
-      this.speed = 1.5;
+      this.speed = 1.25;
     } else {
       if(this.eaten){
         this.speed = 3;
@@ -18218,7 +18218,7 @@ class Inky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/inky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
-      this.speed = 1.5;
+      this.speed = 1.25;
     } else {
       if(this.eaten){
         this.speed = 3;
@@ -18253,7 +18253,7 @@ class Pinky extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/pinky.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
-      this.speed = 1.5;
+      this.speed = 1.25;
     } else {
         if(this.eaten){
           this.speed = 3;
@@ -18288,7 +18288,7 @@ class Clyde extends __WEBPACK_IMPORTED_MODULE_0__ghost__["a" /* default */] {
       const ghostImg = new Image();
       ghostImg.src = `./assets/clyde.png`;
       this.ctx.drawImage(ghostImg, this.x, this.y, this.width, this.height);
-      this.speed = 1.5;
+      this.speed = 1.25;
     } else {
       if(this.eaten){
         this.speed = 3;
