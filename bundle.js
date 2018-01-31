@@ -32629,8 +32629,10 @@ class GameView {
 
   startNewRound(){
     this.ctx.font = "18px PressStart";
-    this.game.setDefaultPositions();
-    this.countdown();
+    window.setTimeout(() => {
+      this.game.setDefaultPositions();
+      this.countdown();
+    }, 500);
   }
 
   startNewGame(){
