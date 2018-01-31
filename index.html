@@ -7,6 +7,8 @@
 
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
     <link rel="stylesheet" href="./styles/main.css">
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+
     <script type="application/javascript" src="bundle.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js" charset="utf-8"></script>
 
@@ -27,6 +29,14 @@
           <li>Press Space to pause</li>
         </ul>
 
+        <div class="name-container">
+          <h2>Please input your initials</h2>
+          <div>
+            *tip press tab to focus instead of clicking*
+          </div>
+          <input tabIndex="1" class="name-input" type="text" value="" maxlength="3">
+        </div>
+
         <div class="game-board">
           <canvas id="canvas">
           </canvas>
@@ -38,18 +48,31 @@
         </div>
 
         <ul class="list">
-          <li>Contact</li>
-          <li>
-            <a href="https://github.com/thansen29/Quack-Man">Git</a>
-          </li>
-          <li>
-            <a href="https://www.linkedin.com/in/thomas-hansen-1a0a51132/">LinkedIn</a>
-          </li>
-          <li>
-            <a href="http://www.tomhansen.io/">Website</a>
-          </li>
+          <li>High Scores</li>
+          <li>score2</li>
+          <li>score3</li>
+          <li>score4</li>
         </ul>
+
+        <!-- put high scores -->
       </section>
+      <ul class="links">
+        <li>
+          <a href="http://github.com/thansen29/">
+            <i class="fa fa-github link-fa" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li>
+          <a href="http://www.linkedin.com/in/thomas-hansen-1a0a51132/">
+            <i class="fa fa-linkedin-square link-fa" aria-hidden="true"></i>
+          </a>
+        </li>
+        <li>
+          <a href="http://www.tomhansen.io">
+            <img class="www" src="./assets/www.png" alt="">
+          </a>
+        </li>
+      </ul>
 
     </section>
 

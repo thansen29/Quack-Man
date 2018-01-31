@@ -1,15 +1,3 @@
-audio {
-  display: none;
-}
-
-.body {
-  background: black;
-  color: #3e1a5c;
-}
-
-.duck {
-  display: none;
-}
 
 @font-face {
   font-family: CrackMan;
@@ -23,6 +11,48 @@ audio {
   src: url('../assets/PressStart.ttf');
   font-weight: normal;
   font-style: normal;
+}
+
+.name-container {
+  margin-top: 13%;
+  width: 600px;
+  height: 150px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: indigo;
+  position: absolute;
+  z-index: 5;
+}
+
+.name-container h2 {
+  color: black;
+}
+.name-container div {
+  color: black;
+}
+
+.name-input {
+  background: white;
+  font-family: PressStart;
+  color: indigo;
+  padding: 10px;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+audio {
+  display: none;
+}
+
+.body {
+  background: black;
+  color: #3e1a5c;
+}
+
+.duck {
+  display: none;
 }
 
 
@@ -68,8 +98,8 @@ audio {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 175px;
-  height: 250px;
+  width: 200px;
+  height: 620px;
   padding: 10px;
   border: 3px solid #3e1a5c;
   margin: 0 40px;
@@ -77,16 +107,16 @@ audio {
 
 .list li {
   text-align: center;
-  padding-top: 10px;
+  /* padding-top: 10px; */
 }
 
 .list li:first-of-type {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 700;
 }
 
 .list li:nth-of-type(1n) {
-  padding-top: 25px;
+  padding-top: 65px;
 }
 
 .list a {
@@ -102,6 +132,7 @@ audio {
   width: 600px;
   height: 640px;
   border: 3px solid #3e1a5c;
+  position: relative;
 }
 
 .stats {
@@ -112,11 +143,25 @@ audio {
   font-size: 20px;
 }
 
-/* .intro {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 18px;
-  position: absolute;
-  top: 57%;
-  left: 25%;
-  color: yellow;
-} */
+.links {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.links li {
+  padding: 10px;
+}
+
+.fa:before {
+  /* font: normal normal normal 50px/1 FontAwesome; */
+  font-size: 50px;
+  color: #3e1a5c;
+
+}
+
+.www {
+  width: 60px;
+  height: 60px;
+  margin-top: -5px;
+}

@@ -88,4 +88,5 @@ Paired in with the collision algorithm, much more work needed to be done to achi
 # Future Plans
 - Set up Firebase to allow users to add initials and keep track/persist high scores.
 - New levels
+- Add breadth-first pathfinding so ghosts return to home base after being eaten
 - Enhance intelligence of ghost movement to actively hunt the quack man.
