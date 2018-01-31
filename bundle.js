@@ -32437,6 +32437,9 @@ class DrawStrategy {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__board_model_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__database__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_lodash__);
+
 
 
 
@@ -32458,11 +32461,8 @@ class GameView {
     this.paused = false;
     this.preGame = true;
     this.lastDir = [0, 0];
-    // this.details = details;
+    this.highscores = [];
   }
-
-  //get score
-  //
 
   bindMoveHandler(){
     window.addEventListener("keydown", this.moveSprite, false);
@@ -32516,6 +32516,7 @@ class GameView {
     this.ctx.font = "18px PressStart";
     this.ctx.fillText("Click anywhere to begin the game", 10, 300);
     this.bindClickHandler();
+    this.fetchScores();
   }
 
   beginGame(){
@@ -32568,6 +32569,46 @@ class GameView {
     container.attr('style', "display: flex");
   }
 
+  fetchScores(){
+    let scoreResults = __WEBPACK_IMPORTED_MODULE_4__database__["a" /* default */].ref("scores");
+    const highscores = [];
+    scoreResults.on('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot) {
+        this.highscores.push(childSnapshot.val());
+      }.bind(this));
+    }).bind(this);
+
+    const delay = (() => setTimeout( this.sortScores.bind(this), 1000));
+    delay();
+  }
+
+  sortScores(){
+    const scores = [];
+    this.highscores.forEach((highscore) => {
+      scores.push(__WEBPACK_IMPORTED_MODULE_5_lodash___default.a.values(highscore));
+    });
+    scores.sort((function(index){
+        return function(a, b){
+            return (a[index] === b[index] ? 0 : (a[index] > b[index] ? -1 : 1));
+        };
+    })(1));
+    this.displayScores(scores);
+  }
+
+  displayScores(scores){
+    const list = $('.highscores');
+    let initials;
+    let points;
+    const highscores = scores.slice(0, 5);
+    highscores.forEach((score) => {
+      initials = score[0].toUpperCase();
+      points = score[1];
+      const li = $('<li>');
+      li.append(`${initials}: ${points}`);
+      list.append(li);
+    });
+  }
+
   addScore(e){
     if(e.keyCode === 13){
       const score = this.game.getScore();
@@ -32578,12 +32619,12 @@ class GameView {
       });
       const container = $('.name-container');
       container.attr('style', "display: none");
+      this.ctx.fillText("Click anywhere for a new game", 30, 340);
+      this.ctx.fill();
+      window.addEventListener("click", this.startNewGame, false);
+
+      window.removeEventListener("keypress", this.addScore, false);
     }
-    this.ctx.fillText("Click anywhere for a new game", 30, 340);
-    this.ctx.fill();
-    window.addEventListener("click", this.startNewGame, false);
-    
-    window.removeEventListener("keypress", this.addScore, false);
   }
 
   startNewRound(){
@@ -32597,6 +32638,7 @@ class GameView {
     const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */]);
     const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
     const gameView = new GameView(this.ctx, game);
+    $('.highscores li').remove();
     gameView.start();
   }
 

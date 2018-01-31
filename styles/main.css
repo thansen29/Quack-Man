@@ -16,14 +16,14 @@
 .name-container {
   margin-top: 13%;
   width: 600px;
-  height: 150px;
+  height: 180px;
   display: none;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
   background: indigo;
   position: absolute;
   z-index: 5;
+  border: 3px solid black;
 }
 
 .name-container h2 {
@@ -40,6 +40,7 @@
   padding: 10px;
   font-size: 20px;
   text-transform: uppercase;
+  text-align: center;
 }
 
 audio {
@@ -94,11 +95,11 @@ audio {
 .list {
   list-style: none;
   font-family: 'Press Start 2P', cursive;
-  font-size: 12px;
+  font-size: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 200px;
+  width: 240px;
   height: 620px;
   padding: 10px;
   border: 3px solid #3e1a5c;
@@ -107,12 +108,17 @@ audio {
 
 .list li {
   text-align: center;
-  /* padding-top: 10px; */
 }
 
-.list li:first-of-type {
-  font-size: 18px;
+.list div {
+  font-size: 20px;
   font-weight: 700;
+  padding-top: 65px;
+}
+.list li:first-of-type {
+  font-size: 20px;
+  font-weight: 700;
+  padding-top: 65px;
 }
 
 .list li:nth-of-type(1n) {
