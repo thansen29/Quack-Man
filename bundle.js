@@ -5437,6 +5437,7 @@ class Board {
     this.dead = false;
     this.intro = document.getElementById('intro');
     this.getPoints = false;
+    this.newLevel = false;
   }
 
   draw(){
@@ -24876,6 +24877,7 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
 
 "use strict";
 const boardModel =
+[
 `XXXXXXXXXXXXXXXXXXX
 X.................X
 X.X.XXXX.X.XXXXoX.X
@@ -24896,7 +24898,28 @@ X.X.X.X.XXX.X.X.X.X
 X.X...X..X..X...o.X
 X.XXXXXX.X.XXXXXX.X
 X.................X
-XXXXXXXXXXXXXXXXXXX`;
+XXXXXXXXXXXXXXXXXXX`,
+`XXXXXXXXXXXXXXXXXXXX
+X..................X
+X.XXX.XXXX.XXX.XXX.X
+X...X.X  X.X X.X...X
+XXX.X.XXXX.XXX.X.XXX
+   .......q......
+XXX.XXXX.XX.XXXX.XXX
+X...X  X.XX.X  X...X
+X.X.X  X.XX.XXXX.X.X
+X.X.XXXX.XX.XX...X.X
+X.X............X.X.X
+X.X.X.X.XXXX X.X.X.X
+X...X.X.XbpicX.X...X
+XXX.X.X.XXXXXX.X.XXX
+   .X............
+XXX.X.XX.XXX.XXX.XXX
+X.....XX.X X.......X
+X.XXXXXX.XXXXXX.XX.X
+X..................X
+XXXXXXXXXXXXXXXXXXXX`
+];
 
 /* harmony default export */ __webpack_exports__["a"] = (boardModel);
 
@@ -24910,8 +24933,11 @@ XXXXXXXXXXXXXXXXXXX`;
 
 
 class Game {
-  constructor(board){
+  constructor(board, score, lives, level){
     this.board = board;
+    this.score = score;
+    this.lives = lives;
+    this.level = level;
   }
 
   draw(){
@@ -24950,13 +24976,34 @@ class Game {
     return this.board.roundOver();
   }
 
+  getPoints(){
+    return this.board.getPoints;
+  }
+
   getScore(){
     return this.board.score;
   }
 
-  getPoints(){
-    return this.board.getPoints;
+  getLevel(){
+    return this.board.level;
   }
+
+  getLives(){
+    return this.board.lives;
+  }
+
+  setLevel(level){
+    this.board.level = level;
+  }
+
+  setLives(lives){
+    this.board.lives = lives;
+  }
+
+  setScore(score){
+    this.board.score = score;
+  }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Game);
@@ -32096,8 +32143,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const ctx = canvasEl.getContext("2d");
   const font = new __WEBPACK_IMPORTED_MODULE_4_fontfaceobserver___default.a('PressStart');
-
-  const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */]);
+  const model = __WEBPACK_IMPORTED_MODULE_1__board_model_js__["a" /* default */][0];
+  const board = __WEBPACK_IMPORTED_MODULE_0__board_js__["a" /* default */].fromString(ctx, model);
   const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
   const gameView = new __WEBPACK_IMPORTED_MODULE_2__game_view__["a" /* default */](ctx, game);
   font.load().then( () => {
@@ -32520,6 +32567,16 @@ class GameView {
   }
 
   beginGame(){
+    // debugger
+    // if(this.game.lives){
+    //   let newLives = this.game.lives;
+    //   let newScore = this.game.score;
+    //   let newLevel = this.game.level + 1;
+    //   this.game.setLives(newLives);
+    //   this.game.setScore(newScore);
+    //   this.game.setLevel(newLevel);
+    // }
+    // debugger
     window.removeEventListener("click", this.beginGame, false);
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
@@ -32541,7 +32598,7 @@ class GameView {
           window.removeEventListener("keydown", this.moveSprite, false);
           this.startNewRound();
         } else if(this.game.roundOver()){
-          this.startNewRound();
+          this.startNewLevel();
         } else if(this.game.getPoints()){
             this.paused = true;
             window.setTimeout(() => {
@@ -32559,6 +32616,7 @@ class GameView {
   }
 
   gameOver(){
+    window.removeEventListener("click", this.startNewGame, false);
     this.ctx.font = "18px PressStart";
     this.ctx.fillStyle = "yellow";
     this.ctx.fillText(`Game Over`, 220, 300);
@@ -32635,9 +32693,27 @@ class GameView {
     }, 500);
   }
 
+  startNewLevel(){
+    this.ctx.font = "18px PressStart";
+    let level = this.game.getLevel() - 1;
+    const model = __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */][level];
+    const lives = this.game.getLives();
+    const score = this.game.getScore();
+    const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, model);
+    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, level);
+    const gameView = new GameView(this.ctx, game);
+    gameView.countdown();
+    let newLives = game.lives;
+    let newScore = game.score;
+    let newLevel = game.level + 1;
+    this.game.setLives(newLives);
+    this.game.setScore(newScore);
+    this.game.setLevel(newLevel);
+  }
+
   startNewGame(){
     this.ctx.font = "18px PressStart";
-    const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */]);
+    const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */][0]);
     const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board);
     const gameView = new GameView(this.ctx, game);
     $('.highscores li').remove();
@@ -32645,6 +32721,14 @@ class GameView {
   }
 
   countdown(){
+    if(this.game.lives){
+      let newLives = this.game.lives;
+      let newScore = this.game.score;
+      let newLevel = this.game.level + 1;
+      this.game.setLives(newLives);
+      this.game.setScore(newScore);
+      this.game.setLevel(newLevel);
+    }
     this.count = 4;
     window.removeEventListener("click", this.countdown, false);
     window.removeEventListener("click", this.startNewGame, false);
