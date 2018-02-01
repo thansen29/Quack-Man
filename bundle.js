@@ -32720,6 +32720,7 @@ class GameView {
   startNewLevel(){
     this.ctx.font = "18px PressStart";
     let level = this.game.getLevel() - 1;
+    const boardLevel = this.game.getLevel();
     if(level >= 3){
       level = 0;
     }
@@ -32727,7 +32728,7 @@ class GameView {
     const lives = this.game.getLives();
     const score = this.game.getScore();
     const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, model);
-    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, level+1);
+    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, boardLevel);
     const gameView = new GameView(this.ctx, game);
     gameView.countdown();
   }
