@@ -32615,14 +32615,18 @@ class GameView {
     if(!this.paused){
       const timeDelta = time - this.lastTime;
       if(this.game.gameOver()){
+        this.game.draw();
         this.gameOver();
       } else {
         if(this.game.restartGame()){
           window.removeEventListener("keydown", this.moveSprite, false);
+          this.game.draw();
           this.startNewRound();
         } else if(this.game.roundOver()){
+          this.game.draw();
           this.startNewLevel();
         } else if(this.game.getPoints()){
+            this.game.draw();
             this.paused = true;
             window.setTimeout(() => {
               this.paused = false;
@@ -32721,7 +32725,7 @@ class GameView {
     this.ctx.font = "18px PressStart";
     let level = this.game.getLevel() - 1;
     const boardLevel = this.game.getLevel();
-    if(level >= 3){
+    if(level >= 2){
       level = 0;
     }
     const model = __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */][level];
