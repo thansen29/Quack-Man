@@ -25032,8 +25032,10 @@ class Game {
     this.board.score = score;
   }
 
-  updateLives(){
+  updateStats(){
     this.lives = this.board.lives;
+    this.score = this.board.score;
+    this.level = this.board.level;
   }
 
 }
@@ -32708,7 +32710,7 @@ class GameView {
 
   startNewRound(){
     this.ctx.font = "18px PressStart";
-    this.game.updateLives();
+    this.game.updateStats();
     window.setTimeout(() => {
       this.game.setDefaultPositions();
       this.countdown();
@@ -32725,14 +32727,8 @@ class GameView {
     const lives = this.game.getLives();
     const score = this.game.getScore();
     const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, model);
-    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, level);
+    const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, level+1);
     const gameView = new GameView(this.ctx, game);
-    // let newLives = game.lives;
-    // let newScore = game.score;
-    // let newLevel = game.level + 1;
-    // this.game.setLives(newLives);
-    // this.game.setScore(newScore);
-    // this.game.setLevel(newLevel);
     gameView.countdown();
   }
 
@@ -32749,7 +32745,7 @@ class GameView {
     if(this.game.lives){
       let newLives = this.game.lives;
       let newScore = this.game.score;
-      let newLevel = this.game.level + 1;
+      let newLevel = this.game.level;
       this.game.setLives(newLives);
       this.game.setScore(newScore);
       this.game.setLevel(newLevel);
