@@ -5518,7 +5518,7 @@ class Board {
         this.getRandomDirection(ghost);
       }
 
-      this.wrap(ghost, ghost.x);
+      this.wrap(ghost, ghost.x, ghost.y);
       this.ghostCollision(ghost);
       ghost.draw();
     });
@@ -5580,7 +5580,7 @@ class Board {
       this.quackMan.direction = [0, 0];
     }
 
-    this.wrap(this.quackMan, this.quackMan.x);
+    this.wrap(this.quackMan, this.quackMan.x, this.quackMan.y);
     this.quackMan.draw(this.quackMan.direction);
     this.eatPill();
     this.showStats();
@@ -5725,11 +5725,15 @@ class Board {
     };
   }
 
-  wrap(object, x){
+  wrap(object, x, y){
     if(x >= 600){
       object.x = 0;
     } else if(x <= 0){
       object.x = 600;
+    } else if (y >= 600){
+      object.y = 0;
+    } else if( y <= 0){
+      object.y = 600;
     }
   }
 
@@ -24902,7 +24906,7 @@ XXXXXXXXXXXXXXXXXXX`,
 `XXXXXXXXXXXXXXXXXXXX
 X..................X
 X.XXX.XXXX.XXX.XXX.X
-X...X.X  X.X X.X...X
+X.o.X.X  X.X X.X.o.X
 XXX.X.XXXX.XXX.X.XXX
    .......q......
 XXX.XXXX.XX.XXXX.XXX
@@ -24913,12 +24917,36 @@ X.X............X.X.X
 X.X.X.X.XXXX X.X.X.X
 X...X.X.XbpicX.X...X
 XXX.X.X.XXXXXX.X.XXX
-   .X............
+   .X.o..........
 XXX.X.XX.XXX.XXX.XXX
-X.....XX.X X.......X
+X.....XX.X X....o..X
 X.XXXXXX.XXXXXX.XX.X
 X..................X
-XXXXXXXXXXXXXXXXXXXX`
+XXXXXXXXXXXXXXXXXXXX`,
+
+`XXXXXXXXXXXXXXXXXXXX
+X..................X
+X.XXXXXXX XXXXXXXX.X
+ ...............o..
+X.XXXXXX.XX.XXX.XX.X
+X.XbpicX.XX.X X....X
+X.XXXX X.XX.X X.XX.X
+X...o....XX.XXX.XX.X
+X.XXXX.X........XX.X
+X.X  X.X.XXX.XXXXX.X
+ .X  X.X........XX.
+X.XXXX.XX XXXXX....X
+X........o..XXX.XX.X
+X.XXX.XXXXX.....XX.X
+X.XXX.X X X.XXXXXX.X
+X..q..X X X.....XX.X
+X.X.X.XXXXX.XXX.XX.X
+ .X.X.......X...o..
+X.X.XXXXX.XXX.XXXX.X
+X.X.XXXXX.XXX.XXXX.X
+X..................X
+XXXXXXXXXXXXXXXXXXXX
+`
 ];
 
 /* harmony default export */ __webpack_exports__["a"] = (boardModel);
@@ -25002,6 +25030,10 @@ class Game {
 
   setScore(score){
     this.board.score = score;
+  }
+
+  updateLives(){
+    this.lives = this.board.lives;
   }
 
 }
@@ -32524,7 +32556,6 @@ class GameView {
   }
 
   moveSprite(e){
-    //r is 82
     switch (e.keyCode) {
       case 40:
         this.lastDir = [0, 1];
@@ -32567,16 +32598,6 @@ class GameView {
   }
 
   beginGame(){
-    // debugger
-    // if(this.game.lives){
-    //   let newLives = this.game.lives;
-    //   let newScore = this.game.score;
-    //   let newLevel = this.game.level + 1;
-    //   this.game.setLives(newLives);
-    //   this.game.setScore(newScore);
-    //   this.game.setLevel(newLevel);
-    // }
-    // debugger
     window.removeEventListener("click", this.beginGame, false);
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
@@ -32687,6 +32708,7 @@ class GameView {
 
   startNewRound(){
     this.ctx.font = "18px PressStart";
+    this.game.updateLives();
     window.setTimeout(() => {
       this.game.setDefaultPositions();
       this.countdown();
@@ -32696,19 +32718,22 @@ class GameView {
   startNewLevel(){
     this.ctx.font = "18px PressStart";
     let level = this.game.getLevel() - 1;
+    if(level >= 3){
+      level = 0;
+    }
     const model = __WEBPACK_IMPORTED_MODULE_2__board_model_js__["a" /* default */][level];
     const lives = this.game.getLives();
     const score = this.game.getScore();
     const board = __WEBPACK_IMPORTED_MODULE_1__board__["a" /* default */].fromString(this.ctx, model);
     const game = new __WEBPACK_IMPORTED_MODULE_3__game__["a" /* default */](board, score, lives, level);
     const gameView = new GameView(this.ctx, game);
+    // let newLives = game.lives;
+    // let newScore = game.score;
+    // let newLevel = game.level + 1;
+    // this.game.setLives(newLives);
+    // this.game.setScore(newScore);
+    // this.game.setLevel(newLevel);
     gameView.countdown();
-    let newLives = game.lives;
-    let newScore = game.score;
-    let newLevel = game.level + 1;
-    this.game.setLives(newLives);
-    this.game.setScore(newScore);
-    this.game.setLevel(newLevel);
   }
 
   startNewGame(){
