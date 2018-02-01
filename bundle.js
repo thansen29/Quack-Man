@@ -90,7 +90,7 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(51));
 __export(__webpack_require__(52));
-__export(__webpack_require__(33));
+__export(__webpack_require__(34));
 __export(__webpack_require__(110));
 __export(__webpack_require__(111));
 __export(__webpack_require__(112));
@@ -4494,7 +4494,7 @@ var util_1 = __webpack_require__(0);
 var util_2 = __webpack_require__(1);
 var util_3 = __webpack_require__(0);
 var AuthTokenProvider_1 = __webpack_require__(143);
-var StatsManager_1 = __webpack_require__(38);
+var StatsManager_1 = __webpack_require__(39);
 var StatsReporter_1 = __webpack_require__(145);
 var StatsListener_1 = __webpack_require__(72);
 var EventQueue_1 = __webpack_require__(146);
@@ -5398,13 +5398,13 @@ var Location = /** @class */ (function () {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__util__ = __webpack_require__(90);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wall__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pill__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__large_pill__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__pill__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__large_pill__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__duck__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__ghost__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__draw_strategy__ = __webpack_require__(97);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_lodash__);
 
 
@@ -6000,1791 +6000,6 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
 /***/ }),
 /* 33 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @fileoverview Firebase constants.  Some of these (@defines) can be overridden at compile-time.
- */
-exports.CONSTANTS = {
-    /**
-     * @define {boolean} Whether this is the client Node.js SDK.
-     */
-    NODE_CLIENT: false,
-    /**
-     * @define {boolean} Whether this is the Admin Node.js SDK.
-     */
-    NODE_ADMIN: false,
-    /**
-     * Firebase SDK Version
-     */
-    SDK_VERSION: '${JSCORE_VERSION}'
-};
-
-//# sourceMappingURL=constants.js.map
-
-
-/***/ }),
-/* 34 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var onDisconnect_1 = __webpack_require__(58);
-var TransactionResult_1 = __webpack_require__(127);
-var util_1 = __webpack_require__(1);
-var NextPushId_1 = __webpack_require__(128);
-var Query_1 = __webpack_require__(59);
-var Repo_1 = __webpack_require__(26);
-var Path_1 = __webpack_require__(2);
-var QueryParams_1 = __webpack_require__(152);
-var validation_1 = __webpack_require__(9);
-var util_2 = __webpack_require__(0);
-var util_3 = __webpack_require__(0);
-var SyncPoint_1 = __webpack_require__(70);
-var Reference = /** @class */ (function (_super) {
-    __extends(Reference, _super);
-    /**
-     * Call options:
-     *   new Reference(Repo, Path) or
-     *   new Reference(url: string, string|RepoManager)
-     *
-     * Externally - this is the firebase.database.Reference type.
-     *
-     * @param {!Repo} repo
-     * @param {(!Path)} path
-     * @extends {Query}
-     */
-    function Reference(repo, path) {
-        var _this = this;
-        if (!(repo instanceof Repo_1.Repo)) {
-            throw new Error('new Reference() no longer supported - use app.database().');
-        }
-        // call Query's constructor, passing in the repo and path.
-        _this = _super.call(this, repo, path, QueryParams_1.QueryParams.DEFAULT, false) || this;
-        return _this;
-    }
-    /** @return {?string} */
-    Reference.prototype.getKey = function () {
-        util_2.validateArgCount('Reference.key', 0, 0, arguments.length);
-        if (this.path.isEmpty())
-            return null;
-        else
-            return this.path.getBack();
-    };
-    /**
-     * @param {!(string|Path)} pathString
-     * @return {!Reference}
-     */
-    Reference.prototype.child = function (pathString) {
-        util_2.validateArgCount('Reference.child', 1, 1, arguments.length);
-        if (typeof pathString === 'number') {
-            pathString = String(pathString);
-        }
-        else if (!(pathString instanceof Path_1.Path)) {
-            if (this.path.getFront() === null)
-                validation_1.validateRootPathString('Reference.child', 1, pathString, false);
-            else
-                validation_1.validatePathString('Reference.child', 1, pathString, false);
-        }
-        return new Reference(this.repo, this.path.child(pathString));
-    };
-    /** @return {?Reference} */
-    Reference.prototype.getParent = function () {
-        util_2.validateArgCount('Reference.parent', 0, 0, arguments.length);
-        var parentPath = this.path.parent();
-        return parentPath === null ? null : new Reference(this.repo, parentPath);
-    };
-    /** @return {!Reference} */
-    Reference.prototype.getRoot = function () {
-        util_2.validateArgCount('Reference.root', 0, 0, arguments.length);
-        var ref = this;
-        while (ref.getParent() !== null) {
-            ref = ref.getParent();
-        }
-        return ref;
-    };
-    /** @return {!Database} */
-    Reference.prototype.databaseProp = function () {
-        return this.repo.database;
-    };
-    /**
-     * @param {*} newVal
-     * @param {function(?Error)=} onComplete
-     * @return {!Promise}
-     */
-    Reference.prototype.set = function (newVal, onComplete) {
-        util_2.validateArgCount('Reference.set', 1, 2, arguments.length);
-        validation_1.validateWritablePath('Reference.set', this.path);
-        validation_1.validateFirebaseDataArg('Reference.set', 1, newVal, this.path, false);
-        util_2.validateCallback('Reference.set', 2, onComplete, true);
-        var deferred = new util_3.Deferred();
-        this.repo.setWithPriority(this.path, newVal, 
-        /*priority=*/ null, deferred.wrapCallback(onComplete));
-        return deferred.promise;
-    };
-    /**
-     * @param {!Object} objectToMerge
-     * @param {function(?Error)=} onComplete
-     * @return {!Promise}
-     */
-    Reference.prototype.update = function (objectToMerge, onComplete) {
-        util_2.validateArgCount('Reference.update', 1, 2, arguments.length);
-        validation_1.validateWritablePath('Reference.update', this.path);
-        if (Array.isArray(objectToMerge)) {
-            var newObjectToMerge = {};
-            for (var i = 0; i < objectToMerge.length; ++i) {
-                newObjectToMerge['' + i] = objectToMerge[i];
-            }
-            objectToMerge = newObjectToMerge;
-            util_1.warn('Passing an Array to Firebase.update() is deprecated. ' +
-                'Use set() if you want to overwrite the existing data, or ' +
-                'an Object with integer keys if you really do want to ' +
-                'only update some of the children.');
-        }
-        validation_1.validateFirebaseMergeDataArg('Reference.update', 1, objectToMerge, this.path, false);
-        util_2.validateCallback('Reference.update', 2, onComplete, true);
-        var deferred = new util_3.Deferred();
-        this.repo.update(this.path, objectToMerge, deferred.wrapCallback(onComplete));
-        return deferred.promise;
-    };
-    /**
-     * @param {*} newVal
-     * @param {string|number|null} newPriority
-     * @param {function(?Error)=} onComplete
-     * @return {!Promise}
-     */
-    Reference.prototype.setWithPriority = function (newVal, newPriority, onComplete) {
-        util_2.validateArgCount('Reference.setWithPriority', 2, 3, arguments.length);
-        validation_1.validateWritablePath('Reference.setWithPriority', this.path);
-        validation_1.validateFirebaseDataArg('Reference.setWithPriority', 1, newVal, this.path, false);
-        validation_1.validatePriority('Reference.setWithPriority', 2, newPriority, false);
-        util_2.validateCallback('Reference.setWithPriority', 3, onComplete, true);
-        if (this.getKey() === '.length' || this.getKey() === '.keys')
-            throw 'Reference.setWithPriority failed: ' +
-                this.getKey() +
-                ' is a read-only object.';
-        var deferred = new util_3.Deferred();
-        this.repo.setWithPriority(this.path, newVal, newPriority, deferred.wrapCallback(onComplete));
-        return deferred.promise;
-    };
-    /**
-     * @param {function(?Error)=} onComplete
-     * @return {!Promise}
-     */
-    Reference.prototype.remove = function (onComplete) {
-        util_2.validateArgCount('Reference.remove', 0, 1, arguments.length);
-        validation_1.validateWritablePath('Reference.remove', this.path);
-        util_2.validateCallback('Reference.remove', 1, onComplete, true);
-        return this.set(null, onComplete);
-    };
-    /**
-     * @param {function(*):*} transactionUpdate
-     * @param {(function(?Error, boolean, ?DataSnapshot))=} onComplete
-     * @param {boolean=} applyLocally
-     * @return {!Promise}
-     */
-    Reference.prototype.transaction = function (transactionUpdate, onComplete, applyLocally) {
-        util_2.validateArgCount('Reference.transaction', 1, 3, arguments.length);
-        validation_1.validateWritablePath('Reference.transaction', this.path);
-        util_2.validateCallback('Reference.transaction', 1, transactionUpdate, false);
-        util_2.validateCallback('Reference.transaction', 2, onComplete, true);
-        // NOTE: applyLocally is an internal-only option for now.  We need to decide if we want to keep it and how
-        // to expose it.
-        validation_1.validateBoolean('Reference.transaction', 3, applyLocally, true);
-        if (this.getKey() === '.length' || this.getKey() === '.keys')
-            throw 'Reference.transaction failed: ' +
-                this.getKey() +
-                ' is a read-only object.';
-        if (applyLocally === undefined)
-            applyLocally = true;
-        var deferred = new util_3.Deferred();
-        if (typeof onComplete === 'function') {
-            deferred.promise.catch(function () { });
-        }
-        var promiseComplete = function (error, committed, snapshot) {
-            if (error) {
-                deferred.reject(error);
-            }
-            else {
-                deferred.resolve(new TransactionResult_1.TransactionResult(committed, snapshot));
-            }
-            if (typeof onComplete === 'function') {
-                onComplete(error, committed, snapshot);
-            }
-        };
-        this.repo.startTransaction(this.path, transactionUpdate, promiseComplete, applyLocally);
-        return deferred.promise;
-    };
-    /**
-     * @param {string|number|null} priority
-     * @param {function(?Error)=} onComplete
-     * @return {!Promise}
-     */
-    Reference.prototype.setPriority = function (priority, onComplete) {
-        util_2.validateArgCount('Reference.setPriority', 1, 2, arguments.length);
-        validation_1.validateWritablePath('Reference.setPriority', this.path);
-        validation_1.validatePriority('Reference.setPriority', 1, priority, false);
-        util_2.validateCallback('Reference.setPriority', 2, onComplete, true);
-        var deferred = new util_3.Deferred();
-        this.repo.setWithPriority(this.path.child('.priority'), priority, null, deferred.wrapCallback(onComplete));
-        return deferred.promise;
-    };
-    /**
-     * @param {*=} value
-     * @param {function(?Error)=} onComplete
-     * @return {!Reference}
-     */
-    Reference.prototype.push = function (value, onComplete) {
-        util_2.validateArgCount('Reference.push', 0, 2, arguments.length);
-        validation_1.validateWritablePath('Reference.push', this.path);
-        validation_1.validateFirebaseDataArg('Reference.push', 1, value, this.path, true);
-        util_2.validateCallback('Reference.push', 2, onComplete, true);
-        var now = this.repo.serverTime();
-        var name = NextPushId_1.nextPushId(now);
-        // push() returns a ThennableReference whose promise is fulfilled with a regular Reference.
-        // We use child() to create handles to two different references. The first is turned into a
-        // ThennableReference below by adding then() and catch() methods and is used as the
-        // return value of push(). The second remains a regular Reference and is used as the fulfilled
-        // value of the first ThennableReference.
-        var thennablePushRef = this.child(name);
-        var pushRef = this.child(name);
-        var promise;
-        if (value != null) {
-            promise = thennablePushRef.set(value, onComplete).then(function () { return pushRef; });
-        }
-        else {
-            promise = Promise.resolve(pushRef);
-        }
-        thennablePushRef.then = promise.then.bind(promise);
-        thennablePushRef.catch = promise.then.bind(promise, undefined);
-        if (typeof onComplete === 'function') {
-            promise.catch(function () { });
-        }
-        return thennablePushRef;
-    };
-    /**
-     * @return {!OnDisconnect}
-     */
-    Reference.prototype.onDisconnect = function () {
-        validation_1.validateWritablePath('Reference.onDisconnect', this.path);
-        return new onDisconnect_1.OnDisconnect(this.repo, this.path);
-    };
-    Object.defineProperty(Reference.prototype, "database", {
-        get: function () {
-            return this.databaseProp();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Reference.prototype, "key", {
-        get: function () {
-            return this.getKey();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Reference.prototype, "parent", {
-        get: function () {
-            return this.getParent();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Reference.prototype, "root", {
-        get: function () {
-            return this.getRoot();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return Reference;
-}(Query_1.Query));
-exports.Reference = Reference;
-/**
- * Define reference constructor in various modules
- *
- * We are doing this here to avoid several circular
- * dependency issues
- */
-Query_1.Query.__referenceConstructor = Reference;
-SyncPoint_1.SyncPoint.__referenceConstructor = Reference;
-
-//# sourceMappingURL=Reference.js.map
-
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(0);
-var validation_1 = __webpack_require__(9);
-var Path_1 = __webpack_require__(2);
-var PriorityIndex_1 = __webpack_require__(3);
-/**
- * Class representing a firebase data snapshot.  It wraps a SnapshotNode and
- * surfaces the public methods (val, forEach, etc.) we want to expose.
- */
-var DataSnapshot = /** @class */ (function () {
-    /**
-     * @param {!Node} node_ A SnapshotNode to wrap.
-     * @param {!Reference} ref_ The ref of the location this snapshot came from.
-     * @param {!Index} index_ The iteration order for this snapshot
-     */
-    function DataSnapshot(node_, ref_, index_) {
-        this.node_ = node_;
-        this.ref_ = ref_;
-        this.index_ = index_;
-    }
-    /**
-     * Retrieves the snapshot contents as JSON.  Returns null if the snapshot is
-     * empty.
-     *
-     * @return {*} JSON representation of the DataSnapshot contents, or null if empty.
-     */
-    DataSnapshot.prototype.val = function () {
-        util_1.validateArgCount('DataSnapshot.val', 0, 0, arguments.length);
-        return this.node_.val();
-    };
-    /**
-     * Returns the snapshot contents as JSON, including priorities of node.  Suitable for exporting
-     * the entire node contents.
-     * @return {*} JSON representation of the DataSnapshot contents, or null if empty.
-     */
-    DataSnapshot.prototype.exportVal = function () {
-        util_1.validateArgCount('DataSnapshot.exportVal', 0, 0, arguments.length);
-        return this.node_.val(true);
-    };
-    // Do not create public documentation. This is intended to make JSON serialization work but is otherwise unnecessary
-    // for end-users
-    DataSnapshot.prototype.toJSON = function () {
-        // Optional spacer argument is unnecessary because we're depending on recursion rather than stringifying the content
-        util_1.validateArgCount('DataSnapshot.toJSON', 0, 1, arguments.length);
-        return this.exportVal();
-    };
-    /**
-     * Returns whether the snapshot contains a non-null value.
-     *
-     * @return {boolean} Whether the snapshot contains a non-null value, or is empty.
-     */
-    DataSnapshot.prototype.exists = function () {
-        util_1.validateArgCount('DataSnapshot.exists', 0, 0, arguments.length);
-        return !this.node_.isEmpty();
-    };
-    /**
-     * Returns a DataSnapshot of the specified child node's contents.
-     *
-     * @param {!string} childPathString Path to a child.
-     * @return {!DataSnapshot} DataSnapshot for child node.
-     */
-    DataSnapshot.prototype.child = function (childPathString) {
-        util_1.validateArgCount('DataSnapshot.child', 0, 1, arguments.length);
-        // Ensure the childPath is a string (can be a number)
-        childPathString = String(childPathString);
-        validation_1.validatePathString('DataSnapshot.child', 1, childPathString, false);
-        var childPath = new Path_1.Path(childPathString);
-        var childRef = this.ref_.child(childPath);
-        return new DataSnapshot(this.node_.getChild(childPath), childRef, PriorityIndex_1.PRIORITY_INDEX);
-    };
-    /**
-     * Returns whether the snapshot contains a child at the specified path.
-     *
-     * @param {!string} childPathString Path to a child.
-     * @return {boolean} Whether the child exists.
-     */
-    DataSnapshot.prototype.hasChild = function (childPathString) {
-        util_1.validateArgCount('DataSnapshot.hasChild', 1, 1, arguments.length);
-        validation_1.validatePathString('DataSnapshot.hasChild', 1, childPathString, false);
-        var childPath = new Path_1.Path(childPathString);
-        return !this.node_.getChild(childPath).isEmpty();
-    };
-    /**
-     * Returns the priority of the object, or null if no priority was set.
-     *
-     * @return {string|number|null} The priority.
-     */
-    DataSnapshot.prototype.getPriority = function () {
-        util_1.validateArgCount('DataSnapshot.getPriority', 0, 0, arguments.length);
-        // typecast here because we never return deferred values or internal priorities (MAX_PRIORITY)
-        return this.node_.getPriority().val();
-    };
-    /**
-     * Iterates through child nodes and calls the specified action for each one.
-     *
-     * @param {function(!DataSnapshot)} action Callback function to be called
-     * for each child.
-     * @return {boolean} True if forEach was canceled by action returning true for
-     * one of the child nodes.
-     */
-    DataSnapshot.prototype.forEach = function (action) {
-        var _this = this;
-        util_1.validateArgCount('DataSnapshot.forEach', 1, 1, arguments.length);
-        util_1.validateCallback('DataSnapshot.forEach', 1, action, false);
-        if (this.node_.isLeafNode())
-            return false;
-        var childrenNode = this.node_;
-        // Sanitize the return value to a boolean. ChildrenNode.forEachChild has a weird return type...
-        return !!childrenNode.forEachChild(this.index_, function (key, node) {
-            return action(new DataSnapshot(node, _this.ref_.child(key), PriorityIndex_1.PRIORITY_INDEX));
-        });
-    };
-    /**
-     * Returns whether this DataSnapshot has children.
-     * @return {boolean} True if the DataSnapshot contains 1 or more child nodes.
-     */
-    DataSnapshot.prototype.hasChildren = function () {
-        util_1.validateArgCount('DataSnapshot.hasChildren', 0, 0, arguments.length);
-        if (this.node_.isLeafNode())
-            return false;
-        else
-            return !this.node_.isEmpty();
-    };
-    Object.defineProperty(DataSnapshot.prototype, "key", {
-        get: function () {
-            return this.ref_.getKey();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    /**
-     * Returns the number of children for this DataSnapshot.
-     * @return {number} The number of children that this DataSnapshot contains.
-     */
-    DataSnapshot.prototype.numChildren = function () {
-        util_1.validateArgCount('DataSnapshot.numChildren', 0, 0, arguments.length);
-        return this.node_.numChildren();
-    };
-    /**
-     * @return {Reference} The Firebase reference for the location this snapshot's data came from.
-     */
-    DataSnapshot.prototype.getRef = function () {
-        util_1.validateArgCount('DataSnapshot.ref', 0, 0, arguments.length);
-        return this.ref_;
-    };
-    Object.defineProperty(DataSnapshot.prototype, "ref", {
-        get: function () {
-            return this.getRef();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return DataSnapshot;
-}());
-exports.DataSnapshot = DataSnapshot;
-
-//# sourceMappingURL=DataSnapshot.js.map
-
-
-/***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var SortedMap_1 = __webpack_require__(25);
-var Path_1 = __webpack_require__(2);
-var util_1 = __webpack_require__(1);
-var util_2 = __webpack_require__(0);
-var emptyChildrenSingleton;
-/**
- * Singleton empty children collection.
- *
- * @const
- * @type {!SortedMap.<string, !ImmutableTree.<?>>}
- */
-var EmptyChildren = function () {
-    if (!emptyChildrenSingleton) {
-        emptyChildrenSingleton = new SortedMap_1.SortedMap(util_1.stringCompare);
-    }
-    return emptyChildrenSingleton;
-};
-/**
- * A tree with immutable elements.
- */
-var ImmutableTree = /** @class */ (function () {
-    /**
-     * @template T
-     * @param {?T} value
-     * @param {SortedMap.<string, !ImmutableTree.<T>>=} children
-     */
-    function ImmutableTree(value, children) {
-        if (children === void 0) { children = EmptyChildren(); }
-        this.value = value;
-        this.children = children;
-    }
-    /**
-     * @template T
-     * @param {!Object.<string, !T>} obj
-     * @return {!ImmutableTree.<!T>}
-     */
-    ImmutableTree.fromObject = function (obj) {
-        var tree = ImmutableTree.Empty;
-        util_2.forEach(obj, function (childPath, childSnap) {
-            tree = tree.set(new Path_1.Path(childPath), childSnap);
-        });
-        return tree;
-    };
-    /**
-     * True if the value is empty and there are no children
-     * @return {boolean}
-     */
-    ImmutableTree.prototype.isEmpty = function () {
-        return this.value === null && this.children.isEmpty();
-    };
-    /**
-     * Given a path and predicate, return the first node and the path to that node
-     * where the predicate returns true.
-     *
-     * TODO Do a perf test -- If we're creating a bunch of {path: value:} objects
-     * on the way back out, it may be better to pass down a pathSoFar obj.
-     *
-     * @param {!Path} relativePath The remainder of the path
-     * @param {function(T):boolean} predicate The predicate to satisfy to return a
-     *   node
-     * @return {?{path:!Path, value:!T}}
-     */
-    ImmutableTree.prototype.findRootMostMatchingPathAndValue = function (relativePath, predicate) {
-        if (this.value != null && predicate(this.value)) {
-            return { path: Path_1.Path.Empty, value: this.value };
-        }
-        else {
-            if (relativePath.isEmpty()) {
-                return null;
-            }
-            else {
-                var front = relativePath.getFront();
-                var child = this.children.get(front);
-                if (child !== null) {
-                    var childExistingPathAndValue = child.findRootMostMatchingPathAndValue(relativePath.popFront(), predicate);
-                    if (childExistingPathAndValue != null) {
-                        var fullPath = new Path_1.Path(front).child(childExistingPathAndValue.path);
-                        return { path: fullPath, value: childExistingPathAndValue.value };
-                    }
-                    else {
-                        return null;
-                    }
-                }
-                else {
-                    return null;
-                }
-            }
-        }
-    };
-    /**
-     * Find, if it exists, the shortest subpath of the given path that points a defined
-     * value in the tree
-     * @param {!Path} relativePath
-     * @return {?{path: !Path, value: !T}}
-     */
-    ImmutableTree.prototype.findRootMostValueAndPath = function (relativePath) {
-        return this.findRootMostMatchingPathAndValue(relativePath, function () { return true; });
-    };
-    /**
-     * @param {!Path} relativePath
-     * @return {!ImmutableTree.<T>} The subtree at the given path
-     */
-    ImmutableTree.prototype.subtree = function (relativePath) {
-        if (relativePath.isEmpty()) {
-            return this;
-        }
-        else {
-            var front = relativePath.getFront();
-            var childTree = this.children.get(front);
-            if (childTree !== null) {
-                return childTree.subtree(relativePath.popFront());
-            }
-            else {
-                return ImmutableTree.Empty;
-            }
-        }
-    };
-    /**
-     * Sets a value at the specified path.
-     *
-     * @param {!Path} relativePath Path to set value at.
-     * @param {?T} toSet Value to set.
-     * @return {!ImmutableTree.<T>} Resulting tree.
-     */
-    ImmutableTree.prototype.set = function (relativePath, toSet) {
-        if (relativePath.isEmpty()) {
-            return new ImmutableTree(toSet, this.children);
-        }
-        else {
-            var front = relativePath.getFront();
-            var child = this.children.get(front) || ImmutableTree.Empty;
-            var newChild = child.set(relativePath.popFront(), toSet);
-            var newChildren = this.children.insert(front, newChild);
-            return new ImmutableTree(this.value, newChildren);
-        }
-    };
-    /**
-     * Removes the value at the specified path.
-     *
-     * @param {!Path} relativePath Path to value to remove.
-     * @return {!ImmutableTree.<T>} Resulting tree.
-     */
-    ImmutableTree.prototype.remove = function (relativePath) {
-        if (relativePath.isEmpty()) {
-            if (this.children.isEmpty()) {
-                return ImmutableTree.Empty;
-            }
-            else {
-                return new ImmutableTree(null, this.children);
-            }
-        }
-        else {
-            var front = relativePath.getFront();
-            var child = this.children.get(front);
-            if (child) {
-                var newChild = child.remove(relativePath.popFront());
-                var newChildren = void 0;
-                if (newChild.isEmpty()) {
-                    newChildren = this.children.remove(front);
-                }
-                else {
-                    newChildren = this.children.insert(front, newChild);
-                }
-                if (this.value === null && newChildren.isEmpty()) {
-                    return ImmutableTree.Empty;
-                }
-                else {
-                    return new ImmutableTree(this.value, newChildren);
-                }
-            }
-            else {
-                return this;
-            }
-        }
-    };
-    /**
-     * Gets a value from the tree.
-     *
-     * @param {!Path} relativePath Path to get value for.
-     * @return {?T} Value at path, or null.
-     */
-    ImmutableTree.prototype.get = function (relativePath) {
-        if (relativePath.isEmpty()) {
-            return this.value;
-        }
-        else {
-            var front = relativePath.getFront();
-            var child = this.children.get(front);
-            if (child) {
-                return child.get(relativePath.popFront());
-            }
-            else {
-                return null;
-            }
-        }
-    };
-    /**
-     * Replace the subtree at the specified path with the given new tree.
-     *
-     * @param {!Path} relativePath Path to replace subtree for.
-     * @param {!ImmutableTree} newTree New tree.
-     * @return {!ImmutableTree} Resulting tree.
-     */
-    ImmutableTree.prototype.setTree = function (relativePath, newTree) {
-        if (relativePath.isEmpty()) {
-            return newTree;
-        }
-        else {
-            var front = relativePath.getFront();
-            var child = this.children.get(front) || ImmutableTree.Empty;
-            var newChild = child.setTree(relativePath.popFront(), newTree);
-            var newChildren = void 0;
-            if (newChild.isEmpty()) {
-                newChildren = this.children.remove(front);
-            }
-            else {
-                newChildren = this.children.insert(front, newChild);
-            }
-            return new ImmutableTree(this.value, newChildren);
-        }
-    };
-    /**
-     * Performs a depth first fold on this tree. Transforms a tree into a single
-     * value, given a function that operates on the path to a node, an optional
-     * current value, and a map of child names to folded subtrees
-     * @template V
-     * @param {function(Path, ?T, Object.<string, V>):V} fn
-     * @return {V}
-     */
-    ImmutableTree.prototype.fold = function (fn) {
-        return this.fold_(Path_1.Path.Empty, fn);
-    };
-    /**
-     * Recursive helper for public-facing fold() method
-     * @template V
-     * @param {!Path} pathSoFar
-     * @param {function(Path, ?T, Object.<string, V>):V} fn
-     * @return {V}
-     * @private
-     */
-    ImmutableTree.prototype.fold_ = function (pathSoFar, fn) {
-        var accum = {};
-        this.children.inorderTraversal(function (childKey, childTree) {
-            accum[childKey] = childTree.fold_(pathSoFar.child(childKey), fn);
-        });
-        return fn(pathSoFar, this.value, accum);
-    };
-    /**
-     * Find the first matching value on the given path. Return the result of applying f to it.
-     * @template V
-     * @param {!Path} path
-     * @param {!function(!Path, !T):?V} f
-     * @return {?V}
-     */
-    ImmutableTree.prototype.findOnPath = function (path, f) {
-        return this.findOnPath_(path, Path_1.Path.Empty, f);
-    };
-    ImmutableTree.prototype.findOnPath_ = function (pathToFollow, pathSoFar, f) {
-        var result = this.value ? f(pathSoFar, this.value) : false;
-        if (result) {
-            return result;
-        }
-        else {
-            if (pathToFollow.isEmpty()) {
-                return null;
-            }
-            else {
-                var front = pathToFollow.getFront();
-                var nextChild = this.children.get(front);
-                if (nextChild) {
-                    return nextChild.findOnPath_(pathToFollow.popFront(), pathSoFar.child(front), f);
-                }
-                else {
-                    return null;
-                }
-            }
-        }
-    };
-    /**
-     *
-     * @param {!Path} path
-     * @param {!function(!Path, !T)} f
-     * @returns {!ImmutableTree.<T>}
-     */
-    ImmutableTree.prototype.foreachOnPath = function (path, f) {
-        return this.foreachOnPath_(path, Path_1.Path.Empty, f);
-    };
-    ImmutableTree.prototype.foreachOnPath_ = function (pathToFollow, currentRelativePath, f) {
-        if (pathToFollow.isEmpty()) {
-            return this;
-        }
-        else {
-            if (this.value) {
-                f(currentRelativePath, this.value);
-            }
-            var front = pathToFollow.getFront();
-            var nextChild = this.children.get(front);
-            if (nextChild) {
-                return nextChild.foreachOnPath_(pathToFollow.popFront(), currentRelativePath.child(front), f);
-            }
-            else {
-                return ImmutableTree.Empty;
-            }
-        }
-    };
-    /**
-     * Calls the given function for each node in the tree that has a value.
-     *
-     * @param {function(!Path, !T)} f A function to be called with
-     *   the path from the root of the tree to a node, and the value at that node.
-     *   Called in depth-first order.
-     */
-    ImmutableTree.prototype.foreach = function (f) {
-        this.foreach_(Path_1.Path.Empty, f);
-    };
-    ImmutableTree.prototype.foreach_ = function (currentRelativePath, f) {
-        this.children.inorderTraversal(function (childName, childTree) {
-            childTree.foreach_(currentRelativePath.child(childName), f);
-        });
-        if (this.value) {
-            f(currentRelativePath, this.value);
-        }
-    };
-    /**
-     *
-     * @param {function(string, !T)} f
-     */
-    ImmutableTree.prototype.foreachChild = function (f) {
-        this.children.inorderTraversal(function (childName, childTree) {
-            if (childTree.value) {
-                f(childName, childTree.value);
-            }
-        });
-    };
-    ImmutableTree.Empty = new ImmutableTree(null);
-    return ImmutableTree;
-}());
-exports.ImmutableTree = ImmutableTree;
-
-//# sourceMappingURL=ImmutableTree.js.map
-
-
-/***/ }),
-/* 37 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(0);
-var Change_1 = __webpack_require__(12);
-var ChildrenNode_1 = __webpack_require__(4);
-var PriorityIndex_1 = __webpack_require__(3);
-/**
- * Doesn't really filter nodes but applies an index to the node and keeps track of any changes
- *
- * @constructor
- * @implements {NodeFilter}
- * @param {!Index} index
- */
-var IndexedFilter = /** @class */ (function () {
-    function IndexedFilter(index_) {
-        this.index_ = index_;
-    }
-    IndexedFilter.prototype.updateChild = function (snap, key, newChild, affectedPath, source, optChangeAccumulator) {
-        util_1.assert(snap.isIndexed(this.index_), 'A node must be indexed if only a child is updated');
-        var oldChild = snap.getImmediateChild(key);
-        // Check if anything actually changed.
-        if (oldChild.getChild(affectedPath).equals(newChild.getChild(affectedPath))) {
-            // There's an edge case where a child can enter or leave the view because affectedPath was set to null.
-            // In this case, affectedPath will appear null in both the old and new snapshots.  So we need
-            // to avoid treating these cases as "nothing changed."
-            if (oldChild.isEmpty() == newChild.isEmpty()) {
-                // Nothing changed.
-                // This assert should be valid, but it's expensive (can dominate perf testing) so don't actually do it.
-                //assert(oldChild.equals(newChild), 'Old and new snapshots should be equal.');
-                return snap;
-            }
-        }
-        if (optChangeAccumulator != null) {
-            if (newChild.isEmpty()) {
-                if (snap.hasChild(key)) {
-                    optChangeAccumulator.trackChildChange(Change_1.Change.childRemovedChange(key, oldChild));
-                }
-                else {
-                    util_1.assert(snap.isLeafNode(), 'A child remove without an old child only makes sense on a leaf node');
-                }
-            }
-            else if (oldChild.isEmpty()) {
-                optChangeAccumulator.trackChildChange(Change_1.Change.childAddedChange(key, newChild));
-            }
-            else {
-                optChangeAccumulator.trackChildChange(Change_1.Change.childChangedChange(key, newChild, oldChild));
-            }
-        }
-        if (snap.isLeafNode() && newChild.isEmpty()) {
-            return snap;
-        }
-        else {
-            // Make sure the node is indexed
-            return snap.updateImmediateChild(key, newChild).withIndex(this.index_);
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    IndexedFilter.prototype.updateFullNode = function (oldSnap, newSnap, optChangeAccumulator) {
-        if (optChangeAccumulator != null) {
-            if (!oldSnap.isLeafNode()) {
-                oldSnap.forEachChild(PriorityIndex_1.PRIORITY_INDEX, function (key, childNode) {
-                    if (!newSnap.hasChild(key)) {
-                        optChangeAccumulator.trackChildChange(Change_1.Change.childRemovedChange(key, childNode));
-                    }
-                });
-            }
-            if (!newSnap.isLeafNode()) {
-                newSnap.forEachChild(PriorityIndex_1.PRIORITY_INDEX, function (key, childNode) {
-                    if (oldSnap.hasChild(key)) {
-                        var oldChild = oldSnap.getImmediateChild(key);
-                        if (!oldChild.equals(childNode)) {
-                            optChangeAccumulator.trackChildChange(Change_1.Change.childChangedChange(key, childNode, oldChild));
-                        }
-                    }
-                    else {
-                        optChangeAccumulator.trackChildChange(Change_1.Change.childAddedChange(key, childNode));
-                    }
-                });
-            }
-        }
-        return newSnap.withIndex(this.index_);
-    };
-    /**
-     * @inheritDoc
-     */
-    IndexedFilter.prototype.updatePriority = function (oldSnap, newPriority) {
-        if (oldSnap.isEmpty()) {
-            return ChildrenNode_1.ChildrenNode.EMPTY_NODE;
-        }
-        else {
-            return oldSnap.updatePriority(newPriority);
-        }
-    };
-    /**
-     * @inheritDoc
-     */
-    IndexedFilter.prototype.filtersNodes = function () {
-        return false;
-    };
-    /**
-     * @inheritDoc
-     */
-    IndexedFilter.prototype.getIndexedFilter = function () {
-        return this;
-    };
-    /**
-     * @inheritDoc
-     */
-    IndexedFilter.prototype.getIndex = function () {
-        return this.index_;
-    };
-    return IndexedFilter;
-}());
-exports.IndexedFilter = IndexedFilter;
-
-//# sourceMappingURL=IndexedFilter.js.map
-
-
-/***/ }),
-/* 38 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var StatsCollection_1 = __webpack_require__(144);
-var StatsManager = /** @class */ (function () {
-    function StatsManager() {
-    }
-    StatsManager.getCollection = function (repoInfo) {
-        var hashString = repoInfo.toString();
-        if (!this.collections_[hashString]) {
-            this.collections_[hashString] = new StatsCollection_1.StatsCollection();
-        }
-        return this.collections_[hashString];
-    };
-    StatsManager.getOrCreateReporter = function (repoInfo, creatorFunction) {
-        var hashString = repoInfo.toString();
-        if (!this.reporters_[hashString]) {
-            this.reporters_[hashString] = creatorFunction();
-        }
-        return this.reporters_[hashString];
-    };
-    StatsManager.collections_ = {};
-    StatsManager.reporters_ = {};
-    return StatsManager;
-}());
-exports.StatsManager = StatsManager;
-
-//# sourceMappingURL=StatsManager.js.map
-
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-var util_1 = __webpack_require__(0);
-var Repo_1 = __webpack_require__(26);
-var util_2 = __webpack_require__(1);
-var parser_1 = __webpack_require__(56);
-var validation_1 = __webpack_require__(9);
-__webpack_require__(154);
-/** @const {string} */
-var DATABASE_URL_OPTION = 'databaseURL';
-var _staticInstance;
-/**
- * Creates and caches Repo instances.
- */
-var RepoManager = /** @class */ (function () {
-    function RepoManager() {
-        /**
-         * @private {!Object.<string, Object<string, !fb.core.Repo>>}
-         */
-        this.repos_ = {};
-        /**
-         * If true, new Repos will be created to use ReadonlyRestClient (for testing purposes).
-         * @private {boolean}
-         */
-        this.useRestClient_ = false;
-    }
-    RepoManager.getInstance = function () {
-        if (!_staticInstance) {
-            _staticInstance = new RepoManager();
-        }
-        return _staticInstance;
-    };
-    // TODO(koss): Remove these functions unless used in tests?
-    RepoManager.prototype.interrupt = function () {
-        for (var appName in this.repos_) {
-            for (var dbUrl in this.repos_[appName]) {
-                this.repos_[appName][dbUrl].interrupt();
-            }
-        }
-    };
-    RepoManager.prototype.resume = function () {
-        for (var appName in this.repos_) {
-            for (var dbUrl in this.repos_[appName]) {
-                this.repos_[appName][dbUrl].resume();
-            }
-        }
-    };
-    /**
-     * This function should only ever be called to CREATE a new database instance.
-     *
-     * @param {!FirebaseApp} app
-     * @return {!Database}
-     */
-    RepoManager.prototype.databaseFromApp = function (app, url) {
-        var dbUrl = url || app.options[DATABASE_URL_OPTION];
-        if (dbUrl === undefined) {
-            util_2.fatal("Can't determine Firebase Database URL.  Be sure to include " +
-                DATABASE_URL_OPTION +
-                ' option when calling firebase.initializeApp().');
-        }
-        var parsedUrl = parser_1.parseRepoInfo(dbUrl);
-        var repoInfo = parsedUrl.repoInfo;
-        validation_1.validateUrl('Invalid Firebase Database URL', 1, parsedUrl);
-        if (!parsedUrl.path.isEmpty()) {
-            util_2.fatal('Database URL must point to the root of a Firebase Database ' +
-                '(not including a child path).');
-        }
-        var repo = this.createRepo(repoInfo, app);
-        return repo.database;
-    };
-    /**
-     * Remove the repo and make sure it is disconnected.
-     *
-     * @param {!Repo} repo
-     */
-    RepoManager.prototype.deleteRepo = function (repo) {
-        var appRepos = util_1.safeGet(this.repos_, repo.app.name);
-        // This should never happen...
-        if (!appRepos || util_1.safeGet(appRepos, repo.repoInfo_.toURLString()) !== repo) {
-            util_2.fatal("Database " + repo.app.name + "(" + repo.repoInfo_ + ") has already been deleted.");
-        }
-        repo.interrupt();
-        delete appRepos[repo.repoInfo_.toURLString()];
-    };
-    /**
-     * Ensures a repo doesn't already exist and then creates one using the
-     * provided app.
-     *
-     * @param {!RepoInfo} repoInfo The metadata about the Repo
-     * @param {!FirebaseApp} app
-     * @return {!Repo} The Repo object for the specified server / repoName.
-     */
-    RepoManager.prototype.createRepo = function (repoInfo, app) {
-        var appRepos = util_1.safeGet(this.repos_, app.name);
-        if (!appRepos) {
-            appRepos = {};
-            this.repos_[app.name] = appRepos;
-        }
-        var repo = util_1.safeGet(appRepos, repoInfo.toURLString());
-        if (repo) {
-            util_2.fatal('Database initialized multiple times. Please make sure the format of the database URL matches with each database() call.');
-        }
-        repo = new Repo_1.Repo(repoInfo, this.useRestClient_, app);
-        appRepos[repoInfo.toURLString()] = repo;
-        return repo;
-    };
-    /**
-     * Forces us to use ReadonlyRestClient instead of PersistentConnection for new Repos.
-     * @param {boolean} forceRestClient
-     */
-    RepoManager.prototype.forceRestClient = function (forceRestClient) {
-        this.useRestClient_ = forceRestClient;
-    };
-    return RepoManager;
-}());
-exports.RepoManager = RepoManager;
-
-//# sourceMappingURL=RepoManager.js.map
-
-
-/***/ }),
-/* 40 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["g"] = validate;
-/* unused harmony export ArgSpec */
-/* unused harmony export and_ */
-/* harmony export (immutable) */ __webpack_exports__["e"] = stringSpec;
-/* harmony export (immutable) */ __webpack_exports__["f"] = uploadDataSpec;
-/* harmony export (immutable) */ __webpack_exports__["b"] = metadataSpec;
-/* harmony export (immutable) */ __webpack_exports__["c"] = nonNegativeNumberSpec;
-/* harmony export (immutable) */ __webpack_exports__["a"] = looseObjectSpec;
-/* harmony export (immutable) */ __webpack_exports__["d"] = nullFunctionSpec;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__metadata__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(6);
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-
-/**
- * @param name Name of the function.
- * @param specs Argument specs.
- * @param passed The actual arguments passed to the function.
- * @throws {fbs.Error} If the arguments are invalid.
- */
-function validate(name, specs, passed) {
-    var minArgs = specs.length;
-    var maxArgs = specs.length;
-    for (var i = 0; i < specs.length; i++) {
-        if (specs[i].optional) {
-            minArgs = i;
-            break;
-        }
-    }
-    var validLength = minArgs <= passed.length && passed.length <= maxArgs;
-    if (!validLength) {
-        throw __WEBPACK_IMPORTED_MODULE_0__error__["g" /* invalidArgumentCount */](minArgs, maxArgs, name, passed.length);
-    }
-    for (var i = 0; i < passed.length; i++) {
-        try {
-            specs[i].validator(passed[i]);
-        }
-        catch (e) {
-            if (e instanceof Error) {
-                throw __WEBPACK_IMPORTED_MODULE_0__error__["f" /* invalidArgument */](i, name, e.message);
-            }
-            else {
-                throw __WEBPACK_IMPORTED_MODULE_0__error__["f" /* invalidArgument */](i, name, e);
-            }
-        }
-    }
-}
-/**
- * @struct
- */
-var ArgSpec = /** @class */ (function () {
-    function ArgSpec(validator, opt_optional) {
-        var self = this;
-        this.validator = function (p) {
-            if (self.optional && !__WEBPACK_IMPORTED_MODULE_2__type__["c" /* isJustDef */](p)) {
-                return;
-            }
-            validator(p);
-        };
-        this.optional = !!opt_optional;
-    }
-    return ArgSpec;
-}());
-
-function and_(v1, v2) {
-    return function (p) {
-        v1(p);
-        v2(p);
-    };
-}
-function stringSpec(opt_validator, opt_optional) {
-    function stringValidator(p) {
-        if (!__WEBPACK_IMPORTED_MODULE_2__type__["j" /* isString */](p)) {
-            throw 'Expected string.';
-        }
-    }
-    var validator;
-    if (opt_validator) {
-        validator = and_(stringValidator, opt_validator);
-    }
-    else {
-        validator = stringValidator;
-    }
-    return new ArgSpec(validator, opt_optional);
-}
-function uploadDataSpec() {
-    function validator(p) {
-        var valid = p instanceof Uint8Array ||
-            p instanceof ArrayBuffer ||
-            (__WEBPACK_IMPORTED_MODULE_2__type__["e" /* isNativeBlobDefined */]() && p instanceof Blob);
-        if (!valid) {
-            throw 'Expected Blob or File.';
-        }
-    }
-    return new ArgSpec(validator);
-}
-function metadataSpec(opt_optional) {
-    return new ArgSpec(__WEBPACK_IMPORTED_MODULE_1__metadata__["c" /* metadataValidator */], opt_optional);
-}
-function nonNegativeNumberSpec() {
-    function validator(p) {
-        var valid = __WEBPACK_IMPORTED_MODULE_2__type__["h" /* isNumber */](p) && p >= 0;
-        if (!valid) {
-            throw 'Expected a number 0 or greater.';
-        }
-    }
-    return new ArgSpec(validator);
-}
-function looseObjectSpec(opt_validator, opt_optional) {
-    function validator(p) {
-        var isLooseObject = p === null || (__WEBPACK_IMPORTED_MODULE_2__type__["a" /* isDef */](p) && p instanceof Object);
-        if (!isLooseObject) {
-            throw 'Expected an Object.';
-        }
-        if (opt_validator !== undefined && opt_validator !== null) {
-            opt_validator(p);
-        }
-    }
-    return new ArgSpec(validator, opt_optional);
-}
-function nullFunctionSpec(opt_optional) {
-    function validator(p) {
-        var valid = p === null || __WEBPACK_IMPORTED_MODULE_2__type__["b" /* isFunction */](p);
-        if (!valid) {
-            throw 'Expected a Function.';
-        }
-    }
-    return new ArgSpec(validator, opt_optional);
-}
-
-//# sourceMappingURL=args.js.map
-
-
-/***/ }),
-/* 41 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export noXform_ */
-/* unused harmony export Mapping */
-/* unused harmony export xformPath */
-/* harmony export (immutable) */ __webpack_exports__["b"] = getMappings;
-/* unused harmony export addRef */
-/* unused harmony export fromResource */
-/* harmony export (immutable) */ __webpack_exports__["a"] = fromResourceString;
-/* harmony export (immutable) */ __webpack_exports__["d"] = toResourceString;
-/* harmony export (immutable) */ __webpack_exports__["c"] = metadataValidator;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__json__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__location__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__path__ = __webpack_require__(86);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__url__ = __webpack_require__(42);
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-
-
-
-
-function noXform_(metadata, value) {
-    return value;
-}
-/**
- * @struct
- */
-var Mapping = /** @class */ (function () {
-    function Mapping(server, opt_local, opt_writable, opt_xform) {
-        this.server = server;
-        this.local = opt_local || server;
-        this.writable = !!opt_writable;
-        this.xform = opt_xform || noXform_;
-    }
-    return Mapping;
-}());
-
-var mappings_ = null;
-function xformPath(fullPath) {
-    var valid = __WEBPACK_IMPORTED_MODULE_3__type__["j" /* isString */](fullPath);
-    if (!valid || fullPath.length < 2) {
-        return fullPath;
-    }
-    else {
-        fullPath = fullPath;
-        return __WEBPACK_IMPORTED_MODULE_2__path__["b" /* lastComponent */](fullPath);
-    }
-}
-function getMappings() {
-    if (mappings_) {
-        return mappings_;
-    }
-    var mappings = [];
-    mappings.push(new Mapping('bucket'));
-    mappings.push(new Mapping('generation'));
-    mappings.push(new Mapping('metageneration'));
-    mappings.push(new Mapping('name', 'fullPath', true));
-    function mappingsXformPath(metadata, fullPath) {
-        return xformPath(fullPath);
-    }
-    var nameMapping = new Mapping('name');
-    nameMapping.xform = mappingsXformPath;
-    mappings.push(nameMapping);
-    /**
-     * Coerces the second param to a number, if it is defined.
-     */
-    function xformSize(metadata, size) {
-        if (__WEBPACK_IMPORTED_MODULE_3__type__["a" /* isDef */](size)) {
-            return +size;
-        }
-        else {
-            return size;
-        }
-    }
-    var sizeMapping = new Mapping('size');
-    sizeMapping.xform = xformSize;
-    mappings.push(sizeMapping);
-    mappings.push(new Mapping('timeCreated'));
-    mappings.push(new Mapping('updated'));
-    mappings.push(new Mapping('md5Hash', null, true));
-    mappings.push(new Mapping('cacheControl', null, true));
-    mappings.push(new Mapping('contentDisposition', null, true));
-    mappings.push(new Mapping('contentEncoding', null, true));
-    mappings.push(new Mapping('contentLanguage', null, true));
-    mappings.push(new Mapping('contentType', null, true));
-    mappings.push(new Mapping('metadata', 'customMetadata', true));
-    /**
-     * Transforms a comma-separated string of tokens into a list of download
-     * URLs.
-     */
-    function xformTokens(metadata, tokens) {
-        var valid = __WEBPACK_IMPORTED_MODULE_3__type__["j" /* isString */](tokens) && tokens.length > 0;
-        if (!valid) {
-            // This can happen if objects are uploaded through GCS and retrieved
-            // through list, so we don't want to throw an Error.
-            return [];
-        }
-        var encode = encodeURIComponent;
-        var tokensList = tokens.split(',');
-        var urls = tokensList.map(function (token) {
-            var bucket = metadata['bucket'];
-            var path = metadata['fullPath'];
-            var urlPart = '/b/' + encode(bucket) + '/o/' + encode(path);
-            var base = __WEBPACK_IMPORTED_MODULE_4__url__["a" /* makeDownloadUrl */](urlPart);
-            var queryString = __WEBPACK_IMPORTED_MODULE_4__url__["c" /* makeQueryString */]({
-                alt: 'media',
-                token: token
-            });
-            return base + queryString;
-        });
-        return urls;
-    }
-    mappings.push(new Mapping('downloadTokens', 'downloadURLs', false, xformTokens));
-    mappings_ = mappings;
-    return mappings_;
-}
-function addRef(metadata, authWrapper) {
-    function generateRef() {
-        var bucket = metadata['bucket'];
-        var path = metadata['fullPath'];
-        var loc = new __WEBPACK_IMPORTED_MODULE_1__location__["a" /* Location */](bucket, path);
-        return authWrapper.makeStorageReference(loc);
-    }
-    Object.defineProperty(metadata, 'ref', { get: generateRef });
-}
-function fromResource(authWrapper, resource, mappings) {
-    var metadata = {};
-    metadata['type'] = 'file';
-    var len = mappings.length;
-    for (var i = 0; i < len; i++) {
-        var mapping = mappings[i];
-        metadata[mapping.local] = mapping.xform(metadata, resource[mapping.server]);
-    }
-    addRef(metadata, authWrapper);
-    return metadata;
-}
-function fromResourceString(authWrapper, resourceString, mappings) {
-    var obj = __WEBPACK_IMPORTED_MODULE_0__json__["a" /* jsonObjectOrNull */](resourceString);
-    if (obj === null) {
-        return null;
-    }
-    var resource = obj;
-    return fromResource(authWrapper, resource, mappings);
-}
-function toResourceString(metadata, mappings) {
-    var resource = {};
-    var len = mappings.length;
-    for (var i = 0; i < len; i++) {
-        var mapping = mappings[i];
-        if (mapping.writable) {
-            resource[mapping.server] = metadata[mapping.local];
-        }
-    }
-    return JSON.stringify(resource);
-}
-function metadataValidator(p) {
-    var validType = p && __WEBPACK_IMPORTED_MODULE_3__type__["i" /* isObject */](p);
-    if (!validType) {
-        throw 'Expected Metadata object.';
-    }
-    for (var key in p) {
-        var val = p[key];
-        if (key === 'customMetadata') {
-            if (!__WEBPACK_IMPORTED_MODULE_3__type__["i" /* isObject */](val)) {
-                throw 'Expected object for \'customMetadata\' mapping.';
-            }
-        }
-        else {
-            if (__WEBPACK_IMPORTED_MODULE_3__type__["g" /* isNonNullObject */](val)) {
-                throw "Mapping for '" + key + "' cannot be an object.";
-            }
-        }
-    }
-}
-
-//# sourceMappingURL=metadata.js.map
-
-
-/***/ }),
-/* 42 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = makeNormalUrl;
-/* harmony export (immutable) */ __webpack_exports__["a"] = makeDownloadUrl;
-/* harmony export (immutable) */ __webpack_exports__["d"] = makeUploadUrl;
-/* harmony export (immutable) */ __webpack_exports__["c"] = makeQueryString;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(29);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(13);
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * @fileoverview Functions to create and manipulate URLs for the server API.
- */
-
-
-function makeNormalUrl(urlPart) {
-    return __WEBPACK_IMPORTED_MODULE_0__constants__["f" /* domainBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* apiBaseUrl */] + urlPart;
-}
-function makeDownloadUrl(urlPart) {
-    return __WEBPACK_IMPORTED_MODULE_0__constants__["g" /* downloadBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* apiBaseUrl */] + urlPart;
-}
-function makeUploadUrl(urlPart) {
-    return __WEBPACK_IMPORTED_MODULE_0__constants__["f" /* domainBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* apiUploadBaseUrl */] + urlPart;
-}
-function makeQueryString(params) {
-    var encode = encodeURIComponent;
-    var queryPart = '?';
-    __WEBPACK_IMPORTED_MODULE_1__object__["b" /* forEach */](params, function (key, val) {
-        var nextPart = encode(key) + '=' + encode(val);
-        queryPart = queryPart + nextPart + '&';
-    });
-    // Chop off the extra '&' or '?' on the end
-    queryPart = queryPart.slice(0, -1);
-    return queryPart;
-}
-
-//# sourceMappingURL=url.js.map
-
-
-/***/ }),
-/* 43 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (immutable) */ __webpack_exports__["b"] = contains;
-/* harmony export (immutable) */ __webpack_exports__["a"] = clone;
-/* harmony export (immutable) */ __webpack_exports__["c"] = remove;
-/**
- * Copyright 2017 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-/**
- * Returns true if the object is contained in the array (compared with ===).
- * @template T
- */
-function contains(array, elem) {
-    return array.indexOf(elem) !== -1;
-}
-/**
- * Returns a shallow copy of the array or array-like object (e.g. arguments).
- * @template T
- */
-function clone(arraylike) {
-    return Array.prototype.slice.call(arraylike);
-}
-/**
- * Removes the given element from the given array, if it is contained.
- * Directly modifies the passed-in array.
- * @template T
- */
-function remove(array, elem) {
-    var i = array.indexOf(elem);
-    if (i !== -1) {
-        array.splice(i, 1);
-    }
-}
-
-//# sourceMappingURL=array.js.map
-
-
-/***/ }),
-/* 44 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
-
-
-class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */] {
-  constructor(ctx, x, y, width, height) {
-    super(ctx, x, y, width, height);
-    this.drawStrategy = [];
-  }
-
-  draw(){
-    if(this.drawStrategy.length){
-      this.drawStrategy.forEach((drawStrategy) => {
-        drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
-      });
-    }
-    // this.ctx.strokeStyle = "green";
-    // this.ctx.rect(this.x, this.y, this.width, this.height);
-    // this.ctx.stroke();
-  }
-
-  addDrawStrategy(drawStrategy){
-    this.drawStrategy.push(drawStrategy);
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Wall);
-
-
-/***/ }),
-/* 45 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
-
-
-class Pill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */]{
-  constructor(ctx, x, y, width, height) {
-    super(ctx, x, y, width, height);
-    this.visible = true;
-  }
-
-  draw(){
-    if(this.visible){
-      this.ctx.beginPath();
-      this.ctx.fillStyle = "yellow";
-      this.ctx.lineWidth = 0;
-      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/10, 2*Math.PI, false);
-      this.ctx.fill();
-    }
-  }
-
-  hide(){
-    this.visible = false;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (Pill);
-
-
-/***/ }),
-/* 46 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
-
-
-class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */]{
-  constructor(ctx, x, y, width, height) {
-    super(ctx, x, y, width, height);
-    this.visible = true;
-  }
-
-  draw(){
-    if(this.visible){
-      this.ctx.beginPath();
-      this.ctx.fillStyle = "yellow";
-      this.ctx.lineWidth = 0;
-      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
-      this.ctx.fill();
-    }
-  }
-
-  hide(){
-    this.visible = false;
-  }
-}
-
-/* harmony default export */ __webpack_exports__["a"] = (LargePill);
-
-
-/***/ }),
-/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -24876,6 +23091,1791 @@ class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* def
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20), __webpack_require__(92)(module)))
 
 /***/ }),
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @fileoverview Firebase constants.  Some of these (@defines) can be overridden at compile-time.
+ */
+exports.CONSTANTS = {
+    /**
+     * @define {boolean} Whether this is the client Node.js SDK.
+     */
+    NODE_CLIENT: false,
+    /**
+     * @define {boolean} Whether this is the Admin Node.js SDK.
+     */
+    NODE_ADMIN: false,
+    /**
+     * Firebase SDK Version
+     */
+    SDK_VERSION: '${JSCORE_VERSION}'
+};
+
+//# sourceMappingURL=constants.js.map
+
+
+/***/ }),
+/* 35 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var onDisconnect_1 = __webpack_require__(58);
+var TransactionResult_1 = __webpack_require__(127);
+var util_1 = __webpack_require__(1);
+var NextPushId_1 = __webpack_require__(128);
+var Query_1 = __webpack_require__(59);
+var Repo_1 = __webpack_require__(26);
+var Path_1 = __webpack_require__(2);
+var QueryParams_1 = __webpack_require__(152);
+var validation_1 = __webpack_require__(9);
+var util_2 = __webpack_require__(0);
+var util_3 = __webpack_require__(0);
+var SyncPoint_1 = __webpack_require__(70);
+var Reference = /** @class */ (function (_super) {
+    __extends(Reference, _super);
+    /**
+     * Call options:
+     *   new Reference(Repo, Path) or
+     *   new Reference(url: string, string|RepoManager)
+     *
+     * Externally - this is the firebase.database.Reference type.
+     *
+     * @param {!Repo} repo
+     * @param {(!Path)} path
+     * @extends {Query}
+     */
+    function Reference(repo, path) {
+        var _this = this;
+        if (!(repo instanceof Repo_1.Repo)) {
+            throw new Error('new Reference() no longer supported - use app.database().');
+        }
+        // call Query's constructor, passing in the repo and path.
+        _this = _super.call(this, repo, path, QueryParams_1.QueryParams.DEFAULT, false) || this;
+        return _this;
+    }
+    /** @return {?string} */
+    Reference.prototype.getKey = function () {
+        util_2.validateArgCount('Reference.key', 0, 0, arguments.length);
+        if (this.path.isEmpty())
+            return null;
+        else
+            return this.path.getBack();
+    };
+    /**
+     * @param {!(string|Path)} pathString
+     * @return {!Reference}
+     */
+    Reference.prototype.child = function (pathString) {
+        util_2.validateArgCount('Reference.child', 1, 1, arguments.length);
+        if (typeof pathString === 'number') {
+            pathString = String(pathString);
+        }
+        else if (!(pathString instanceof Path_1.Path)) {
+            if (this.path.getFront() === null)
+                validation_1.validateRootPathString('Reference.child', 1, pathString, false);
+            else
+                validation_1.validatePathString('Reference.child', 1, pathString, false);
+        }
+        return new Reference(this.repo, this.path.child(pathString));
+    };
+    /** @return {?Reference} */
+    Reference.prototype.getParent = function () {
+        util_2.validateArgCount('Reference.parent', 0, 0, arguments.length);
+        var parentPath = this.path.parent();
+        return parentPath === null ? null : new Reference(this.repo, parentPath);
+    };
+    /** @return {!Reference} */
+    Reference.prototype.getRoot = function () {
+        util_2.validateArgCount('Reference.root', 0, 0, arguments.length);
+        var ref = this;
+        while (ref.getParent() !== null) {
+            ref = ref.getParent();
+        }
+        return ref;
+    };
+    /** @return {!Database} */
+    Reference.prototype.databaseProp = function () {
+        return this.repo.database;
+    };
+    /**
+     * @param {*} newVal
+     * @param {function(?Error)=} onComplete
+     * @return {!Promise}
+     */
+    Reference.prototype.set = function (newVal, onComplete) {
+        util_2.validateArgCount('Reference.set', 1, 2, arguments.length);
+        validation_1.validateWritablePath('Reference.set', this.path);
+        validation_1.validateFirebaseDataArg('Reference.set', 1, newVal, this.path, false);
+        util_2.validateCallback('Reference.set', 2, onComplete, true);
+        var deferred = new util_3.Deferred();
+        this.repo.setWithPriority(this.path, newVal, 
+        /*priority=*/ null, deferred.wrapCallback(onComplete));
+        return deferred.promise;
+    };
+    /**
+     * @param {!Object} objectToMerge
+     * @param {function(?Error)=} onComplete
+     * @return {!Promise}
+     */
+    Reference.prototype.update = function (objectToMerge, onComplete) {
+        util_2.validateArgCount('Reference.update', 1, 2, arguments.length);
+        validation_1.validateWritablePath('Reference.update', this.path);
+        if (Array.isArray(objectToMerge)) {
+            var newObjectToMerge = {};
+            for (var i = 0; i < objectToMerge.length; ++i) {
+                newObjectToMerge['' + i] = objectToMerge[i];
+            }
+            objectToMerge = newObjectToMerge;
+            util_1.warn('Passing an Array to Firebase.update() is deprecated. ' +
+                'Use set() if you want to overwrite the existing data, or ' +
+                'an Object with integer keys if you really do want to ' +
+                'only update some of the children.');
+        }
+        validation_1.validateFirebaseMergeDataArg('Reference.update', 1, objectToMerge, this.path, false);
+        util_2.validateCallback('Reference.update', 2, onComplete, true);
+        var deferred = new util_3.Deferred();
+        this.repo.update(this.path, objectToMerge, deferred.wrapCallback(onComplete));
+        return deferred.promise;
+    };
+    /**
+     * @param {*} newVal
+     * @param {string|number|null} newPriority
+     * @param {function(?Error)=} onComplete
+     * @return {!Promise}
+     */
+    Reference.prototype.setWithPriority = function (newVal, newPriority, onComplete) {
+        util_2.validateArgCount('Reference.setWithPriority', 2, 3, arguments.length);
+        validation_1.validateWritablePath('Reference.setWithPriority', this.path);
+        validation_1.validateFirebaseDataArg('Reference.setWithPriority', 1, newVal, this.path, false);
+        validation_1.validatePriority('Reference.setWithPriority', 2, newPriority, false);
+        util_2.validateCallback('Reference.setWithPriority', 3, onComplete, true);
+        if (this.getKey() === '.length' || this.getKey() === '.keys')
+            throw 'Reference.setWithPriority failed: ' +
+                this.getKey() +
+                ' is a read-only object.';
+        var deferred = new util_3.Deferred();
+        this.repo.setWithPriority(this.path, newVal, newPriority, deferred.wrapCallback(onComplete));
+        return deferred.promise;
+    };
+    /**
+     * @param {function(?Error)=} onComplete
+     * @return {!Promise}
+     */
+    Reference.prototype.remove = function (onComplete) {
+        util_2.validateArgCount('Reference.remove', 0, 1, arguments.length);
+        validation_1.validateWritablePath('Reference.remove', this.path);
+        util_2.validateCallback('Reference.remove', 1, onComplete, true);
+        return this.set(null, onComplete);
+    };
+    /**
+     * @param {function(*):*} transactionUpdate
+     * @param {(function(?Error, boolean, ?DataSnapshot))=} onComplete
+     * @param {boolean=} applyLocally
+     * @return {!Promise}
+     */
+    Reference.prototype.transaction = function (transactionUpdate, onComplete, applyLocally) {
+        util_2.validateArgCount('Reference.transaction', 1, 3, arguments.length);
+        validation_1.validateWritablePath('Reference.transaction', this.path);
+        util_2.validateCallback('Reference.transaction', 1, transactionUpdate, false);
+        util_2.validateCallback('Reference.transaction', 2, onComplete, true);
+        // NOTE: applyLocally is an internal-only option for now.  We need to decide if we want to keep it and how
+        // to expose it.
+        validation_1.validateBoolean('Reference.transaction', 3, applyLocally, true);
+        if (this.getKey() === '.length' || this.getKey() === '.keys')
+            throw 'Reference.transaction failed: ' +
+                this.getKey() +
+                ' is a read-only object.';
+        if (applyLocally === undefined)
+            applyLocally = true;
+        var deferred = new util_3.Deferred();
+        if (typeof onComplete === 'function') {
+            deferred.promise.catch(function () { });
+        }
+        var promiseComplete = function (error, committed, snapshot) {
+            if (error) {
+                deferred.reject(error);
+            }
+            else {
+                deferred.resolve(new TransactionResult_1.TransactionResult(committed, snapshot));
+            }
+            if (typeof onComplete === 'function') {
+                onComplete(error, committed, snapshot);
+            }
+        };
+        this.repo.startTransaction(this.path, transactionUpdate, promiseComplete, applyLocally);
+        return deferred.promise;
+    };
+    /**
+     * @param {string|number|null} priority
+     * @param {function(?Error)=} onComplete
+     * @return {!Promise}
+     */
+    Reference.prototype.setPriority = function (priority, onComplete) {
+        util_2.validateArgCount('Reference.setPriority', 1, 2, arguments.length);
+        validation_1.validateWritablePath('Reference.setPriority', this.path);
+        validation_1.validatePriority('Reference.setPriority', 1, priority, false);
+        util_2.validateCallback('Reference.setPriority', 2, onComplete, true);
+        var deferred = new util_3.Deferred();
+        this.repo.setWithPriority(this.path.child('.priority'), priority, null, deferred.wrapCallback(onComplete));
+        return deferred.promise;
+    };
+    /**
+     * @param {*=} value
+     * @param {function(?Error)=} onComplete
+     * @return {!Reference}
+     */
+    Reference.prototype.push = function (value, onComplete) {
+        util_2.validateArgCount('Reference.push', 0, 2, arguments.length);
+        validation_1.validateWritablePath('Reference.push', this.path);
+        validation_1.validateFirebaseDataArg('Reference.push', 1, value, this.path, true);
+        util_2.validateCallback('Reference.push', 2, onComplete, true);
+        var now = this.repo.serverTime();
+        var name = NextPushId_1.nextPushId(now);
+        // push() returns a ThennableReference whose promise is fulfilled with a regular Reference.
+        // We use child() to create handles to two different references. The first is turned into a
+        // ThennableReference below by adding then() and catch() methods and is used as the
+        // return value of push(). The second remains a regular Reference and is used as the fulfilled
+        // value of the first ThennableReference.
+        var thennablePushRef = this.child(name);
+        var pushRef = this.child(name);
+        var promise;
+        if (value != null) {
+            promise = thennablePushRef.set(value, onComplete).then(function () { return pushRef; });
+        }
+        else {
+            promise = Promise.resolve(pushRef);
+        }
+        thennablePushRef.then = promise.then.bind(promise);
+        thennablePushRef.catch = promise.then.bind(promise, undefined);
+        if (typeof onComplete === 'function') {
+            promise.catch(function () { });
+        }
+        return thennablePushRef;
+    };
+    /**
+     * @return {!OnDisconnect}
+     */
+    Reference.prototype.onDisconnect = function () {
+        validation_1.validateWritablePath('Reference.onDisconnect', this.path);
+        return new onDisconnect_1.OnDisconnect(this.repo, this.path);
+    };
+    Object.defineProperty(Reference.prototype, "database", {
+        get: function () {
+            return this.databaseProp();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Reference.prototype, "key", {
+        get: function () {
+            return this.getKey();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Reference.prototype, "parent", {
+        get: function () {
+            return this.getParent();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Reference.prototype, "root", {
+        get: function () {
+            return this.getRoot();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return Reference;
+}(Query_1.Query));
+exports.Reference = Reference;
+/**
+ * Define reference constructor in various modules
+ *
+ * We are doing this here to avoid several circular
+ * dependency issues
+ */
+Query_1.Query.__referenceConstructor = Reference;
+SyncPoint_1.SyncPoint.__referenceConstructor = Reference;
+
+//# sourceMappingURL=Reference.js.map
+
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(0);
+var validation_1 = __webpack_require__(9);
+var Path_1 = __webpack_require__(2);
+var PriorityIndex_1 = __webpack_require__(3);
+/**
+ * Class representing a firebase data snapshot.  It wraps a SnapshotNode and
+ * surfaces the public methods (val, forEach, etc.) we want to expose.
+ */
+var DataSnapshot = /** @class */ (function () {
+    /**
+     * @param {!Node} node_ A SnapshotNode to wrap.
+     * @param {!Reference} ref_ The ref of the location this snapshot came from.
+     * @param {!Index} index_ The iteration order for this snapshot
+     */
+    function DataSnapshot(node_, ref_, index_) {
+        this.node_ = node_;
+        this.ref_ = ref_;
+        this.index_ = index_;
+    }
+    /**
+     * Retrieves the snapshot contents as JSON.  Returns null if the snapshot is
+     * empty.
+     *
+     * @return {*} JSON representation of the DataSnapshot contents, or null if empty.
+     */
+    DataSnapshot.prototype.val = function () {
+        util_1.validateArgCount('DataSnapshot.val', 0, 0, arguments.length);
+        return this.node_.val();
+    };
+    /**
+     * Returns the snapshot contents as JSON, including priorities of node.  Suitable for exporting
+     * the entire node contents.
+     * @return {*} JSON representation of the DataSnapshot contents, or null if empty.
+     */
+    DataSnapshot.prototype.exportVal = function () {
+        util_1.validateArgCount('DataSnapshot.exportVal', 0, 0, arguments.length);
+        return this.node_.val(true);
+    };
+    // Do not create public documentation. This is intended to make JSON serialization work but is otherwise unnecessary
+    // for end-users
+    DataSnapshot.prototype.toJSON = function () {
+        // Optional spacer argument is unnecessary because we're depending on recursion rather than stringifying the content
+        util_1.validateArgCount('DataSnapshot.toJSON', 0, 1, arguments.length);
+        return this.exportVal();
+    };
+    /**
+     * Returns whether the snapshot contains a non-null value.
+     *
+     * @return {boolean} Whether the snapshot contains a non-null value, or is empty.
+     */
+    DataSnapshot.prototype.exists = function () {
+        util_1.validateArgCount('DataSnapshot.exists', 0, 0, arguments.length);
+        return !this.node_.isEmpty();
+    };
+    /**
+     * Returns a DataSnapshot of the specified child node's contents.
+     *
+     * @param {!string} childPathString Path to a child.
+     * @return {!DataSnapshot} DataSnapshot for child node.
+     */
+    DataSnapshot.prototype.child = function (childPathString) {
+        util_1.validateArgCount('DataSnapshot.child', 0, 1, arguments.length);
+        // Ensure the childPath is a string (can be a number)
+        childPathString = String(childPathString);
+        validation_1.validatePathString('DataSnapshot.child', 1, childPathString, false);
+        var childPath = new Path_1.Path(childPathString);
+        var childRef = this.ref_.child(childPath);
+        return new DataSnapshot(this.node_.getChild(childPath), childRef, PriorityIndex_1.PRIORITY_INDEX);
+    };
+    /**
+     * Returns whether the snapshot contains a child at the specified path.
+     *
+     * @param {!string} childPathString Path to a child.
+     * @return {boolean} Whether the child exists.
+     */
+    DataSnapshot.prototype.hasChild = function (childPathString) {
+        util_1.validateArgCount('DataSnapshot.hasChild', 1, 1, arguments.length);
+        validation_1.validatePathString('DataSnapshot.hasChild', 1, childPathString, false);
+        var childPath = new Path_1.Path(childPathString);
+        return !this.node_.getChild(childPath).isEmpty();
+    };
+    /**
+     * Returns the priority of the object, or null if no priority was set.
+     *
+     * @return {string|number|null} The priority.
+     */
+    DataSnapshot.prototype.getPriority = function () {
+        util_1.validateArgCount('DataSnapshot.getPriority', 0, 0, arguments.length);
+        // typecast here because we never return deferred values or internal priorities (MAX_PRIORITY)
+        return this.node_.getPriority().val();
+    };
+    /**
+     * Iterates through child nodes and calls the specified action for each one.
+     *
+     * @param {function(!DataSnapshot)} action Callback function to be called
+     * for each child.
+     * @return {boolean} True if forEach was canceled by action returning true for
+     * one of the child nodes.
+     */
+    DataSnapshot.prototype.forEach = function (action) {
+        var _this = this;
+        util_1.validateArgCount('DataSnapshot.forEach', 1, 1, arguments.length);
+        util_1.validateCallback('DataSnapshot.forEach', 1, action, false);
+        if (this.node_.isLeafNode())
+            return false;
+        var childrenNode = this.node_;
+        // Sanitize the return value to a boolean. ChildrenNode.forEachChild has a weird return type...
+        return !!childrenNode.forEachChild(this.index_, function (key, node) {
+            return action(new DataSnapshot(node, _this.ref_.child(key), PriorityIndex_1.PRIORITY_INDEX));
+        });
+    };
+    /**
+     * Returns whether this DataSnapshot has children.
+     * @return {boolean} True if the DataSnapshot contains 1 or more child nodes.
+     */
+    DataSnapshot.prototype.hasChildren = function () {
+        util_1.validateArgCount('DataSnapshot.hasChildren', 0, 0, arguments.length);
+        if (this.node_.isLeafNode())
+            return false;
+        else
+            return !this.node_.isEmpty();
+    };
+    Object.defineProperty(DataSnapshot.prototype, "key", {
+        get: function () {
+            return this.ref_.getKey();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    /**
+     * Returns the number of children for this DataSnapshot.
+     * @return {number} The number of children that this DataSnapshot contains.
+     */
+    DataSnapshot.prototype.numChildren = function () {
+        util_1.validateArgCount('DataSnapshot.numChildren', 0, 0, arguments.length);
+        return this.node_.numChildren();
+    };
+    /**
+     * @return {Reference} The Firebase reference for the location this snapshot's data came from.
+     */
+    DataSnapshot.prototype.getRef = function () {
+        util_1.validateArgCount('DataSnapshot.ref', 0, 0, arguments.length);
+        return this.ref_;
+    };
+    Object.defineProperty(DataSnapshot.prototype, "ref", {
+        get: function () {
+            return this.getRef();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return DataSnapshot;
+}());
+exports.DataSnapshot = DataSnapshot;
+
+//# sourceMappingURL=DataSnapshot.js.map
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var SortedMap_1 = __webpack_require__(25);
+var Path_1 = __webpack_require__(2);
+var util_1 = __webpack_require__(1);
+var util_2 = __webpack_require__(0);
+var emptyChildrenSingleton;
+/**
+ * Singleton empty children collection.
+ *
+ * @const
+ * @type {!SortedMap.<string, !ImmutableTree.<?>>}
+ */
+var EmptyChildren = function () {
+    if (!emptyChildrenSingleton) {
+        emptyChildrenSingleton = new SortedMap_1.SortedMap(util_1.stringCompare);
+    }
+    return emptyChildrenSingleton;
+};
+/**
+ * A tree with immutable elements.
+ */
+var ImmutableTree = /** @class */ (function () {
+    /**
+     * @template T
+     * @param {?T} value
+     * @param {SortedMap.<string, !ImmutableTree.<T>>=} children
+     */
+    function ImmutableTree(value, children) {
+        if (children === void 0) { children = EmptyChildren(); }
+        this.value = value;
+        this.children = children;
+    }
+    /**
+     * @template T
+     * @param {!Object.<string, !T>} obj
+     * @return {!ImmutableTree.<!T>}
+     */
+    ImmutableTree.fromObject = function (obj) {
+        var tree = ImmutableTree.Empty;
+        util_2.forEach(obj, function (childPath, childSnap) {
+            tree = tree.set(new Path_1.Path(childPath), childSnap);
+        });
+        return tree;
+    };
+    /**
+     * True if the value is empty and there are no children
+     * @return {boolean}
+     */
+    ImmutableTree.prototype.isEmpty = function () {
+        return this.value === null && this.children.isEmpty();
+    };
+    /**
+     * Given a path and predicate, return the first node and the path to that node
+     * where the predicate returns true.
+     *
+     * TODO Do a perf test -- If we're creating a bunch of {path: value:} objects
+     * on the way back out, it may be better to pass down a pathSoFar obj.
+     *
+     * @param {!Path} relativePath The remainder of the path
+     * @param {function(T):boolean} predicate The predicate to satisfy to return a
+     *   node
+     * @return {?{path:!Path, value:!T}}
+     */
+    ImmutableTree.prototype.findRootMostMatchingPathAndValue = function (relativePath, predicate) {
+        if (this.value != null && predicate(this.value)) {
+            return { path: Path_1.Path.Empty, value: this.value };
+        }
+        else {
+            if (relativePath.isEmpty()) {
+                return null;
+            }
+            else {
+                var front = relativePath.getFront();
+                var child = this.children.get(front);
+                if (child !== null) {
+                    var childExistingPathAndValue = child.findRootMostMatchingPathAndValue(relativePath.popFront(), predicate);
+                    if (childExistingPathAndValue != null) {
+                        var fullPath = new Path_1.Path(front).child(childExistingPathAndValue.path);
+                        return { path: fullPath, value: childExistingPathAndValue.value };
+                    }
+                    else {
+                        return null;
+                    }
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+    };
+    /**
+     * Find, if it exists, the shortest subpath of the given path that points a defined
+     * value in the tree
+     * @param {!Path} relativePath
+     * @return {?{path: !Path, value: !T}}
+     */
+    ImmutableTree.prototype.findRootMostValueAndPath = function (relativePath) {
+        return this.findRootMostMatchingPathAndValue(relativePath, function () { return true; });
+    };
+    /**
+     * @param {!Path} relativePath
+     * @return {!ImmutableTree.<T>} The subtree at the given path
+     */
+    ImmutableTree.prototype.subtree = function (relativePath) {
+        if (relativePath.isEmpty()) {
+            return this;
+        }
+        else {
+            var front = relativePath.getFront();
+            var childTree = this.children.get(front);
+            if (childTree !== null) {
+                return childTree.subtree(relativePath.popFront());
+            }
+            else {
+                return ImmutableTree.Empty;
+            }
+        }
+    };
+    /**
+     * Sets a value at the specified path.
+     *
+     * @param {!Path} relativePath Path to set value at.
+     * @param {?T} toSet Value to set.
+     * @return {!ImmutableTree.<T>} Resulting tree.
+     */
+    ImmutableTree.prototype.set = function (relativePath, toSet) {
+        if (relativePath.isEmpty()) {
+            return new ImmutableTree(toSet, this.children);
+        }
+        else {
+            var front = relativePath.getFront();
+            var child = this.children.get(front) || ImmutableTree.Empty;
+            var newChild = child.set(relativePath.popFront(), toSet);
+            var newChildren = this.children.insert(front, newChild);
+            return new ImmutableTree(this.value, newChildren);
+        }
+    };
+    /**
+     * Removes the value at the specified path.
+     *
+     * @param {!Path} relativePath Path to value to remove.
+     * @return {!ImmutableTree.<T>} Resulting tree.
+     */
+    ImmutableTree.prototype.remove = function (relativePath) {
+        if (relativePath.isEmpty()) {
+            if (this.children.isEmpty()) {
+                return ImmutableTree.Empty;
+            }
+            else {
+                return new ImmutableTree(null, this.children);
+            }
+        }
+        else {
+            var front = relativePath.getFront();
+            var child = this.children.get(front);
+            if (child) {
+                var newChild = child.remove(relativePath.popFront());
+                var newChildren = void 0;
+                if (newChild.isEmpty()) {
+                    newChildren = this.children.remove(front);
+                }
+                else {
+                    newChildren = this.children.insert(front, newChild);
+                }
+                if (this.value === null && newChildren.isEmpty()) {
+                    return ImmutableTree.Empty;
+                }
+                else {
+                    return new ImmutableTree(this.value, newChildren);
+                }
+            }
+            else {
+                return this;
+            }
+        }
+    };
+    /**
+     * Gets a value from the tree.
+     *
+     * @param {!Path} relativePath Path to get value for.
+     * @return {?T} Value at path, or null.
+     */
+    ImmutableTree.prototype.get = function (relativePath) {
+        if (relativePath.isEmpty()) {
+            return this.value;
+        }
+        else {
+            var front = relativePath.getFront();
+            var child = this.children.get(front);
+            if (child) {
+                return child.get(relativePath.popFront());
+            }
+            else {
+                return null;
+            }
+        }
+    };
+    /**
+     * Replace the subtree at the specified path with the given new tree.
+     *
+     * @param {!Path} relativePath Path to replace subtree for.
+     * @param {!ImmutableTree} newTree New tree.
+     * @return {!ImmutableTree} Resulting tree.
+     */
+    ImmutableTree.prototype.setTree = function (relativePath, newTree) {
+        if (relativePath.isEmpty()) {
+            return newTree;
+        }
+        else {
+            var front = relativePath.getFront();
+            var child = this.children.get(front) || ImmutableTree.Empty;
+            var newChild = child.setTree(relativePath.popFront(), newTree);
+            var newChildren = void 0;
+            if (newChild.isEmpty()) {
+                newChildren = this.children.remove(front);
+            }
+            else {
+                newChildren = this.children.insert(front, newChild);
+            }
+            return new ImmutableTree(this.value, newChildren);
+        }
+    };
+    /**
+     * Performs a depth first fold on this tree. Transforms a tree into a single
+     * value, given a function that operates on the path to a node, an optional
+     * current value, and a map of child names to folded subtrees
+     * @template V
+     * @param {function(Path, ?T, Object.<string, V>):V} fn
+     * @return {V}
+     */
+    ImmutableTree.prototype.fold = function (fn) {
+        return this.fold_(Path_1.Path.Empty, fn);
+    };
+    /**
+     * Recursive helper for public-facing fold() method
+     * @template V
+     * @param {!Path} pathSoFar
+     * @param {function(Path, ?T, Object.<string, V>):V} fn
+     * @return {V}
+     * @private
+     */
+    ImmutableTree.prototype.fold_ = function (pathSoFar, fn) {
+        var accum = {};
+        this.children.inorderTraversal(function (childKey, childTree) {
+            accum[childKey] = childTree.fold_(pathSoFar.child(childKey), fn);
+        });
+        return fn(pathSoFar, this.value, accum);
+    };
+    /**
+     * Find the first matching value on the given path. Return the result of applying f to it.
+     * @template V
+     * @param {!Path} path
+     * @param {!function(!Path, !T):?V} f
+     * @return {?V}
+     */
+    ImmutableTree.prototype.findOnPath = function (path, f) {
+        return this.findOnPath_(path, Path_1.Path.Empty, f);
+    };
+    ImmutableTree.prototype.findOnPath_ = function (pathToFollow, pathSoFar, f) {
+        var result = this.value ? f(pathSoFar, this.value) : false;
+        if (result) {
+            return result;
+        }
+        else {
+            if (pathToFollow.isEmpty()) {
+                return null;
+            }
+            else {
+                var front = pathToFollow.getFront();
+                var nextChild = this.children.get(front);
+                if (nextChild) {
+                    return nextChild.findOnPath_(pathToFollow.popFront(), pathSoFar.child(front), f);
+                }
+                else {
+                    return null;
+                }
+            }
+        }
+    };
+    /**
+     *
+     * @param {!Path} path
+     * @param {!function(!Path, !T)} f
+     * @returns {!ImmutableTree.<T>}
+     */
+    ImmutableTree.prototype.foreachOnPath = function (path, f) {
+        return this.foreachOnPath_(path, Path_1.Path.Empty, f);
+    };
+    ImmutableTree.prototype.foreachOnPath_ = function (pathToFollow, currentRelativePath, f) {
+        if (pathToFollow.isEmpty()) {
+            return this;
+        }
+        else {
+            if (this.value) {
+                f(currentRelativePath, this.value);
+            }
+            var front = pathToFollow.getFront();
+            var nextChild = this.children.get(front);
+            if (nextChild) {
+                return nextChild.foreachOnPath_(pathToFollow.popFront(), currentRelativePath.child(front), f);
+            }
+            else {
+                return ImmutableTree.Empty;
+            }
+        }
+    };
+    /**
+     * Calls the given function for each node in the tree that has a value.
+     *
+     * @param {function(!Path, !T)} f A function to be called with
+     *   the path from the root of the tree to a node, and the value at that node.
+     *   Called in depth-first order.
+     */
+    ImmutableTree.prototype.foreach = function (f) {
+        this.foreach_(Path_1.Path.Empty, f);
+    };
+    ImmutableTree.prototype.foreach_ = function (currentRelativePath, f) {
+        this.children.inorderTraversal(function (childName, childTree) {
+            childTree.foreach_(currentRelativePath.child(childName), f);
+        });
+        if (this.value) {
+            f(currentRelativePath, this.value);
+        }
+    };
+    /**
+     *
+     * @param {function(string, !T)} f
+     */
+    ImmutableTree.prototype.foreachChild = function (f) {
+        this.children.inorderTraversal(function (childName, childTree) {
+            if (childTree.value) {
+                f(childName, childTree.value);
+            }
+        });
+    };
+    ImmutableTree.Empty = new ImmutableTree(null);
+    return ImmutableTree;
+}());
+exports.ImmutableTree = ImmutableTree;
+
+//# sourceMappingURL=ImmutableTree.js.map
+
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(0);
+var Change_1 = __webpack_require__(12);
+var ChildrenNode_1 = __webpack_require__(4);
+var PriorityIndex_1 = __webpack_require__(3);
+/**
+ * Doesn't really filter nodes but applies an index to the node and keeps track of any changes
+ *
+ * @constructor
+ * @implements {NodeFilter}
+ * @param {!Index} index
+ */
+var IndexedFilter = /** @class */ (function () {
+    function IndexedFilter(index_) {
+        this.index_ = index_;
+    }
+    IndexedFilter.prototype.updateChild = function (snap, key, newChild, affectedPath, source, optChangeAccumulator) {
+        util_1.assert(snap.isIndexed(this.index_), 'A node must be indexed if only a child is updated');
+        var oldChild = snap.getImmediateChild(key);
+        // Check if anything actually changed.
+        if (oldChild.getChild(affectedPath).equals(newChild.getChild(affectedPath))) {
+            // There's an edge case where a child can enter or leave the view because affectedPath was set to null.
+            // In this case, affectedPath will appear null in both the old and new snapshots.  So we need
+            // to avoid treating these cases as "nothing changed."
+            if (oldChild.isEmpty() == newChild.isEmpty()) {
+                // Nothing changed.
+                // This assert should be valid, but it's expensive (can dominate perf testing) so don't actually do it.
+                //assert(oldChild.equals(newChild), 'Old and new snapshots should be equal.');
+                return snap;
+            }
+        }
+        if (optChangeAccumulator != null) {
+            if (newChild.isEmpty()) {
+                if (snap.hasChild(key)) {
+                    optChangeAccumulator.trackChildChange(Change_1.Change.childRemovedChange(key, oldChild));
+                }
+                else {
+                    util_1.assert(snap.isLeafNode(), 'A child remove without an old child only makes sense on a leaf node');
+                }
+            }
+            else if (oldChild.isEmpty()) {
+                optChangeAccumulator.trackChildChange(Change_1.Change.childAddedChange(key, newChild));
+            }
+            else {
+                optChangeAccumulator.trackChildChange(Change_1.Change.childChangedChange(key, newChild, oldChild));
+            }
+        }
+        if (snap.isLeafNode() && newChild.isEmpty()) {
+            return snap;
+        }
+        else {
+            // Make sure the node is indexed
+            return snap.updateImmediateChild(key, newChild).withIndex(this.index_);
+        }
+    };
+    /**
+     * @inheritDoc
+     */
+    IndexedFilter.prototype.updateFullNode = function (oldSnap, newSnap, optChangeAccumulator) {
+        if (optChangeAccumulator != null) {
+            if (!oldSnap.isLeafNode()) {
+                oldSnap.forEachChild(PriorityIndex_1.PRIORITY_INDEX, function (key, childNode) {
+                    if (!newSnap.hasChild(key)) {
+                        optChangeAccumulator.trackChildChange(Change_1.Change.childRemovedChange(key, childNode));
+                    }
+                });
+            }
+            if (!newSnap.isLeafNode()) {
+                newSnap.forEachChild(PriorityIndex_1.PRIORITY_INDEX, function (key, childNode) {
+                    if (oldSnap.hasChild(key)) {
+                        var oldChild = oldSnap.getImmediateChild(key);
+                        if (!oldChild.equals(childNode)) {
+                            optChangeAccumulator.trackChildChange(Change_1.Change.childChangedChange(key, childNode, oldChild));
+                        }
+                    }
+                    else {
+                        optChangeAccumulator.trackChildChange(Change_1.Change.childAddedChange(key, childNode));
+                    }
+                });
+            }
+        }
+        return newSnap.withIndex(this.index_);
+    };
+    /**
+     * @inheritDoc
+     */
+    IndexedFilter.prototype.updatePriority = function (oldSnap, newPriority) {
+        if (oldSnap.isEmpty()) {
+            return ChildrenNode_1.ChildrenNode.EMPTY_NODE;
+        }
+        else {
+            return oldSnap.updatePriority(newPriority);
+        }
+    };
+    /**
+     * @inheritDoc
+     */
+    IndexedFilter.prototype.filtersNodes = function () {
+        return false;
+    };
+    /**
+     * @inheritDoc
+     */
+    IndexedFilter.prototype.getIndexedFilter = function () {
+        return this;
+    };
+    /**
+     * @inheritDoc
+     */
+    IndexedFilter.prototype.getIndex = function () {
+        return this.index_;
+    };
+    return IndexedFilter;
+}());
+exports.IndexedFilter = IndexedFilter;
+
+//# sourceMappingURL=IndexedFilter.js.map
+
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var StatsCollection_1 = __webpack_require__(144);
+var StatsManager = /** @class */ (function () {
+    function StatsManager() {
+    }
+    StatsManager.getCollection = function (repoInfo) {
+        var hashString = repoInfo.toString();
+        if (!this.collections_[hashString]) {
+            this.collections_[hashString] = new StatsCollection_1.StatsCollection();
+        }
+        return this.collections_[hashString];
+    };
+    StatsManager.getOrCreateReporter = function (repoInfo, creatorFunction) {
+        var hashString = repoInfo.toString();
+        if (!this.reporters_[hashString]) {
+            this.reporters_[hashString] = creatorFunction();
+        }
+        return this.reporters_[hashString];
+    };
+    StatsManager.collections_ = {};
+    StatsManager.reporters_ = {};
+    return StatsManager;
+}());
+exports.StatsManager = StatsManager;
+
+//# sourceMappingURL=StatsManager.js.map
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var util_1 = __webpack_require__(0);
+var Repo_1 = __webpack_require__(26);
+var util_2 = __webpack_require__(1);
+var parser_1 = __webpack_require__(56);
+var validation_1 = __webpack_require__(9);
+__webpack_require__(154);
+/** @const {string} */
+var DATABASE_URL_OPTION = 'databaseURL';
+var _staticInstance;
+/**
+ * Creates and caches Repo instances.
+ */
+var RepoManager = /** @class */ (function () {
+    function RepoManager() {
+        /**
+         * @private {!Object.<string, Object<string, !fb.core.Repo>>}
+         */
+        this.repos_ = {};
+        /**
+         * If true, new Repos will be created to use ReadonlyRestClient (for testing purposes).
+         * @private {boolean}
+         */
+        this.useRestClient_ = false;
+    }
+    RepoManager.getInstance = function () {
+        if (!_staticInstance) {
+            _staticInstance = new RepoManager();
+        }
+        return _staticInstance;
+    };
+    // TODO(koss): Remove these functions unless used in tests?
+    RepoManager.prototype.interrupt = function () {
+        for (var appName in this.repos_) {
+            for (var dbUrl in this.repos_[appName]) {
+                this.repos_[appName][dbUrl].interrupt();
+            }
+        }
+    };
+    RepoManager.prototype.resume = function () {
+        for (var appName in this.repos_) {
+            for (var dbUrl in this.repos_[appName]) {
+                this.repos_[appName][dbUrl].resume();
+            }
+        }
+    };
+    /**
+     * This function should only ever be called to CREATE a new database instance.
+     *
+     * @param {!FirebaseApp} app
+     * @return {!Database}
+     */
+    RepoManager.prototype.databaseFromApp = function (app, url) {
+        var dbUrl = url || app.options[DATABASE_URL_OPTION];
+        if (dbUrl === undefined) {
+            util_2.fatal("Can't determine Firebase Database URL.  Be sure to include " +
+                DATABASE_URL_OPTION +
+                ' option when calling firebase.initializeApp().');
+        }
+        var parsedUrl = parser_1.parseRepoInfo(dbUrl);
+        var repoInfo = parsedUrl.repoInfo;
+        validation_1.validateUrl('Invalid Firebase Database URL', 1, parsedUrl);
+        if (!parsedUrl.path.isEmpty()) {
+            util_2.fatal('Database URL must point to the root of a Firebase Database ' +
+                '(not including a child path).');
+        }
+        var repo = this.createRepo(repoInfo, app);
+        return repo.database;
+    };
+    /**
+     * Remove the repo and make sure it is disconnected.
+     *
+     * @param {!Repo} repo
+     */
+    RepoManager.prototype.deleteRepo = function (repo) {
+        var appRepos = util_1.safeGet(this.repos_, repo.app.name);
+        // This should never happen...
+        if (!appRepos || util_1.safeGet(appRepos, repo.repoInfo_.toURLString()) !== repo) {
+            util_2.fatal("Database " + repo.app.name + "(" + repo.repoInfo_ + ") has already been deleted.");
+        }
+        repo.interrupt();
+        delete appRepos[repo.repoInfo_.toURLString()];
+    };
+    /**
+     * Ensures a repo doesn't already exist and then creates one using the
+     * provided app.
+     *
+     * @param {!RepoInfo} repoInfo The metadata about the Repo
+     * @param {!FirebaseApp} app
+     * @return {!Repo} The Repo object for the specified server / repoName.
+     */
+    RepoManager.prototype.createRepo = function (repoInfo, app) {
+        var appRepos = util_1.safeGet(this.repos_, app.name);
+        if (!appRepos) {
+            appRepos = {};
+            this.repos_[app.name] = appRepos;
+        }
+        var repo = util_1.safeGet(appRepos, repoInfo.toURLString());
+        if (repo) {
+            util_2.fatal('Database initialized multiple times. Please make sure the format of the database URL matches with each database() call.');
+        }
+        repo = new Repo_1.Repo(repoInfo, this.useRestClient_, app);
+        appRepos[repoInfo.toURLString()] = repo;
+        return repo;
+    };
+    /**
+     * Forces us to use ReadonlyRestClient instead of PersistentConnection for new Repos.
+     * @param {boolean} forceRestClient
+     */
+    RepoManager.prototype.forceRestClient = function (forceRestClient) {
+        this.useRestClient_ = forceRestClient;
+    };
+    return RepoManager;
+}());
+exports.RepoManager = RepoManager;
+
+//# sourceMappingURL=RepoManager.js.map
+
+
+/***/ }),
+/* 41 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["g"] = validate;
+/* unused harmony export ArgSpec */
+/* unused harmony export and_ */
+/* harmony export (immutable) */ __webpack_exports__["e"] = stringSpec;
+/* harmony export (immutable) */ __webpack_exports__["f"] = uploadDataSpec;
+/* harmony export (immutable) */ __webpack_exports__["b"] = metadataSpec;
+/* harmony export (immutable) */ __webpack_exports__["c"] = nonNegativeNumberSpec;
+/* harmony export (immutable) */ __webpack_exports__["a"] = looseObjectSpec;
+/* harmony export (immutable) */ __webpack_exports__["d"] = nullFunctionSpec;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__error__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__metadata__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__type__ = __webpack_require__(6);
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+/**
+ * @param name Name of the function.
+ * @param specs Argument specs.
+ * @param passed The actual arguments passed to the function.
+ * @throws {fbs.Error} If the arguments are invalid.
+ */
+function validate(name, specs, passed) {
+    var minArgs = specs.length;
+    var maxArgs = specs.length;
+    for (var i = 0; i < specs.length; i++) {
+        if (specs[i].optional) {
+            minArgs = i;
+            break;
+        }
+    }
+    var validLength = minArgs <= passed.length && passed.length <= maxArgs;
+    if (!validLength) {
+        throw __WEBPACK_IMPORTED_MODULE_0__error__["g" /* invalidArgumentCount */](minArgs, maxArgs, name, passed.length);
+    }
+    for (var i = 0; i < passed.length; i++) {
+        try {
+            specs[i].validator(passed[i]);
+        }
+        catch (e) {
+            if (e instanceof Error) {
+                throw __WEBPACK_IMPORTED_MODULE_0__error__["f" /* invalidArgument */](i, name, e.message);
+            }
+            else {
+                throw __WEBPACK_IMPORTED_MODULE_0__error__["f" /* invalidArgument */](i, name, e);
+            }
+        }
+    }
+}
+/**
+ * @struct
+ */
+var ArgSpec = /** @class */ (function () {
+    function ArgSpec(validator, opt_optional) {
+        var self = this;
+        this.validator = function (p) {
+            if (self.optional && !__WEBPACK_IMPORTED_MODULE_2__type__["c" /* isJustDef */](p)) {
+                return;
+            }
+            validator(p);
+        };
+        this.optional = !!opt_optional;
+    }
+    return ArgSpec;
+}());
+
+function and_(v1, v2) {
+    return function (p) {
+        v1(p);
+        v2(p);
+    };
+}
+function stringSpec(opt_validator, opt_optional) {
+    function stringValidator(p) {
+        if (!__WEBPACK_IMPORTED_MODULE_2__type__["j" /* isString */](p)) {
+            throw 'Expected string.';
+        }
+    }
+    var validator;
+    if (opt_validator) {
+        validator = and_(stringValidator, opt_validator);
+    }
+    else {
+        validator = stringValidator;
+    }
+    return new ArgSpec(validator, opt_optional);
+}
+function uploadDataSpec() {
+    function validator(p) {
+        var valid = p instanceof Uint8Array ||
+            p instanceof ArrayBuffer ||
+            (__WEBPACK_IMPORTED_MODULE_2__type__["e" /* isNativeBlobDefined */]() && p instanceof Blob);
+        if (!valid) {
+            throw 'Expected Blob or File.';
+        }
+    }
+    return new ArgSpec(validator);
+}
+function metadataSpec(opt_optional) {
+    return new ArgSpec(__WEBPACK_IMPORTED_MODULE_1__metadata__["c" /* metadataValidator */], opt_optional);
+}
+function nonNegativeNumberSpec() {
+    function validator(p) {
+        var valid = __WEBPACK_IMPORTED_MODULE_2__type__["h" /* isNumber */](p) && p >= 0;
+        if (!valid) {
+            throw 'Expected a number 0 or greater.';
+        }
+    }
+    return new ArgSpec(validator);
+}
+function looseObjectSpec(opt_validator, opt_optional) {
+    function validator(p) {
+        var isLooseObject = p === null || (__WEBPACK_IMPORTED_MODULE_2__type__["a" /* isDef */](p) && p instanceof Object);
+        if (!isLooseObject) {
+            throw 'Expected an Object.';
+        }
+        if (opt_validator !== undefined && opt_validator !== null) {
+            opt_validator(p);
+        }
+    }
+    return new ArgSpec(validator, opt_optional);
+}
+function nullFunctionSpec(opt_optional) {
+    function validator(p) {
+        var valid = p === null || __WEBPACK_IMPORTED_MODULE_2__type__["b" /* isFunction */](p);
+        if (!valid) {
+            throw 'Expected a Function.';
+        }
+    }
+    return new ArgSpec(validator, opt_optional);
+}
+
+//# sourceMappingURL=args.js.map
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export noXform_ */
+/* unused harmony export Mapping */
+/* unused harmony export xformPath */
+/* harmony export (immutable) */ __webpack_exports__["b"] = getMappings;
+/* unused harmony export addRef */
+/* unused harmony export fromResource */
+/* harmony export (immutable) */ __webpack_exports__["a"] = fromResourceString;
+/* harmony export (immutable) */ __webpack_exports__["d"] = toResourceString;
+/* harmony export (immutable) */ __webpack_exports__["c"] = metadataValidator;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__json__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__location__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__path__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__type__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__url__ = __webpack_require__(43);
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+
+
+
+function noXform_(metadata, value) {
+    return value;
+}
+/**
+ * @struct
+ */
+var Mapping = /** @class */ (function () {
+    function Mapping(server, opt_local, opt_writable, opt_xform) {
+        this.server = server;
+        this.local = opt_local || server;
+        this.writable = !!opt_writable;
+        this.xform = opt_xform || noXform_;
+    }
+    return Mapping;
+}());
+
+var mappings_ = null;
+function xformPath(fullPath) {
+    var valid = __WEBPACK_IMPORTED_MODULE_3__type__["j" /* isString */](fullPath);
+    if (!valid || fullPath.length < 2) {
+        return fullPath;
+    }
+    else {
+        fullPath = fullPath;
+        return __WEBPACK_IMPORTED_MODULE_2__path__["b" /* lastComponent */](fullPath);
+    }
+}
+function getMappings() {
+    if (mappings_) {
+        return mappings_;
+    }
+    var mappings = [];
+    mappings.push(new Mapping('bucket'));
+    mappings.push(new Mapping('generation'));
+    mappings.push(new Mapping('metageneration'));
+    mappings.push(new Mapping('name', 'fullPath', true));
+    function mappingsXformPath(metadata, fullPath) {
+        return xformPath(fullPath);
+    }
+    var nameMapping = new Mapping('name');
+    nameMapping.xform = mappingsXformPath;
+    mappings.push(nameMapping);
+    /**
+     * Coerces the second param to a number, if it is defined.
+     */
+    function xformSize(metadata, size) {
+        if (__WEBPACK_IMPORTED_MODULE_3__type__["a" /* isDef */](size)) {
+            return +size;
+        }
+        else {
+            return size;
+        }
+    }
+    var sizeMapping = new Mapping('size');
+    sizeMapping.xform = xformSize;
+    mappings.push(sizeMapping);
+    mappings.push(new Mapping('timeCreated'));
+    mappings.push(new Mapping('updated'));
+    mappings.push(new Mapping('md5Hash', null, true));
+    mappings.push(new Mapping('cacheControl', null, true));
+    mappings.push(new Mapping('contentDisposition', null, true));
+    mappings.push(new Mapping('contentEncoding', null, true));
+    mappings.push(new Mapping('contentLanguage', null, true));
+    mappings.push(new Mapping('contentType', null, true));
+    mappings.push(new Mapping('metadata', 'customMetadata', true));
+    /**
+     * Transforms a comma-separated string of tokens into a list of download
+     * URLs.
+     */
+    function xformTokens(metadata, tokens) {
+        var valid = __WEBPACK_IMPORTED_MODULE_3__type__["j" /* isString */](tokens) && tokens.length > 0;
+        if (!valid) {
+            // This can happen if objects are uploaded through GCS and retrieved
+            // through list, so we don't want to throw an Error.
+            return [];
+        }
+        var encode = encodeURIComponent;
+        var tokensList = tokens.split(',');
+        var urls = tokensList.map(function (token) {
+            var bucket = metadata['bucket'];
+            var path = metadata['fullPath'];
+            var urlPart = '/b/' + encode(bucket) + '/o/' + encode(path);
+            var base = __WEBPACK_IMPORTED_MODULE_4__url__["a" /* makeDownloadUrl */](urlPart);
+            var queryString = __WEBPACK_IMPORTED_MODULE_4__url__["c" /* makeQueryString */]({
+                alt: 'media',
+                token: token
+            });
+            return base + queryString;
+        });
+        return urls;
+    }
+    mappings.push(new Mapping('downloadTokens', 'downloadURLs', false, xformTokens));
+    mappings_ = mappings;
+    return mappings_;
+}
+function addRef(metadata, authWrapper) {
+    function generateRef() {
+        var bucket = metadata['bucket'];
+        var path = metadata['fullPath'];
+        var loc = new __WEBPACK_IMPORTED_MODULE_1__location__["a" /* Location */](bucket, path);
+        return authWrapper.makeStorageReference(loc);
+    }
+    Object.defineProperty(metadata, 'ref', { get: generateRef });
+}
+function fromResource(authWrapper, resource, mappings) {
+    var metadata = {};
+    metadata['type'] = 'file';
+    var len = mappings.length;
+    for (var i = 0; i < len; i++) {
+        var mapping = mappings[i];
+        metadata[mapping.local] = mapping.xform(metadata, resource[mapping.server]);
+    }
+    addRef(metadata, authWrapper);
+    return metadata;
+}
+function fromResourceString(authWrapper, resourceString, mappings) {
+    var obj = __WEBPACK_IMPORTED_MODULE_0__json__["a" /* jsonObjectOrNull */](resourceString);
+    if (obj === null) {
+        return null;
+    }
+    var resource = obj;
+    return fromResource(authWrapper, resource, mappings);
+}
+function toResourceString(metadata, mappings) {
+    var resource = {};
+    var len = mappings.length;
+    for (var i = 0; i < len; i++) {
+        var mapping = mappings[i];
+        if (mapping.writable) {
+            resource[mapping.server] = metadata[mapping.local];
+        }
+    }
+    return JSON.stringify(resource);
+}
+function metadataValidator(p) {
+    var validType = p && __WEBPACK_IMPORTED_MODULE_3__type__["i" /* isObject */](p);
+    if (!validType) {
+        throw 'Expected Metadata object.';
+    }
+    for (var key in p) {
+        var val = p[key];
+        if (key === 'customMetadata') {
+            if (!__WEBPACK_IMPORTED_MODULE_3__type__["i" /* isObject */](val)) {
+                throw 'Expected object for \'customMetadata\' mapping.';
+            }
+        }
+        else {
+            if (__WEBPACK_IMPORTED_MODULE_3__type__["g" /* isNonNullObject */](val)) {
+                throw "Mapping for '" + key + "' cannot be an object.";
+            }
+        }
+    }
+}
+
+//# sourceMappingURL=metadata.js.map
+
+
+/***/ }),
+/* 43 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = makeNormalUrl;
+/* harmony export (immutable) */ __webpack_exports__["a"] = makeDownloadUrl;
+/* harmony export (immutable) */ __webpack_exports__["d"] = makeUploadUrl;
+/* harmony export (immutable) */ __webpack_exports__["c"] = makeQueryString;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__constants__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__object__ = __webpack_require__(13);
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * @fileoverview Functions to create and manipulate URLs for the server API.
+ */
+
+
+function makeNormalUrl(urlPart) {
+    return __WEBPACK_IMPORTED_MODULE_0__constants__["f" /* domainBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* apiBaseUrl */] + urlPart;
+}
+function makeDownloadUrl(urlPart) {
+    return __WEBPACK_IMPORTED_MODULE_0__constants__["g" /* downloadBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["a" /* apiBaseUrl */] + urlPart;
+}
+function makeUploadUrl(urlPart) {
+    return __WEBPACK_IMPORTED_MODULE_0__constants__["f" /* domainBase */] + __WEBPACK_IMPORTED_MODULE_0__constants__["b" /* apiUploadBaseUrl */] + urlPart;
+}
+function makeQueryString(params) {
+    var encode = encodeURIComponent;
+    var queryPart = '?';
+    __WEBPACK_IMPORTED_MODULE_1__object__["b" /* forEach */](params, function (key, val) {
+        var nextPart = encode(key) + '=' + encode(val);
+        queryPart = queryPart + nextPart + '&';
+    });
+    // Chop off the extra '&' or '?' on the end
+    queryPart = queryPart.slice(0, -1);
+    return queryPart;
+}
+
+//# sourceMappingURL=url.js.map
+
+
+/***/ }),
+/* 44 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["b"] = contains;
+/* harmony export (immutable) */ __webpack_exports__["a"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["c"] = remove;
+/**
+ * Copyright 2017 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/**
+ * Returns true if the object is contained in the array (compared with ===).
+ * @template T
+ */
+function contains(array, elem) {
+    return array.indexOf(elem) !== -1;
+}
+/**
+ * Returns a shallow copy of the array or array-like object (e.g. arguments).
+ * @template T
+ */
+function clone(arraylike) {
+    return Array.prototype.slice.call(arraylike);
+}
+/**
+ * Removes the given element from the given array, if it is contained.
+ * Directly modifies the passed-in array.
+ * @template T
+ */
+function remove(array, elem) {
+    var i = array.indexOf(elem);
+    if (i !== -1) {
+        array.splice(i, 1);
+    }
+}
+
+//# sourceMappingURL=array.js.map
+
+
+/***/ }),
+/* 45 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
+
+
+class Wall extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */] {
+  constructor(ctx, x, y, width, height) {
+    super(ctx, x, y, width, height);
+    this.drawStrategy = [];
+  }
+
+  draw(){
+    if(this.drawStrategy.length){
+      this.drawStrategy.forEach((drawStrategy) => {
+        drawStrategy(this.ctx, this.x, this.y, this.width, this.height);
+      });
+    }
+    // this.ctx.strokeStyle = "green";
+    // this.ctx.rect(this.x, this.y, this.width, this.height);
+    // this.ctx.stroke();
+  }
+
+  addDrawStrategy(drawStrategy){
+    this.drawStrategy.push(drawStrategy);
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Wall);
+
+
+/***/ }),
+/* 46 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
+
+
+class Pill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */]{
+  constructor(ctx, x, y, width, height) {
+    super(ctx, x, y, width, height);
+    this.visible = true;
+  }
+
+  draw(){
+    if(this.visible){
+      this.ctx.beginPath();
+      this.ctx.fillStyle = "yellow";
+      this.ctx.lineWidth = 0;
+      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/10, 2*Math.PI, false);
+      this.ctx.fill();
+    }
+  }
+
+  hide(){
+    this.visible = false;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (Pill);
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
+
+
+class LargePill extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */]{
+  constructor(ctx, x, y, width, height) {
+    super(ctx, x, y, width, height);
+    this.visible = true;
+  }
+
+  draw(){
+    if(this.visible){
+      this.ctx.beginPath();
+      this.ctx.fillStyle = "yellow";
+      this.ctx.lineWidth = 0;
+      this.ctx.arc(this.x+this.width/2, this.y+this.height/2, this.height/4, 2*Math.PI, false);
+      this.ctx.fill();
+    }
+  }
+
+  hide(){
+    this.visible = false;
+  }
+}
+
+/* harmony default export */ __webpack_exports__["a"] = (LargePill);
+
+
+/***/ }),
 /* 48 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -24927,21 +24927,21 @@ XXXXXXXXXXXXXXXXXXXX`,
 `XXXXXXXXXXXXXXXXXXXX
 X..................X
 X.XXXXXXX XXXXXXXX.X
- ...............o..
+X...............o..X
 X.XXXXXX.XX.XXX.XX.X
 X.XbpicX.XX.X X....X
 X.XXXX X.XX.X X.XX.X
 X...o....XX.XXX.XX.X
 X.XXXX.X........XX.X
 X.X  X.X.XXX.XXXXX.X
- .X  X.X........XX.
+X.X  X.X........XX.X
 X.XXXX.XX XXXXX....X
 X........o..XXX.XX.X
 X.XXX.XXXXX.....XX.X
 X.XXX.X X X.XXXXXX.X
 X..q..X X X.....XX.X
 X.X.X.XXXXX.XXX.XX.X
- .X.X.......X...o..
+X.X.X.......X...o..X
 X.X.XXXXX.XXX.XXXX.X
 X.X.XXXXX.XXX.XXXX.X
 X..................X
@@ -25255,7 +25255,7 @@ process.umask = function() { return 0; };
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(33);
+var constants_1 = __webpack_require__(34);
 /**
  * Throws an error if the provided assertion is falsy
  * @param {*} assertion The assertion to be tested for falsiness
@@ -25811,9 +25811,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(1);
 var parser_1 = __webpack_require__(56);
 var Path_1 = __webpack_require__(2);
-var Reference_1 = __webpack_require__(34);
+var Reference_1 = __webpack_require__(35);
 var Repo_1 = __webpack_require__(26);
-var RepoManager_1 = __webpack_require__(39);
+var RepoManager_1 = __webpack_require__(40);
 var util_2 = __webpack_require__(0);
 var validation_1 = __webpack_require__(9);
 /**
@@ -29724,7 +29724,7 @@ exports.Connection = Connection;
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(1);
 var CountedSet_1 = __webpack_require__(68);
-var StatsManager_1 = __webpack_require__(38);
+var StatsManager_1 = __webpack_require__(39);
 var PacketReceiver_1 = __webpack_require__(150);
 var Constants_1 = __webpack_require__(22);
 var util_2 = __webpack_require__(0);
@@ -30361,7 +30361,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var app_1 = __webpack_require__(8);
 var util_1 = __webpack_require__(0);
 var util_2 = __webpack_require__(1);
-var StatsManager_1 = __webpack_require__(38);
+var StatsManager_1 = __webpack_require__(39);
 var Constants_1 = __webpack_require__(22);
 var util_3 = __webpack_require__(0);
 var storage_1 = __webpack_require__(21);
@@ -30795,7 +30795,7 @@ exports.ServerActions = ServerActions;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var IndexedFilter_1 = __webpack_require__(37);
+var IndexedFilter_1 = __webpack_require__(38);
 var PriorityIndex_1 = __webpack_require__(3);
 var Node_1 = __webpack_require__(5);
 var ChildrenNode_1 = __webpack_require__(4);
@@ -31325,11 +31325,11 @@ var ErrorCode;
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Reference; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_blob__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_error__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_location__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_metadata__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_metadata__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_object__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_path__ = __webpack_require__(86);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_requests__ = __webpack_require__(88);
@@ -31811,14 +31811,14 @@ var FbsBlob = /** @class */ (function () {
 /* harmony export (immutable) */ __webpack_exports__["f"] = getResumableUploadStatus;
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return resumableUploadChunkSize; });
 /* harmony export (immutable) */ __webpack_exports__["b"] = continueResumableUpload;
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__array__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__array__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__blob__ = __webpack_require__(87);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__error__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__metadata__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__metadata__ = __webpack_require__(42);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__requestinfo__ = __webpack_require__(171);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(43);
 /**
  * Copyright 2017 Google Inc.
  *
@@ -32195,9 +32195,9 @@ document.addEventListener("DOMContentLoaded", () => {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(44);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pill__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__large_pill__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__pill__ = __webpack_require__(46);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__large_pill__ = __webpack_require__(47);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__duck__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__blinky__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__inky__ = __webpack_require__(94);
@@ -32245,7 +32245,7 @@ class Util {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__visible_object__ = __webpack_require__(14);
 
@@ -32518,7 +32518,7 @@ class DrawStrategy {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__board_model_js__ = __webpack_require__(48);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__game__ = __webpack_require__(49);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__database__ = __webpack_require__(99);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_lodash__);
 
 
@@ -34124,7 +34124,7 @@ exports.Deferred = Deferred;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(33);
+var constants_1 = __webpack_require__(34);
 /**
  * Returns navigator.userAgent string or '' if it's not defined.
  * @return {string} user agent string
@@ -35622,11 +35622,11 @@ var Database_1 = __webpack_require__(55);
 exports.Database = Database_1.Database;
 var Query_1 = __webpack_require__(59);
 exports.Query = Query_1.Query;
-var Reference_1 = __webpack_require__(34);
+var Reference_1 = __webpack_require__(35);
 exports.Reference = Reference_1.Reference;
 var util_1 = __webpack_require__(1);
 exports.enableLogging = util_1.enableLogging;
-var RepoManager_1 = __webpack_require__(39);
+var RepoManager_1 = __webpack_require__(40);
 var INTERNAL = __webpack_require__(156);
 var TEST_ACCESS = __webpack_require__(157);
 var util_2 = __webpack_require__(0);
@@ -35651,7 +35651,7 @@ function registerDatabase(instance) {
 }
 exports.registerDatabase = registerDatabase;
 registerDatabase(app_1.default);
-var DataSnapshot_1 = __webpack_require__(35);
+var DataSnapshot_1 = __webpack_require__(36);
 exports.DataSnapshot = DataSnapshot_1.DataSnapshot;
 var onDisconnect_1 = __webpack_require__(58);
 exports.OnDisconnect = onDisconnect_1.OnDisconnect;
@@ -35962,7 +35962,7 @@ exports.nextPushId = (function () {
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var DataSnapshot_1 = __webpack_require__(35);
+var DataSnapshot_1 = __webpack_require__(36);
 var Event_1 = __webpack_require__(130);
 var util_1 = __webpack_require__(0);
 var util_2 = __webpack_require__(0);
@@ -36308,7 +36308,7 @@ var util_2 = __webpack_require__(1);
 var AckUserWrite_1 = __webpack_require__(132);
 var ChildrenNode_1 = __webpack_require__(4);
 var util_3 = __webpack_require__(0);
-var ImmutableTree_1 = __webpack_require__(36);
+var ImmutableTree_1 = __webpack_require__(37);
 var ListenComplete_1 = __webpack_require__(133);
 var Merge_1 = __webpack_require__(134);
 var Operation_1 = __webpack_require__(10);
@@ -37229,7 +37229,7 @@ exports.Merge = Merge;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var IndexedFilter_1 = __webpack_require__(37);
+var IndexedFilter_1 = __webpack_require__(38);
 var ViewProcessor_1 = __webpack_require__(136);
 var ChildrenNode_1 = __webpack_require__(4);
 var CacheNode_1 = __webpack_require__(27);
@@ -37450,7 +37450,7 @@ var ChildChangeAccumulator_1 = __webpack_require__(137);
 var Change_1 = __webpack_require__(12);
 var ChildrenNode_1 = __webpack_require__(4);
 var KeyIndex_1 = __webpack_require__(16);
-var ImmutableTree_1 = __webpack_require__(36);
+var ImmutableTree_1 = __webpack_require__(37);
 var Path_1 = __webpack_require__(2);
 var CompleteChildSource_1 = __webpack_require__(138);
 /**
@@ -39021,7 +39021,7 @@ exports.WriteTreeRef = WriteTreeRef;
  * limitations under the License.
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-var ImmutableTree_1 = __webpack_require__(36);
+var ImmutableTree_1 = __webpack_require__(37);
 var Path_1 = __webpack_require__(2);
 var util_1 = __webpack_require__(0);
 var Node_1 = __webpack_require__(5);
@@ -40279,7 +40279,7 @@ var KeyIndex_1 = __webpack_require__(16);
 var PriorityIndex_1 = __webpack_require__(3);
 var ValueIndex_1 = __webpack_require__(61);
 var PathIndex_1 = __webpack_require__(65);
-var IndexedFilter_1 = __webpack_require__(37);
+var IndexedFilter_1 = __webpack_require__(38);
 var LimitedFilter_1 = __webpack_require__(153);
 var RangedFilter_1 = __webpack_require__(79);
 var util_3 = __webpack_require__(0);
@@ -40953,8 +40953,8 @@ exports.LimitedFilter = LimitedFilter;
  */
 Object.defineProperty(exports, "__esModule", { value: true });
 var util_1 = __webpack_require__(0);
-var Reference_1 = __webpack_require__(34);
-var DataSnapshot_1 = __webpack_require__(35);
+var Reference_1 = __webpack_require__(35);
+var DataSnapshot_1 = __webpack_require__(36);
 var Path_1 = __webpack_require__(2);
 var Tree_1 = __webpack_require__(155);
 var PriorityIndex_1 = __webpack_require__(3);
@@ -41821,7 +41821,7 @@ exports.interceptServerData = function (ref, callback) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var RepoInfo_1 = __webpack_require__(57);
 var PersistentConnection_1 = __webpack_require__(73);
-var RepoManager_1 = __webpack_require__(39);
+var RepoManager_1 = __webpack_require__(40);
 var Connection_1 = __webpack_require__(75);
 exports.DataConnection = PersistentConnection_1.PersistentConnection;
 /**
@@ -43490,8 +43490,8 @@ var RequestInfo = /** @class */ (function () {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_taskenums__ = __webpack_require__(19);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_observer__ = __webpack_require__(173);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__tasksnapshot__ = __webpack_require__(174);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_args__ = __webpack_require__(40);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_array__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_args__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__implementation_array__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__implementation_async__ = __webpack_require__(175);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__implementation_error__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__implementation_promise_external__ = __webpack_require__(11);
@@ -44204,7 +44204,7 @@ function async(f) {
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Service; });
 /* unused harmony export ServiceInternals */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__implementation_args__ = __webpack_require__(41);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__implementation_authwrapper__ = __webpack_require__(177);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__implementation_location__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__implementation_promise_external__ = __webpack_require__(11);
@@ -44602,13 +44602,13 @@ var RequestMap = /** @class */ (function () {
 /* unused harmony export addVersionHeader_ */
 /* harmony export (immutable) */ __webpack_exports__["a"] = makeRequest;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__firebase_app__ = __webpack_require__(8);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__array__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__array__ = __webpack_require__(44);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__backoff__ = __webpack_require__(181);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__error__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object__ = __webpack_require__(13);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__promise_external__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__type__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(42);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__url__ = __webpack_require__(43);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__xhrio__ = __webpack_require__(84);
 /**
  * Copyright 2017 Google Inc.
