@@ -2836,8 +2836,6 @@ class VisibleObject {
     this.direction[1] + this.nextDirection[1];
   }
 
-  
-
   draw(){
   }
 
@@ -5640,7 +5638,7 @@ class Board {
   }
 
   moveQuackMan(){
-    this.actuallyChangeDirection();
+    this.quackMan.actuallyChangeDirection(this.grid, this.squareWidth, this.squareHeight);
 
     const startX = this.quackMan.x;
     const startY = this.quackMan.y;
@@ -5724,42 +5722,6 @@ class Board {
 
   changeDirection(direction){
     this.quackMan.changeDirection(direction);
-  }
-
-  actuallyChangeDirection(){
-    if(!this.quackMan.nextDirection) return;
-
-    const center = this.quackMan.calculateCurrentCenter();
-    const quackCenterX = center.x;
-    const quackCenterY = center.y;
-
-    const currentLocation = this.quackMan.calculateMatrixPos(quackCenterX, quackCenterY, this.squareWidth, this.squareHeight);
-    const currentGridX = currentLocation.gridX;
-    const currentGridY = currentLocation.gridY;
-
-    const nextCenter = this.quackMan.calculateNextCenter(currentGridX, currentGridY, this.squareWidth, this.squareHeight);
-    const nextCenterX = nextCenter.x;
-    const nextCenterY = nextCenter.y;
-
-    const nextGridX = currentGridX + this.quackMan.nextDirection[0];
-    const nextGridY = currentGridY + this.quackMan.nextDirection[1];
-    if(this.grid.length >= nextGridX &&
-       this.grid[0].length >= nextGridY){
-        const nextCell = this.grid[nextGridY][nextGridX];
-        if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
-
-          if(this.quackMan.notInverseDirection()) {
-            if (this.quackMan.smoothMovement(quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
-              return;
-            }
-
-            this.quackMan.x = currentGridX * this.squareWidth + (this.squareWidth - this.quackMan.width) / 2;
-            this.quackMan.y = currentGridY * this.squareHeight + (this.squareHeight - this.quackMan.height) / 2;
-          }
-          this.quackMan.direction = this.quackMan.nextDirection;
-          this.quackMan.nextDirection = null;
-        }
-    }
   }
 
   makeEatable(){
@@ -5962,10 +5924,12 @@ class Board {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__movable_object__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__movable_object__ = __webpack_require__(91);
 
 
-class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* default */] {
+
+class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default */] {
   constructor(ctx, x, y, width, height){
     super(ctx, x, y, width, height);
     this.ctx = ctx;
@@ -6019,6 +5983,42 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
       return;
 
     this.nextDirection = direction;
+  }
+
+  actuallyChangeDirection(grid, squareWidth, squareHeight){
+    if(!this.nextDirection) return;
+
+    const center = this.calculateCurrentCenter();
+    const quackCenterX = center.x;
+    const quackCenterY = center.y;
+
+    const currentLocation = this.calculateMatrixPos(quackCenterX, quackCenterY, squareWidth, squareHeight);
+    const currentGridX = currentLocation.gridX;
+    const currentGridY = currentLocation.gridY;
+
+    const nextCenter = this.calculateNextCenter(currentGridX, currentGridY, squareWidth, squareHeight);
+    const nextCenterX = nextCenter.x;
+    const nextCenterY = nextCenter.y;
+
+    const nextGridX = currentGridX + this.nextDirection[0];
+    const nextGridY = currentGridY + this.nextDirection[1];
+    if(grid.length >= nextGridX &&
+       grid[0].length >= nextGridY){
+        const nextCell = grid[nextGridY][nextGridX];
+        if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */])) {
+
+          if(this.notInverseDirection()) {
+            if (this.smoothMovement(quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
+              return;
+            }
+
+            this.x = currentGridX * squareWidth + (squareWidth - this.width) / 2;
+            this.y = currentGridY * squareHeight + (squareHeight - this.height) / 2;
+          }
+          this.direction = this.nextDirection;
+          this.nextDirection = null;
+        }
+    }
   }
 
 
