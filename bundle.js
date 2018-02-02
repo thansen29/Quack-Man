@@ -2787,12 +2787,17 @@ class VisibleObject {
          object.y < (this.y + this.height));
   }
 
-  getBoundingBox(){
+  calculateCurrentCenter(){
     return {
-      topLeft: { x: this.x, y: this.y },
-      topRight: { x: this.x + this.width, y: this.y },
-      bottomLeft: { x: this.x, y: this.y + this.height } ,
-      bottomRight: { x: this.x + this.width, y: this.y + this.height }
+      x: this.x + this.width / 2,
+      y: this.y + this.height / 2
+    };
+  }
+
+  calculateNextCenter(X, Y, width, height){
+    return {
+      x: X * width + (width / 2),
+      y: Y * height + (height / 2),
     };
   }
 
@@ -5415,7 +5420,6 @@ var Location = /** @class */ (function () {
 
 
 
-
 let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Board {
@@ -5481,7 +5485,6 @@ class Board {
 
   }
 
-  //ghosts get stuck in corner of default gate???
   getRandomDirection(ghost){
     randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
@@ -5524,11 +5527,10 @@ class Board {
     });
   }
 
-
   changeGhostDirection(ghost){
     if(!ghost.nextDirection) return;
 
-    const center = this.calculateCurrentCenter(ghost);
+    const center = ghost.calculateCurrentCenter();
     const ghostX = center.x;
     const ghostY = center.y;
 
@@ -5536,7 +5538,7 @@ class Board {
     const currentGridX = currentLocation.gridX;
     const currentGridY = currentLocation.gridY;
 
-    const nextCenter = this.calculateNextCenter(currentGridX, currentGridY);
+    const nextCenter = ghost.calculateNextCenter(currentGridX, currentGridY, this.squareWidth, this.squareHeight);
     const nextCenterX = nextCenter.x;
     const nextCenterY = nextCenter.y;
 
@@ -5607,7 +5609,6 @@ class Board {
 
   ghostCollision(ghost){
     if(ghost.collidesWith(this.quackMan) && ghost.vulnerable){
-      console.log(ghost.vulnerable);
       this.eatGhost(ghost);
     } else if(ghost.collidesWith(this.quackMan) && !ghost.eatable){
       this.killQuackMan();
@@ -5653,24 +5654,10 @@ class Board {
     this.quackMan.nextDirection = direction;
   }
 
-  calculateCurrentCenter(object){
-    return {
-      x: object.x + object.width / 2,
-      y: object.y + object.height / 2
-    };
-  }
-
-  calculateNextCenter(gridX, gridY){
-    return {
-      x: gridX * this.squareWidth + (this.squareWidth / 2),
-      y: gridY * this.squareHeight + (this.squareHeight / 2)
-    };
-  }
-
   actuallyChangeDirection(){
     if(!this.quackMan.nextDirection) return;
 
-    const center = this.calculateCurrentCenter(this.quackMan);
+    const center = this.quackMan.calculateCurrentCenter();
     const quackCenterX = center.x;
     const quackCenterY = center.y;
 
@@ -5678,7 +5665,7 @@ class Board {
     const currentGridX = currentLocation.gridX;
     const currentGridY = currentLocation.gridY;
 
-    const nextCenter = this.calculateNextCenter(currentGridX, currentGridY);
+    const nextCenter = this.quackMan.calculateNextCenter(currentGridX, currentGridY, this.squareWidth, this.squareHeight);
     const nextCenterX = nextCenter.x;
     const nextCenterY = nextCenter.y;
 
