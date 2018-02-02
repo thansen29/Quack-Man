@@ -5606,7 +5606,8 @@ class Board {
   }
 
   ghostCollision(ghost){
-    if(ghost.collidesWith(this.quackMan) && ghost.eatable){
+    if(ghost.collidesWith(this.quackMan) && ghost.vulnerable){
+      console.log(ghost.vulnerable);
       this.eatGhost(ghost);
     } else if(ghost.collidesWith(this.quackMan) && !ghost.eatable){
       this.killQuackMan();
@@ -5741,10 +5742,47 @@ class Board {
     this.ghosts.forEach((ghost) => {
       ghost.vulnerable = true;
       ghost.eatable = true;
-      window.setTimeout(() => {
-        ghost.eatable = false;
-      }, 4000);
+      this.flicker(ghost);
+
     });
+  }
+
+  flicker(ghost){
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3000);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3100);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3200);
+    window.setTimeout(() => {
+      ghost.eatable = true;
+    }, 3300);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3400);
+    window.setTimeout(() => {
+      ghost.eatable = true;
+    }, 3500);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3600);
+    window.setTimeout(() => {
+      ghost.eatable = true;
+    }, 3700);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+    }, 3800);
+    window.setTimeout(() => {
+      ghost.eatable = true;
+    }, 3900);
+    window.setTimeout(() => {
+      ghost.eatable = false;
+      ghost.vulnerable = false;
+      //dont make vuln and eatable here, vuln and eatable once reached homebase
+    }, 4000);
   }
 
   killQuackMan(){
@@ -5767,7 +5805,6 @@ class Board {
     }
   }
 
-  //TODO: make a slight pause showing you gained 200 points
   eatGhost(ghost){
     const intro = document.getElementById('intro');
     const eatGhost = document.getElementById('eatghost');
@@ -32681,6 +32718,7 @@ class GameView {
   }
 
   displayScores(scores){
+    $('.highscores li').remove();
     const list = $('.highscores');
     let initials;
     let points;
