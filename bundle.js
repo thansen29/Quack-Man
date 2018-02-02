@@ -2801,6 +2801,43 @@ class VisibleObject {
     };
   }
 
+  calculateMatrixPos(x, y, width, height){
+    const gridX = Math.floor(x / width);
+    const gridY = Math.floor(y / height);
+    return {
+      x: gridX * width,
+      y: gridY * height,
+      gridX,
+      gridY
+    };
+  }
+
+  wrap(x, y){
+    if(x >= 600){
+      this.x = 0;
+    } else if(x <= 0){
+      this.x = 600;
+    } else if (y >= 600){
+      this.y = 0;
+    } else if( y <= 0){
+      this.y = 600;
+    }
+  }
+
+  smoothMovement(centerX, centerY, nextCenterX, nextCenterY){
+    return (this.direction[0] === -1 && centerX >= nextCenterX) ||
+        (this.direction[0] === 1 && centerX <= nextCenterX) ||
+        (this.direction[1] === -1 && centerY >= nextCenterY) ||
+        (this.direction[1] === 1 && centerY <= nextCenterY);
+  }
+
+  notInverseDirection(){
+    return this.direction[0] + this.nextDirection[0] &&
+    this.direction[1] + this.nextDirection[1];
+  }
+
+  
+
   draw(){
   }
 
@@ -2816,7 +2853,12 @@ class VisibleObject {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
 
+
+
+let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
 class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */] {
   constructor(ctx, x, y, width, height){
@@ -2833,6 +2875,62 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
     this.speed = 1.5;
     this.vulnerable = false;
   }
+
+  getRandomDirection(){
+    randDirections = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.shuffle(randDirections);
+    const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
+    if(this.direction[0] === newDirection[0] &&
+       this.direction[1] === newDirection[1]){
+         return;
+    } else {
+        this.nextDirection = [1, 0];
+    }
+    if((this.direction[0] + newDirection[0] === 0) &&
+       (this.direction[1] + newDirection[1] === 0)){
+         this.getRandomDirection();
+     } else {
+       this.nextDirection = newDirection;
+     }
+  }
+
+  flicker(){
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3000);
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3100);
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3200);
+    window.setTimeout(() => {
+      this.eatable = true;
+    }, 3300);
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3400);
+    window.setTimeout(() => {
+      this.eatable = true;
+    }, 3500);
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3600);
+    window.setTimeout(() => {
+      this.eatable = true;
+    }, 3700);
+    window.setTimeout(() => {
+      this.eatable = false;
+    }, 3800);
+    window.setTimeout(() => {
+      this.eatable = true;
+    }, 3900);
+    window.setTimeout(() => {
+      this.eatable = false;
+      this.vulnerable = false;
+      //dont make vuln and eatable here, vuln and eatable once reached homebase
+    }, 4000);
+  }
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Ghost);
@@ -5420,8 +5518,6 @@ var Location = /** @class */ (function () {
 
 
 
-let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
-
 class Board {
 
   constructor(ctx, grid, dots, quackMan, squareWidth, squareHeight, ghosts, defaultPositions, initQuack){
@@ -5448,7 +5544,6 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
-    // this.drawGhosts();
     this.moveQuackMan();
     this.moveGhosts();
   }
@@ -5456,7 +5551,7 @@ class Board {
   setInterval(){
     this.ghosts.forEach((ghost) => {
       window.setInterval(() => {
-        this.getRandomDirection(ghost);
+        ghost.getRandomDirection();
       }, 1500);
     });
   }
@@ -5485,24 +5580,6 @@ class Board {
 
   }
 
-  getRandomDirection(ghost){
-    randDirections = __WEBPACK_IMPORTED_MODULE_7_lodash___default.a.shuffle(randDirections);
-    const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
-    if(ghost.direction[0] === newDirection[0] &&
-       ghost.direction[1] === newDirection[1]){
-         return;
-    } else {
-        ghost.nextDirection = [1, 0];
-    }
-    if((ghost.direction[0] + newDirection[0] === 0) &&
-       (ghost.direction[1] + newDirection[1] === 0)){
-         this.getRandomDirection(ghost);
-       } else {
-         ghost.nextDirection = newDirection;
-       }
-
-  }
-
   moveGhosts(){
     this.ghosts.forEach((ghost) => {
       this.changeGhostDirection(ghost);
@@ -5510,7 +5587,7 @@ class Board {
       const startY = ghost.y;
       ghost.x += ghost.direction[0] * ghost.speed;
       ghost.y += ghost.direction[1] * ghost.speed;
-      let finalPos = this.calculateMatrixPos(startX, startY);
+      let finalPos = ghost.calculateMatrixPos(startX, startY, this.squareWidth, this.squareHeight);
 
       const offsetX = (this.squareWidth - ghost.width) / 2;
       const offsetY = (this.squareHeight - ghost.height) / 2;
@@ -5518,10 +5595,10 @@ class Board {
       if(this.isCollision(ghost)){
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
-        this.getRandomDirection(ghost);
+        ghost.getRandomDirection();
       }
 
-      this.wrap(ghost, ghost.x, ghost.y);
+      ghost.wrap(ghost.x, ghost.y);
       this.ghostCollision(ghost);
       ghost.draw();
     });
@@ -5534,7 +5611,7 @@ class Board {
     const ghostX = center.x;
     const ghostY = center.y;
 
-    const currentLocation = this.calculateMatrixPos(ghostX, ghostY);
+    const currentLocation = ghost.calculateMatrixPos(ghostX, ghostY, this.squareWidth, this.squareHeight);
     const currentGridX = currentLocation.gridX;
     const currentGridY = currentLocation.gridY;
 
@@ -5548,9 +5625,8 @@ class Board {
         this.grid[0].length >= nextY){
           const nextCell = this.grid[nextY][nextX];
           if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
-
-              if(this.notInverseDirection(ghost)) {
-                if (this.smoothMovement(ghost, ghostX, ghostY, nextCenterX, nextCenterY)) {
+              if(ghost.notInverseDirection()) {
+                if (ghost.smoothMovement(ghostX, ghostY, nextCenterX, nextCenterY)) {
                   return;
                 }
                 ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
@@ -5558,7 +5634,7 @@ class Board {
               }
             ghost.direction = ghost.nextDirection;
         } else {
-            this.getRandomDirection(ghost);
+            ghost.getRandomDirection();
         }
     }
   }
@@ -5571,7 +5647,7 @@ class Board {
 
     this.quackMan.x += this.quackMan.direction[0] * this.quackMan.speed;
     this.quackMan.y += this.quackMan.direction[1] * this.quackMan.speed;
-    let finalPos = this.calculateMatrixPos(startX, startY);
+    let finalPos = this.quackMan.calculateMatrixPos(startX, startY, this.squareWidth, this.squareHeight);
 
     const offsetX = (this.squareWidth - this.quackMan.width) / 2;
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
@@ -5582,7 +5658,7 @@ class Board {
       this.quackMan.direction = [0, 0];
     }
 
-    this.wrap(this.quackMan, this.quackMan.x, this.quackMan.y);
+    this.quackMan.wrap(this.quackMan.x, this.quackMan.y);
     this.quackMan.draw(this.quackMan.direction);
     this.eatPill();
     this.showStats();
@@ -5639,19 +5715,15 @@ class Board {
   }
 
   canEatPill(dot){
-    const quackLocation = this.calculateMatrixPos(this.quackMan.x, this.quackMan.y);
-    const dotLocation = this.calculateMatrixPos(dot.x, dot.y);
+    const quackLocation = this.quackMan.calculateMatrixPos(this.quackMan.x, this.quackMan.y, this.squareWidth, this.squareHeight);
+    const dotLocation = dot.calculateMatrixPos(dot.x, dot.y, this.squareWidth, this.squareHeight);
     return dotLocation.gridX === quackLocation.gridX &&
     dotLocation.gridY === quackLocation.gridY &&
     dot.visible;
   }
 
   changeDirection(direction){
-    if(direction[0] === this.quackMan.direction[0] &&
-      direction[1] === this.quackMan.direction[1])
-      return;
-
-    this.quackMan.nextDirection = direction;
+    this.quackMan.changeDirection(direction);
   }
 
   actuallyChangeDirection(){
@@ -5661,7 +5733,7 @@ class Board {
     const quackCenterX = center.x;
     const quackCenterY = center.y;
 
-    const currentLocation = this.calculateMatrixPos(quackCenterX, quackCenterY);
+    const currentLocation = this.quackMan.calculateMatrixPos(quackCenterX, quackCenterY, this.squareWidth, this.squareHeight);
     const currentGridX = currentLocation.gridX;
     const currentGridY = currentLocation.gridY;
 
@@ -5676,8 +5748,8 @@ class Board {
         const nextCell = this.grid[nextGridY][nextGridX];
         if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
-          if(this.notInverseDirection(this.quackMan, quackCenterX, nextCenterX)) {
-            if (this.smoothMovement(this.quackMan, quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
+          if(this.quackMan.notInverseDirection()) {
+            if (this.quackMan.smoothMovement(quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
               return;
             }
 
@@ -5690,86 +5762,12 @@ class Board {
     }
   }
 
-  smoothMovement(object, centerX, centerY, nextCenterX, nextCenterY){
-    return (object.direction[0] === -1 && centerX >= nextCenterX) ||
-        (object.direction[0] === 1 && centerX <= nextCenterX) ||
-        (object.direction[1] === -1 && centerY >= nextCenterY) ||
-        (object.direction[1] === 1 && centerY <= nextCenterY);
-  }
-
-  notInverseDirection(object){
-    return object.direction[0] + object.nextDirection[0] &&
-    object.direction[1] + object.nextDirection[1];
-  }
-
-  calculateMatrixPos(x, y){
-    let gridX = Math.floor(x / this.squareWidth);
-    let gridY = Math.floor(y / this.squareHeight);
-    return {
-      x: gridX * this.squareWidth,
-      y: gridY * this.squareHeight,
-      gridX,
-      gridY
-    };
-  }
-
-  wrap(object, x, y){
-    if(x >= 600){
-      object.x = 0;
-    } else if(x <= 0){
-      object.x = 600;
-    } else if (y >= 600){
-      object.y = 0;
-    } else if( y <= 0){
-      object.y = 600;
-    }
-  }
-
   makeEatable(){
     this.ghosts.forEach((ghost) => {
       ghost.vulnerable = true;
       ghost.eatable = true;
-      this.flicker(ghost);
-
+      ghost.flicker();
     });
-  }
-
-  flicker(ghost){
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3000);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3100);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3200);
-    window.setTimeout(() => {
-      ghost.eatable = true;
-    }, 3300);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3400);
-    window.setTimeout(() => {
-      ghost.eatable = true;
-    }, 3500);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3600);
-    window.setTimeout(() => {
-      ghost.eatable = true;
-    }, 3700);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-    }, 3800);
-    window.setTimeout(() => {
-      ghost.eatable = true;
-    }, 3900);
-    window.setTimeout(() => {
-      ghost.eatable = false;
-      ghost.vulnerable = false;
-      //dont make vuln and eatable here, vuln and eatable once reached homebase
-    }, 4000);
   }
 
   killQuackMan(){
@@ -5799,7 +5797,6 @@ class Board {
     if(!this.muted){
       intro.volume = .3;
       eatGhost.volume = .3;
-
       eatGhost.play();
       intro.play();
     }
@@ -5816,7 +5813,6 @@ class Board {
         ghost.eaten = false;
       }, 2000);
       ghost.vulnerable = false;
-
     }
   }
 
@@ -6015,8 +6011,17 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_0__movable_object__["a" /* defa
 
     this.downDuck = new Image();
     this.downDuck.src = "./assets/downduck.png";
-
   }
+
+  changeDirection(direction){
+    if(direction[0] === this.direction[0] &&
+      direction[1] === this.direction[1])
+      return;
+
+    this.nextDirection = direction;
+  }
+
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (QuackMan);
@@ -25020,9 +25025,9 @@ class Game {
     return this.board.restartGame();
   }
 
-  setDefaultPositions(){
-    this.board.setDefaultPositions();
-  }
+  // setDefaultPositions(){
+  //   this.board.setDefaultPositions();
+  // }
 
   roundOver(){
     return this.board.roundOver();
@@ -25060,6 +25065,10 @@ class Game {
     this.lives = this.board.lives;
     this.score = this.board.score;
     this.level = this.board.level;
+  }
+
+  setDefaultPositions(){
+    this.board.setDefaultPositions();
   }
 
 }
@@ -32555,7 +32564,6 @@ class GameView {
   constructor(ctx, game){
     this.ctx = ctx;
     this.game = game;
-    // this.beginGame = this.beginGame.bind(this);
     this.countdown = this.countdown.bind(this);
     this.startNewGame = this.startNewGame.bind(this);
     this.toggleSound = this.toggleSound.bind(this);
