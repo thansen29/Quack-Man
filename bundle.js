@@ -2791,6 +2791,14 @@ class VisibleObject {
     };
   }
 
+  eatable(quackMan, squareWidth, squareHeight){
+    const quackLocation = quackMan.calculateMatrixPos(quackMan.x, quackMan.y, squareWidth, squareHeight);
+    const dotLocation = this.calculateMatrixPos(this.x, this.y, squareWidth, squareHeight);
+    return dotLocation.gridX === quackLocation.gridX &&
+      dotLocation.gridY === quackLocation.gridY &&
+      this.visible;
+  }
+
   draw(){
   }
 
@@ -2831,6 +2839,28 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default
     this.vulnerable = false;
   }
 
+  move(board, grid, squareWidth, squareHeight, quackMan){
+    this.changeGhostDirection(grid, squareWidth, squareHeight);
+    const startX = this.x;
+    const startY = this.y;
+    this.x += this.direction[0] * this.speed;
+    this.y += this.direction[1] * this.speed;
+    let finalPos = this.calculateMatrixPos(startX, startY, squareWidth, squareHeight);
+
+    const offsetX = (squareWidth - this.width) / 2;
+    const offsetY = (squareHeight - this.height) / 2;
+
+    if(this.wallCollision(grid)){
+      this.x = finalPos.x + offsetX;
+      this.y = finalPos.y + offsetY;
+      this.getRandomDirection();
+    }
+
+    this.wrap(this.x, this.y);
+    this.quackCollision(board, quackMan);
+    this.draw();
+  }
+
   getRandomDirection(){
     randDirections = __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
@@ -2849,6 +2879,7 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default
   }
 
   flicker(){
+    this.vulnerable = true;
     window.setTimeout(() => {
       this.eatable = false;
     }, 3000);
@@ -2921,8 +2952,23 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default
     }
   }
 
+  makeEatable(){
+    this.vulnerable = true;
+    this.eatable = true;
+    this.flicker();
+  }
 
-
+  //TODO: fix that they are not dangerous while blinking
+  //theyre not staying eyes after they get eaten
+  quackCollision(board, quackMan){
+    if(this.collidesWith(quackMan) && this.vulnerable){
+      quackMan.eatGhost(board, this);
+    } else if(this.collidesWith(quackMan) && !this.eatable){
+      console.log('here');
+      quackMan.killSelf(board);
+      return;
+    }
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Ghost);
@@ -5536,7 +5582,7 @@ class Board {
     this.ctx.clearRect(0, 0, 600, 600);
     this.drawWalls();
     this.drawPills();
-    this.moveQuackMan();
+    this.quackMan.move(this, this.grid, this.squareWidth, this.squareHeight, this.dots, this.ghosts);
     this.moveGhosts();
   }
 
@@ -5574,207 +5620,12 @@ class Board {
 
   moveGhosts(){
     this.ghosts.forEach((ghost) => {
-      ghost.changeGhostDirection(this.grid, this.squareWidth, this.squareHeight);
-      const startX = ghost.x;
-      const startY = ghost.y;
-      ghost.x += ghost.direction[0] * ghost.speed;
-      ghost.y += ghost.direction[1] * ghost.speed;
-      let finalPos = ghost.calculateMatrixPos(startX, startY, this.squareWidth, this.squareHeight);
-
-      const offsetX = (this.squareWidth - ghost.width) / 2;
-      const offsetY = (this.squareHeight - ghost.height) / 2;
-
-      if(ghost.wallCollision(this.grid)){
-        ghost.x = finalPos.x + offsetX;
-        ghost.y = finalPos.y + offsetY;
-        ghost.getRandomDirection();
-      }
-
-      ghost.wrap(ghost.x, ghost.y);
-      this.ghostCollision(ghost);
-      ghost.draw();
+      ghost.move(this, this.grid, this.squareWidth, this.squareHeight, this.quackMan);
     });
-  }
-
-  moveQuackMan(){
-    this.quackMan.actuallyChangeDirection(this.grid, this.squareWidth, this.squareHeight);
-
-    const startX = this.quackMan.x;
-    const startY = this.quackMan.y;
-
-    this.quackMan.x += this.quackMan.direction[0] * this.quackMan.speed;
-    this.quackMan.y += this.quackMan.direction[1] * this.quackMan.speed;
-    let finalPos = this.quackMan.calculateMatrixPos(startX, startY, this.squareWidth, this.squareHeight);
-
-    const offsetX = (this.squareWidth - this.quackMan.width) / 2;
-    const offsetY = (this.squareHeight - this.quackMan.height) / 2;
-
-    if(this.quackMan.wallCollision(this.grid)){
-      this.quackMan.x = finalPos.x + offsetX;
-      this.quackMan.y = finalPos.y + offsetY;
-      this.quackMan.direction = [0, 0];
-    }
-
-    this.quackMan.wrap(this.quackMan.x, this.quackMan.y);
-    this.quackMan.draw(this.quackMan.direction);
-    this.eatPill();
-    this.showStats();
-  }
-
-  ghostCollision(ghost){
-    if(ghost.collidesWith(this.quackMan) && ghost.vulnerable){
-      this.eatGhost(ghost);
-    } else if(ghost.collidesWith(this.quackMan) && !ghost.eatable){
-      this.killQuackMan();
-    }
-  }
-
-  eatPill(){
-    const chomp = document.getElementById('chomp');
-    this.dots.forEach((dot) => {
-      if(this.canEatPill(dot)){
-        dot.hide();
-        if(!this.muted){
-          chomp.volume = .3;
-          chomp.play();
-        }
-        if(dot instanceof __WEBPACK_IMPORTED_MODULE_3__large_pill__["a" /* default */]){
-          this.score += 50;
-          this.makeEatable();
-          if(!this.muted){
-            chomp.volume = .3;
-            chomp.play();
-          }
-        } else {
-          this.score += 5;
-        }
-      }
-    });
-  }
-
-  canEatPill(dot){
-    const quackLocation = this.quackMan.calculateMatrixPos(this.quackMan.x, this.quackMan.y, this.squareWidth, this.squareHeight);
-    const dotLocation = dot.calculateMatrixPos(dot.x, dot.y, this.squareWidth, this.squareHeight);
-    return dotLocation.gridX === quackLocation.gridX &&
-    dotLocation.gridY === quackLocation.gridY &&
-    dot.visible;
   }
 
   changeDirection(direction){
     this.quackMan.changeDirection(direction);
-  }
-
-  makeEatable(){
-    this.ghosts.forEach((ghost) => {
-      ghost.vulnerable = true;
-      ghost.eatable = true;
-      ghost.flicker();
-    });
-  }
-
-  killQuackMan(){
-    const death = document.getElementById('death');
-    const chomp = document.getElementById('chomp');
-    this.intro.pause();
-    if(!this.muted){
-      death.play();
-      death.volume = .3;
-      chomp.pause();
-      window.setTimeout(() => {
-        this.intro.play();
-      }, 1500);
-    }
-    if(this.quackMan.vulnerable){
-      this.lives -= 1;
-      this.quackMan.vulnerable = false;
-      this.dead = true;
-      this.restartGame();
-    }
-  }
-
-  eatGhost(ghost){
-    const intro = document.getElementById('intro');
-    const eatGhost = document.getElementById('eatghost');
-    intro.pause();
-    if(!this.muted){
-      intro.volume = .3;
-      eatGhost.volume = .3;
-      eatGhost.play();
-      intro.play();
-    }
-    if(ghost.vulnerable){
-      this.getPoints = true;
-      window.setTimeout(() => {
-        this.getPoints = false;
-      }, 200);
-      this.score += 200;
-      ghost.eaten = true;
-      this.ctx.font = '12px PressStart';
-      this.ctx.fillText("200", this.quackMan.x, this.quackMan.y - 5);
-      window.setTimeout(() => {
-        ghost.eaten = false;
-      }, 2000);
-      ghost.vulnerable = false;
-    }
-  }
-
-  getPoints(){
-    return this.getPoints;
-  }
-
-  showStats(){
-    const score = $('.score');
-    const lives = $('.lives');
-    const level = $('.level');
-    score.html("Score:" + this.score);
-    lives.html("Lives:" + this.lives );
-    level.html("Level:" + this.level );
-  }
-
-  toggleSound(muted){
-    this.muted = muted;
-  }
-
-  restartGame(){
-    return this.dead;
-  }
-
-  gameOver(){
-    if(this.lives <= 0){
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  roundOver(){
-    const complete = this.dots.every((dot) => !dot.visible);
-    if(complete){
-      this.level += 1;
-      this.dots.forEach((dot) =>{
-        dot.visible = true;
-      });
-    }
-    return complete;
-  }
-
-  //TODO: animate death?
-  setDefaultPositions(){
-    this.dead = false;
-    this.quackMan.vulnerable = true;
-    this.quackMan.direction = [0, 0];
-    this.quackMan.nextDirection = [0, 0];
-    this.quackMan.x = this.initQuack.x;
-    this.quackMan.y = this.initQuack.y;
-    let i = 0;
-    this.ghosts.forEach((ghost) => {
-      ghost.x = this.defaultPositions[i].x;
-      ghost.y = this.defaultPositions[i].y;
-      i+=1;
-      ghost.direction = [0, 0];
-      ghost.nextDirection = [0, -1];
-    });
-
   }
 
   static fromString(ctx, boardModel){
@@ -5864,12 +5715,14 @@ class Board {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(45);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__movable_object__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__large_pill__ = __webpack_require__(47);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__movable_object__ = __webpack_require__(91);
 
 
 
-class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default */] {
+
+class QuackMan extends __WEBPACK_IMPORTED_MODULE_2__movable_object__["a" /* default */] {
   constructor(ctx, x, y, width, height){
     super(ctx, x, y, width, height);
     this.ctx = ctx;
@@ -5885,6 +5738,19 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* defa
     this.vulnerable = true;
   }
 
+  loadDucks(){
+    this.rightDuck = new Image();
+    this.rightDuck.src = "./assets/rightduck.png";
+
+    this.leftDuck = new Image();
+    this.leftDuck.src = "./assets/leftduck.png";
+
+    this.upDuck = new Image();
+    this.upDuck.src = "./assets/upduck.png";
+
+    this.downDuck = new Image();
+    this.downDuck.src = "./assets/downduck.png";
+  }
 
   draw(direction){
     if(direction[0] === 1){
@@ -5903,18 +5769,28 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* defa
     this.ctx.fill();
   }
 
-  loadDucks(){
-    this.rightDuck = new Image();
-    this.rightDuck.src = "./assets/rightduck.png";
+  move(board, grid, squareWidth, squareHeight, dots, ghosts){
+    this.actuallyChangeDirection(grid, squareWidth, squareHeight);
 
-    this.leftDuck = new Image();
-    this.leftDuck.src = "./assets/leftduck.png";
+    const startX = this.x;
+    const startY = this.y;
 
-    this.upDuck = new Image();
-    this.upDuck.src = "./assets/upduck.png";
+    this.x += this.direction[0] * this.speed;
+    this.y += this.direction[1] * this.speed;
+    let finalPos = this.calculateMatrixPos(startX, startY, squareWidth, squareHeight);
 
-    this.downDuck = new Image();
-    this.downDuck.src = "./assets/downduck.png";
+    const offsetX = (squareWidth - this.width) / 2;
+    const offsetY = (squareHeight - this.height) / 2;
+
+    if(this.wallCollision(grid)){
+      this.x = finalPos.x + offsetX;
+      this.y = finalPos.y + offsetY;
+      this.direction = [0, 0];
+    }
+
+    this.wrap(this.x, this.y);
+    this.draw(this.direction);
+    this.eatPill(board, dots, squareWidth, squareHeight, ghosts);
   }
 
   changeDirection(direction){
@@ -5945,7 +5821,7 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* defa
     if(grid.length >= nextGridX &&
        grid[0].length >= nextGridY){
         const nextCell = grid[nextGridY][nextGridX];
-        if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */])) {
+        if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])) {
 
           if(this.notInverseDirection()) {
             if (this.smoothMovement(quackCenterX, quackCenterY, nextCenterX, nextCenterY)) {
@@ -5961,6 +5837,75 @@ class QuackMan extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* defa
     }
   }
 
+  eatGhost(board, ghost){
+    const intro = document.getElementById('intro');
+    const eatGhost = document.getElementById('eatghost');
+    intro.pause();
+    if(!board.muted){
+      intro.volume = .3;
+      eatGhost.volume = .3;
+      eatGhost.play();
+      intro.play();
+    }
+    if(ghost.vulnerable){
+      board.getPoints = true;
+      window.setTimeout(() => {
+        board.getPoints = false;
+      }, 200);
+      board.score += 200;
+      ghost.eaten = true;
+      // ghost.vulnerable = true;
+      this.ctx.font = '12px PressStart';
+      this.ctx.fillText("200", this.x, this.y - 5);
+      window.setTimeout(() => {
+        ghost.eaten = false;
+        // ghost.vulnerable = true;
+      }, 2000);
+      ghost.vulnerable = false;
+    }
+  }
+
+  killSelf(board){
+    const death = document.getElementById('death');
+    const chomp = document.getElementById('chomp');
+    board.intro.pause();
+    if(!board.muted){
+      death.play();
+      death.volume = .3;
+      chomp.pause();
+      window.setTimeout(() => {
+        board.intro.play();
+      }, 1500);
+    }
+    if(this.vulnerable){
+      board.lives -= 1;
+      this.vulnerable = false;
+      board.dead = true;
+    }
+  }
+
+  eatPill(board, dots, squareWidth, squareHeight, ghosts){
+    const chomp = document.getElementById('chomp');
+    chomp.volume = .3;
+    const muted = board.muted;
+    dots.forEach((dot) => {
+      if(dot.eatable(this, squareWidth, squareHeight)){
+        dot.hide();
+        if(!muted){
+          chomp.play();
+        }
+        if(dot instanceof __WEBPACK_IMPORTED_MODULE_0__large_pill__["a" /* default */]){
+          board.score += 50;
+          ghosts.forEach((ghost) => ghost.makeEatable());
+          if(!muted){
+            chomp.play();
+          }
+        } else {
+          board.score += 5;
+        }
+      }
+    });
+  }
 
 }
 
@@ -24954,23 +24899,26 @@ class Game {
   }
 
   toggleSound(muted){
-    this.board.toggleSound(muted);
+    this.board.muted = muted;
   }
 
   gameOver(){
-    return this.board.gameOver();
+    return this.board.lives <= 0 ? true : false;
   }
 
   restartGame(){
-    return this.board.restartGame();
+    return this.board.dead;
   }
 
-  // setDefaultPositions(){
-  //   this.board.setDefaultPositions();
-  // }
-
   roundOver(){
-    return this.board.roundOver();
+    const complete = this.board.dots.every((dot) => !dot.visible);
+    if(complete){
+      this.board.level += 1;
+      this.board.dots.forEach((dot) => {
+        dot.visible = true;
+      });
+    }
+    return complete;
   }
 
   getPoints(){
@@ -25007,8 +24955,31 @@ class Game {
     this.level = this.board.level;
   }
 
+  showStats(){
+    const score = $('.score');
+    const lives = $('.lives');
+    const level = $('.level');
+    score.html("Score:" + this.board.score);
+    lives.html("Lives:" + this.board.lives );
+    level.html("Level:" + this.board.level );
+  }
+
+  //TODO: animate death?
   setDefaultPositions(){
-    this.board.setDefaultPositions();
+    this.board.dead = false;
+    this.board.quackMan.vulnerable = true;
+    this.board.quackMan.direction = [0, 0];
+    this.board.quackMan.nextDirection = [0, 0];
+    this.board.quackMan.x = this.board.initQuack.x;
+    this.board.quackMan.y = this.board.initQuack.y;
+    let i = 0;
+    this.board.ghosts.forEach((ghost) => {
+      ghost.x = this.board.defaultPositions[i].x;
+      ghost.y = this.board.defaultPositions[i].y;
+      i+=1;
+      ghost.direction = [0, 0];
+      ghost.nextDirection = [0, -1];
+    });
   }
 
 }
@@ -32622,6 +32593,7 @@ class GameView {
   }
 
   start(){
+    this.game.showStats();
     this.bindSoundHandler();
     this.game.draw();
     this.ctx.fillStyle = "yellow";
@@ -32644,6 +32616,7 @@ class GameView {
   }
 
   animate(time){
+    this.game.showStats();
     if(!this.paused){
       const timeDelta = time - this.lastTime;
       if(this.game.gameOver()){
