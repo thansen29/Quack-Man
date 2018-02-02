@@ -2780,27 +2780,6 @@ class VisibleObject {
     this.height = height;
   }
 
-  collidesWith(object) {
-    return (this.x < (object.x + object.width) &&
-         object.x < (this.x + this.width) &&
-         this.y < (object.y + object.height) &&
-         object.y < (this.y + this.height));
-  }
-
-  calculateCurrentCenter(){
-    return {
-      x: this.x + this.width / 2,
-      y: this.y + this.height / 2
-    };
-  }
-
-  calculateNextCenter(X, Y, width, height){
-    return {
-      x: X * width + (width / 2),
-      y: Y * height + (height / 2),
-    };
-  }
-
   calculateMatrixPos(x, y, width, height){
     const gridX = Math.floor(x / width);
     const gridY = Math.floor(y / height);
@@ -2810,30 +2789,6 @@ class VisibleObject {
       gridX,
       gridY
     };
-  }
-
-  wrap(x, y){
-    if(x >= 600){
-      this.x = 0;
-    } else if(x <= 0){
-      this.x = 600;
-    } else if (y >= 600){
-      this.y = 0;
-    } else if( y <= 0){
-      this.y = 600;
-    }
-  }
-
-  smoothMovement(centerX, centerY, nextCenterX, nextCenterY){
-    return (this.direction[0] === -1 && centerX >= nextCenterX) ||
-        (this.direction[0] === 1 && centerX <= nextCenterX) ||
-        (this.direction[1] === -1 && centerY >= nextCenterY) ||
-        (this.direction[1] === 1 && centerY <= nextCenterY);
-  }
-
-  notInverseDirection(){
-    return this.direction[0] + this.nextDirection[0] &&
-    this.direction[1] + this.nextDirection[1];
   }
 
   draw(){
@@ -2850,15 +2805,17 @@ class VisibleObject {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__visible_object__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__movable_object__ = __webpack_require__(91);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_lodash__);
+
 
 
 
 let randDirections = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
-class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default */] {
+class Ghost extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default */] {
   constructor(ctx, x, y, width, height){
     super(ctx, x, y, width, height);
     this.ctx = ctx;
@@ -2875,7 +2832,7 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
   }
 
   getRandomDirection(){
-    randDirections = __WEBPACK_IMPORTED_MODULE_1_lodash___default.a.shuffle(randDirections);
+    randDirections = __WEBPACK_IMPORTED_MODULE_2_lodash___default.a.shuffle(randDirections);
     const newDirection = randDirections[Math.floor(Math.random()*randDirections.length)];
     if(this.direction[0] === newDirection[0] &&
        this.direction[1] === newDirection[1]){
@@ -2928,6 +2885,43 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_0__visible_object__["a" /* default
       //dont make vuln and eatable here, vuln and eatable once reached homebase
     }, 4000);
   }
+
+  changeGhostDirection(grid, squareWidth, squareHeight){
+    if(!this.nextDirection) return;
+
+    const center = this.calculateCurrentCenter();
+    const ghostX = center.x;
+    const ghostY = center.y;
+
+    const currentLocation = this.calculateMatrixPos(ghostX, ghostY, squareWidth, squareHeight);
+    const currentGridX = currentLocation.gridX;
+    const currentGridY = currentLocation.gridY;
+
+    const nextCenter = this.calculateNextCenter(currentGridX, currentGridY, squareWidth, squareHeight);
+    const nextCenterX = nextCenter.x;
+    const nextCenterY = nextCenter.y;
+
+    const nextX = currentGridX + this.nextDirection[0];
+    const nextY = currentGridY + this.nextDirection[1];
+    if(grid.length >= nextX &&
+        grid[0].length >= nextY){
+          const nextCell = grid[nextY][nextX];
+          if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */])){
+              if(this.notInverseDirection()) {
+                if (this.smoothMovement(ghostX, ghostY, nextCenterX, nextCenterY)) {
+                  return;
+                }
+                this.x = currentGridX * squareWidth + (squareWidth - this.width) / 2;
+                this.y = currentGridY * squareHeight + (squareHeight - this.height) / 2;
+              }
+            this.direction = this.nextDirection;
+        } else {
+            this.getRandomDirection();
+        }
+    }
+  }
+
+
 
 }
 
@@ -5580,7 +5574,7 @@ class Board {
 
   moveGhosts(){
     this.ghosts.forEach((ghost) => {
-      this.changeGhostDirection(ghost);
+      ghost.changeGhostDirection(this.grid, this.squareWidth, this.squareHeight);
       const startX = ghost.x;
       const startY = ghost.y;
       ghost.x += ghost.direction[0] * ghost.speed;
@@ -5590,7 +5584,7 @@ class Board {
       const offsetX = (this.squareWidth - ghost.width) / 2;
       const offsetY = (this.squareHeight - ghost.height) / 2;
 
-      if(this.isCollision(ghost)){
+      if(ghost.wallCollision(this.grid)){
         ghost.x = finalPos.x + offsetX;
         ghost.y = finalPos.y + offsetY;
         ghost.getRandomDirection();
@@ -5600,41 +5594,6 @@ class Board {
       this.ghostCollision(ghost);
       ghost.draw();
     });
-  }
-
-  changeGhostDirection(ghost){
-    if(!ghost.nextDirection) return;
-
-    const center = ghost.calculateCurrentCenter();
-    const ghostX = center.x;
-    const ghostY = center.y;
-
-    const currentLocation = ghost.calculateMatrixPos(ghostX, ghostY, this.squareWidth, this.squareHeight);
-    const currentGridX = currentLocation.gridX;
-    const currentGridY = currentLocation.gridY;
-
-    const nextCenter = ghost.calculateNextCenter(currentGridX, currentGridY, this.squareWidth, this.squareHeight);
-    const nextCenterX = nextCenter.x;
-    const nextCenterY = nextCenter.y;
-
-    const nextX = currentGridX + ghost.nextDirection[0];
-    const nextY = currentGridY + ghost.nextDirection[1];
-    if(this.grid.length >= nextX &&
-        this.grid[0].length >= nextY){
-          const nextCell = this.grid[nextY][nextX];
-          if(!(nextCell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */])){
-              if(ghost.notInverseDirection()) {
-                if (ghost.smoothMovement(ghostX, ghostY, nextCenterX, nextCenterY)) {
-                  return;
-                }
-                ghost.x = currentGridX * this.squareWidth + (this.squareWidth - ghost.width) / 2;
-                ghost.y = currentGridY * this.squareHeight + (this.squareHeight - ghost.height) / 2;
-              }
-            ghost.direction = ghost.nextDirection;
-        } else {
-            ghost.getRandomDirection();
-        }
-    }
   }
 
   moveQuackMan(){
@@ -5650,7 +5609,7 @@ class Board {
     const offsetX = (this.squareWidth - this.quackMan.width) / 2;
     const offsetY = (this.squareHeight - this.quackMan.height) / 2;
 
-    if(this.isCollision()){
+    if(this.quackMan.wallCollision(this.grid)){
       this.quackMan.x = finalPos.x + offsetX;
       this.quackMan.y = finalPos.y + offsetY;
       this.quackMan.direction = [0, 0];
@@ -5660,25 +5619,6 @@ class Board {
     this.quackMan.draw(this.quackMan.direction);
     this.eatPill();
     this.showStats();
-  }
-
-  isCollision(ghost){
-    let collides = false;
-    this.grid.forEach((row) => {
-      row.forEach((cell) => {
-        if(ghost){
-          if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && ghost.collidesWith(cell)){
-            collides = true;
-            return collides;
-          }
-        } else {
-          if(cell instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */] && this.quackMan.collidesWith(cell)){
-            collides = true;
-          }
-        }
-      });
-    });
-    return collides;
   }
 
   ghostCollision(ghost){
@@ -32278,13 +32218,73 @@ class Util {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__visible_object__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__wall__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash__ = __webpack_require__(33);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_lodash__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__visible_object__ = __webpack_require__(14);
 
 
 
-class MovableObject extends __WEBPACK_IMPORTED_MODULE_1__visible_object__["a" /* default */] {
+
+class MovableObject extends __WEBPACK_IMPORTED_MODULE_2__visible_object__["a" /* default */] {
+
+  collidesWith(object) {
+    return (this.x < (object.x + object.width) &&
+         object.x < (this.x + this.width) &&
+         this.y < (object.y + object.height) &&
+         object.y < (this.y + this.height));
+  }
+
+  calculateCurrentCenter(){
+    return {
+      x: this.x + this.width / 2,
+      y: this.y + this.height / 2
+    };
+  }
+
+  calculateNextCenter(X, Y, width, height){
+    return {
+      x: X * width + (width / 2),
+      y: Y * height + (height / 2),
+    };
+  }
+
+  wrap(x, y){
+    if(x >= 600){
+      this.x = 0;
+    } else if(x <= 0){
+      this.x = 600;
+    } else if (y >= 600){
+      this.y = 0;
+    } else if( y <= 0){
+      this.y = 600;
+    }
+  }
+
+  smoothMovement(centerX, centerY, nextCenterX, nextCenterY){
+    return (this.direction[0] === -1 && centerX >= nextCenterX) ||
+        (this.direction[0] === 1 && centerX <= nextCenterX) ||
+        (this.direction[1] === -1 && centerY >= nextCenterY) ||
+        (this.direction[1] === 1 && centerY <= nextCenterY);
+  }
+
+  notInverseDirection(){
+    return this.direction[0] + this.nextDirection[0] &&
+    this.direction[1] + this.nextDirection[1];
+  }
+
+  wallCollision(grid){
+    let collides = false;
+    grid.forEach((row) => {
+      row.forEach((cell) => {
+        if(cell instanceof __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */] && this.collidesWith(cell)){
+          collides = true;
+          return collides;
+        }
+      });
+    });
+    return collides;
+  }
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (MovableObject);
