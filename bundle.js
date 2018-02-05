@@ -24805,7 +24805,7 @@ X.X.o....X......X.X
 X.X.XX.XXXXX.XX.X.X
 X.X.X........XX.X.X
 X...X.XXXX X.XX...X
-XXX.X.XbpicX....XXX
+XXX.X.Xb   X....XXX
    .X.XXXXXX.XX.
 XXX.X........XX.XXX
 X.o...XXXXXX.XX...X
@@ -32608,7 +32608,9 @@ class GameView {
     window.removeEventListener("keydown", this.toggleSound, false);
     this.preGame = false;
     this.game.drawGhosts();
-
+    // this.game.lives = 3;
+    // this.game.score = 0;
+    // this.game.level = 1;
     this.bindMoveHandler();
 
     this.lastTime = 0;
