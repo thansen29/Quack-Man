@@ -2969,6 +2969,118 @@ class Ghost extends __WEBPACK_IMPORTED_MODULE_1__movable_object__["a" /* default
       return;
     }
   }
+
+  findShortestPath(startX, startY, endX, endY, grid){
+    const distanceFromTop = startY;
+    const distanceFromLeft = startX;
+    // const visits = [grid.length][grid[0].length];
+    const visits = [];
+    for (let i = 0; i < grid.length; i++) {
+      visits[i] = grid[i].slice();
+    }
+
+    const location = {
+      distanceFromTop,
+      distanceFromLeft,
+      path: [],
+      status: null
+    };
+
+    const queue = [location];
+
+    while(queue.length > 0){
+      let currentLocation = queue.shift();
+
+      let newLocation = this.checkDirection(currentLocation, 'up', grid, endX, endY, visits);
+      if(newLocation.status === 'goal'){
+        return newLocation.path;
+      } else if(newLocation.status === 'valid'){
+        queue.push(newLocation);
+      }
+
+      newLocation = this.checkDirection(currentLocation, 'right', grid, endX, endY, visits);
+      if(newLocation.status === 'goal'){
+        return newLocation.path;
+      } else if(newLocation.status === 'valid'){
+        queue.push(newLocation);
+      }
+
+      newLocation = this.checkDirection(currentLocation, 'down', grid, endX, endY, visits);
+      if(newLocation.status === 'goal'){
+        return newLocation.path;
+      } else if(newLocation.status === 'valid'){
+        queue.push(newLocation);
+      }
+
+      newLocation = this.checkDirection(currentLocation, 'left', grid, endX, endY, visits);
+      if(newLocation.status === 'goal'){
+        return newLocation.path;
+      } else if(newLocation.status === 'valid'){
+        queue.push(newLocation);
+      }
+
+    }
+    return false;
+  }
+
+  checkDirection(currentLocation, direction, grid, endX, endY, visits){
+    const newPath = currentLocation.path.slice();
+    newPath.push(direction);
+
+    let top = currentLocation.distanceFromTop;
+    let left = currentLocation.distanceFromLeft;
+
+    switch (direction) {
+      case 'up':
+        top -= 1;
+        break;
+      case 'right':
+        left += 1;
+        break;
+      case 'down':
+        top += 1;
+        break;
+      case 'left':
+        left -= 1;
+        break;
+      default:
+    }
+
+    const newLocation = {
+      distanceFromTop: top,
+      distanceFromLeft: left,
+      path: newPath,
+      status: 'unknown'
+    };
+    newLocation.status = this.locationStatus(newLocation, endX, endY, grid, visits);
+
+    if(newLocation.status === 'valid'){
+      visits[newLocation.distanceFromTop][newLocation.distanceFromLeft] = 'visited';
+    }
+
+    return newLocation;
+  }
+
+  locationStatus(location, endX, endY, grid, visits){
+    const length = grid.length;
+    let top = location.distanceFromTop;
+    let left = location.distanceFromLeft;
+
+    if(left < 0 ||
+       left >= length ||
+       top < 0 ||
+       top >= length){
+        return 'invalid';
+    } else if(top === endY && left === endX){
+      return 'goal';
+    } else if(grid[top][left] instanceof __WEBPACK_IMPORTED_MODULE_0__wall__["a" /* default */] || visits[top][left] === 'visited'){
+      return 'blocked';
+    } else {
+      return 'valid';
+    }
+  }
+
+
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Ghost);
@@ -5597,7 +5709,9 @@ class Board {
   drawWalls(){
     this.grid.forEach((row) => {
       row.forEach((wall) => {
-        if(wall) wall.draw();
+        if(wall instanceof __WEBPACK_IMPORTED_MODULE_1__wall__["a" /* default */]){
+          wall.draw();
+        }
       });
     });
   }
@@ -5619,9 +5733,40 @@ class Board {
   }
 
   moveGhosts(){
-    this.ghosts.forEach((ghost) => {
-      ghost.move(this, this.grid, this.squareWidth, this.squareHeight, this.quackMan);
+    // this.ghosts.forEach((ghost) => {
+    //   ghost.move(this, this.grid, this.squareWidth, this.squareHeight, this.quackMan);
+    // });
+    const blinky = this.ghosts[0];
+    const grids = blinky.calculateMatrixPos(blinky.x, blinky.y, blinky.width, blinky.height);
+    const startX = grids.gridX;
+    const startY = grids.gridY - 1;
+    const quacks = this.quackMan.calculateMatrixPos(this.quackMan.x, this.quackMan.y, this.quackMan.width, this.quackMan.height);
+    const endX = quacks.gridX;
+    const endY = quacks.gridY - 1;
+    // console.log(startX, startY, endX, endY);
+    //
+    const path = blinky.findShortestPath(startX, startY, endX, endY, this.grid);
+    // console.log(path);
+    path.forEach((direction) => {
+      switch (direction) {
+        case 'up':
+          blinky.direction = [0, -1];
+          break;
+        case 'right':
+          blinky.direction = [1, 0];
+          break;
+        case 'down':
+          blinky.direction = [0, 1];
+          break;
+        case 'left':
+          blinky.direction = [-1, 0];
+          break;
+        default:
+      }
+      blinky.move(this, this.grid, this.squareWidth, this.squareHeight, this.quackMan);
+
     });
+
   }
 
   changeDirection(direction){
