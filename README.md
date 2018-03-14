@@ -86,7 +86,6 @@ collidesWith(object) {
 Paired in with the collision algorithm, much more work needed to be done to achieve smooth, reliable navigation. Direction changes needed to be queued up for when the move is available, as well as not actually changing directions until fully in the next grid square. This prevents any snapping to locations or glitchy movement.
 
 # Future Plans
-- Set up Firebase to allow users to add initials and keep track/persist high scores.
-- New levels
+- Add more levels. Current there are only two.
 - Add breadth-first pathfinding so ghosts return to home base after being eaten
 - Enhance intelligence of ghost movement to actively hunt the quack man.
